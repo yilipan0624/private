@@ -1,0 +1,292 @@
+{
+ "Resources": {
+  "BackupConstructBackupVaultE6D97FF3": {
+   "Type": "AWS::Backup::BackupVault",
+   "Properties": {
+    "BackupVaultName": "testVaultName"
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-backup/Backup-Construct/BackupVault"
+   }
+  },
+  "BackupConstructBackupPlan7F2C2B5D": {
+   "Type": "AWS::Backup::BackupPlan",
+   "Properties": {
+    "BackupPlan": {
+     "BackupPlanName": "testPlanName",
+     "BackupPlanRule": [
+      {
+       "RuleName": "DailyBackup",
+       "ScheduleExpression": "cron(0 0 * * ? *)",
+       "TargetBackupVault": "testVaultName"
+      }
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-backup/Backup-Construct/BackupPlan"
+   }
+  },
+  "BackupConstructBackupRole53D2E43C": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "backup.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-backup/Backup-Construct/BackupRole/Resource"
+   }
+  },
+  "BackupConstructBackupSelection448DA88B": {
+   "Type": "AWS::Backup::BackupSelection",
+   "Properties": {
+    "BackupPlanId": {
+     "Ref": "BackupConstructBackupPlan7F2C2B5D"
+    },
+    "BackupSelection": {
+     "IamRoleArn": {
+      "Fn::GetAtt": [
+       "BackupConstructBackupRole53D2E43C",
+       "Arn"
+      ]
+     },
+     "Resources": [
+      "arn:aws:ec2:*:*:volume/*",
+      "arn:aws:s3:::*/*"
+     ],
+     "SelectionName": "EBSVolumesAndS3"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-backup/Backup-Construct/BackupSelection"
+   }
+  },
+  "IamConstructMyRole16296A5EF": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ec2.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonS3FullAccess"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonRDSFullAccess"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonVPCFullAccess"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonEC2FullAccess"
+       ]
+      ]
+     }
+    ],
+    "RoleName": "MyExampleRole1",
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-backup/IamConstruct/MyRole1/Resource"
+   }
+  },
+  "IamConstructMyRole25CB377D7": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ec2.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonS3FullAccess"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonRDSFullAccess"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonVPCFullAccess"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonEC2FullAccess"
+       ]
+      ]
+     }
+    ],
+    "RoleName": "MyExampleRole2",
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-backup/IamConstruct/MyRole2/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/0WOQQ7CIBBFz+IextoFB9ALGJq4baZ0TKalYArognB3qTW6+u+/v/ktKAXNAV9BmnGWlgfIXUQzi6r6PFRKD8iXuzt/8IbJRvGrV4vu3zqyZCJ7VwTjAll7S9u6ZSlCU/BpNbv6chHOjwRTOD5PCtqmfpkCs1yTi7wQ6D3fKYdzFacAAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-backup/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

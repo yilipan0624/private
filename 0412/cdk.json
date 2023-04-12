@@ -1,0 +1,50 @@
+{
+  "app": "npx ts-node --prefer-ts-exts bin/index.ts",
+  "context": {
+    "dev": {
+      "common": {
+        "region": "ap-northeast-1",
+        "pjPrefix": "cpi",
+        "snsAlarmTopicArn": "arn:aws:sns:ap-northeast-1:679182460211:cpi-snstopic-ps-dev-all-01",
+        "dataSyncRoleArnList": [
+          "arn:aws:iam::679182460211:user/CPI-YILIPAN",
+          "arn:aws:iam::679182460211:user/CPI-YILIPAN"
+        ],
+        "dataSyncCorssAccountId": "679182460211"
+      },
+      "network": {
+        "vpcCidr": "10.200.0.0/16",
+        "publicSubnet": [
+          {
+            "availabilityZone": "ap-northeast-1a",
+            "subnetCidr": "10.200.0.0/24"
+          },
+          {
+            "availabilityZone": "ap-northeast-1c",
+            "subnetCidr": "10.200.100.0/24"
+          }
+        ],
+        "privateSubnet": [
+          {
+            "availabilityZone": "ap-northeast-1a",
+            "subnetCidr": "10.200.1.0/24"
+          },
+          {
+            "availabilityZone": "ap-northeast-1c",
+            "subnetCidr": "10.200.101.0/24"
+          }
+        ],
+        "s3flowLogBucketArn": "arn:aws:s3:::cpi-s3-ps-dev-vpcflowlog-01"
+      },
+      "appConnection": {
+        "cloudFrontWebAclId": "arn:aws:wafv2:us-east-1:679182460211:global/webacl/cpi-waf-ps-dev-cloudfront-01/43bd56b5-6a69-43ac-a4ec-f3089e132c9c",
+        "cloudFrontAcmArn": "arn:aws:acm:us-east-1:679182460211:certificate/219c53ca-8b1f-4d9d-af88-b44b77c09dd9",
+        "frontDomainName": "ps-dev.wellcoms.jp",
+        "albAcmArn": "arn:aws:acm:ap-northeast-1:679182460211:certificate/a18d7803-5223-417a-95fe-7f5f1283c69f",
+        "backDomainName": "ps-dev-org.wellcoms.jp",
+        "albAccessLogbucketArn": "arn:aws:s3:::cpi-s3-ps-dev-elblog-01",
+        "cloudFrontAccessLogBucketArn": "arn:aws:s3:::cpi-s3-ps-dev-cloudfrontlog-01"
+      }
+    }
+  }
+}

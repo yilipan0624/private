@@ -1,0 +1,91 @@
+import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import { Ec2InstanceConstruct } from '../construct/ec2/ec2-construct';
+import { NamingStackProps } from '../../utils/commonTypes';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as sns from 'aws-cdk-lib/aws-sns';
+import { VpcConstruct } from '../construct/vpc/vpc-construct';
+import { AlbConstruct } from '../construct/alb/alb-construct'; 
+import { InstanceTarget } from 'aws-cdk-lib/aws-elasticloadbalancingv2-targets';
+//import { ADConstruct } from '../construct/ad/ad-construct';
+//import { FsxConstruct } from '../construct/fsx/fsx-construct';
+
+
+
+/**
+ * EC2 Instance Stack properties
+ */
+type WccServerStackProps = {
+  namingStackProps: NamingStackProps;
+  vpc: VpcConstruct;
+  privateSubnets: ec2.ISubnet[];
+  alb: AlbConstruct; 
+  instanceType?: string;
+  securityGroupName?: string;
+  logGroupName?: string;
+  snsAlarmTopicArn?: string;
+  password: string;
+  domainName?: string;
+  subnetSelection: ec2.SubnetSelection;
+} & cdk.StackProps;
+
+/**
+ * EC2 Instance Stack
+ */
+export class WccServerstack extends cdk.Stack {
+  readonly ec2InstanceConstruct: Ec2InstanceConstruct;
+ // readonly adConstruct: ADConstruct;
+  //readonly fsxConstruct: FsxConstruct;
+
+  constructor(scope: Construct, id: string, props: WccServerStackProps) {
+    super(scope, id, props);
+
+    this.ec2InstanceConstruct = new Ec2InstanceConstruct(this, 'EC2-Instance-Construct', {
+      namingStackProps: props.namingStackProps,
+      vpc: props.vpc.vpc,
+      privateSubnets: props.vpc.privateSubnets,
+      publicSubnets: props.vpc.publicSubnets,
+      instanceType: props.instanceType,
+      securityGroupName: props.securityGroupName,
+      logGroupName: props.logGroupName,
+      cdkAutoRemove: true,
+   // 添加 subnetSelection 属性
+  subnetSelection: {
+    subnets: [
+      props.privateSubnets[0],
+      props.privateSubnets[1],
+    ],
+  },
+});
+
+    //// Add ADConstruct
+    //this.adConstruct = new ADConstruct(this, 'ADConstruct', {
+    //  namingStackProps: props.namingStackProps,
+    //  vpc: props.vpc.vpc,
+    //  privateSubnets: props.vpc.privateSubnets,
+    //  password: cdk.SecretValue.unsafePlainText(props.password),
+    //  domainName: props.domainName,
+    //});
+    //
+    //// Add FsxConstruct
+    //this.fsxConstruct = new FsxConstruct(this, 'FsxConstruct', {
+    //  vpc: props.vpc.vpc,
+    //  privateSubnets: props.vpc.privateSubnets,
+    //  directoryService: this.adConstruct,
+    //});    
+    
+    // Add EC2 Instance to Alb Target Group
+    const loadBalancerTarget = new InstanceTarget(this.ec2InstanceConstruct.instance1);
+    props.alb.targetGroup.addTarget(loadBalancerTarget);
+    
+    const loadBalancerTarget2 = new InstanceTarget(this.ec2InstanceConstruct.instance2);
+    props.alb.targetGroup.addTarget(loadBalancerTarget2);
+    // Set up CPU Memory alarm
+    if (props.snsAlarmTopicArn) {
+      const topic = sns.Topic.fromTopicArn(this, 'SnsTopic', props.snsAlarmTopicArn);
+      this.ec2InstanceConstruct.addCpuArarm1('CpuUtilization', topic, 0.8);
+      this.ec2InstanceConstruct.addMemoryAlarm('MemoryUtilization', topic, 0.8);
+    }
+    
+  }
+}

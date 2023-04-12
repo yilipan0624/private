@@ -1,0 +1,20 @@
+{
+  "version": "30.0.0",
+  "files": {
+    "c5ab4293f5cd734c13e06aa77e5943c083435ec69592d6d7b6e506a8ab92a20d": {
+      "source": {
+        "path": "dev-wcc-storage.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "679182460211-ap-northeast-1": {
+          "bucketName": "cdk-hnb659fds-assets-679182460211-ap-northeast-1",
+          "objectKey": "c5ab4293f5cd734c13e06aa77e5943c083435ec69592d6d7b6e506a8ab92a20d.json",
+          "region": "ap-northeast-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::679182460211:role/cdk-hnb659fds-file-publishing-role-679182460211-ap-northeast-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

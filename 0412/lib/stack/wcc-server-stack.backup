@@ -1,0 +1,408 @@
+import * as cdk from 'aws-cdk-lib';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as sns from 'aws-cdk-lib/aws-sns';
+import * as s3  from 'aws-cdk-lib/aws-s3';
+import { S3CommonBucketConstruct } from '../construct/s3/s3-common-bucket-construct';
+import { S3S3logBucketConstruct } from '../construct/s3/s3-s3log-bucket-construct';
+import { LogsS3BackupConstruct } from '../construct/s3-backup/s3-log-backup-construct';
+import { Construct } from 'constructs';
+import { NamingStackProps } from '../../utils/commonTypes';
+import { ResourceNameBuilder } from '../../utils/helpers';
+import { EC2Construct } from '../construct/ec2/ec2-construct';
+
+type WccServerStackProps = {
+    namingStackProps: NamingStackProps;
+    vpc: ec2.Vpc;
+    privateSubnets: ec2.ISubnet[];
+    publicteSubnets: ec2.ISubnet[];
+    /**
+     * EC2のインスタンスタイプ
+     * @example t3.micro
+     */
+    instanceType?: string;
+} & cdk.StackProps
+
+export class WccServerstack extends cdk.Stack {
+
+    constructor(scope: Construct, id: string, props: WccServerStackProps) {
+        super(scope, id, props);
+
+        // Ec2 Security Group
+        const sgName = ResourceNameBuilder.makeResourceNameStr({
+            serviceName: 'sg',
+            use: 'bastion',
+            ...props.namingStackProps
+        });
+        const sg = new ec2.SecurityGroup(this, 'sg-ec2-bastion', {
+            vpc: props.vpc,
+            securityGroupName: sgName,
+            allowAllOutbound: true
+        });
+        cdk.Tags.of(sg).add('Name', sgName);
+
+        // Ec2 IAM Role
+        const roleName = ResourceNameBuilder.makeResourceNameStr({
+            serviceName: 'role',
+            use: 'bastion',
+            ...props.namingStackProps
+        });
+        const role = new iam.Role(this, 'role-ec2-bastion', {
+            assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com'),
+            description: 'bastion ec2 role',
+            roleName: roleName,
+            managedPolicies: [iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore')],
+        });
+        cdk.Tags.of(role).add('Name', roleName);
+
+        // EC2 Instance#1
+        const instanceName1 = ResourceNameBuilder.makeResourceNameStr({
+            serviceName: 'ec2',
+            use: 'bastion',
+            ...props.namingStackProps
+        });
+        const instance1 = new ec2.Instance(this, 'ec2-bastion',
+            {
+                vpc: props.vpc,
+                vpcSubnets: { subnets: props.privateSubnets },
+                instanceType: new ec2.InstanceType(props.instanceType || 't3.micro'),
+                machineImage: ec2.MachineImage.latestAmazonLinux({ generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2 }),
+                instanceName: instanceName1,
+                role: role,
+                securityGroup: sg,
+                blockDevices: [{
+                    deviceName: `/dev/xvda`,
+                    volume: ec2.BlockDeviceVolume.ebs(8, {
+                        encrypted: true,
+                        volumeType: ec2.EbsDeviceVolumeType.GP3,
+                        iops: 3000,
+                    }),
+                }]
+            }
+        );
+        instance1.userData.addCommands(
+            `hostnamectl set-hostname ${instanceName1}`,
+            'echo "preserve_hostname: true" >> /etc/cloud/cloud.cfg',
+            'timedatectl set-timezone Asia/Tokyo',
+            'yum update -y'
+        );
+        // EC2終了保護#2
+        new EC2Construct(this, 'EC2TerminationProtection1', {
+            ec2Instance: instance1,
+            namingStackProps: props.namingStackProps
+        });
+
+        cdk.Tags.of(instance1).add('Name', instanceName1);
+        
+        // EC2 Instance#2
+        const instanceName2 = ResourceNameBuilder.makeResourceNameStr({
+            serviceName: 'ec2',
+            use: 'other',
+            ...props.namingStackProps
+        });
+        const instance2 = new ec2.Instance(this, 'ec2-other',
+            {
+                vpc: props.vpc,
+                vpcSubnets: { subnets: props.privateSubnets },
+                instanceType: new ec2.InstanceType(props.instanceType || 't3.micro'),
+                machineImage: ec2.MachineImage.latestAmazonLinux({ generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2 }),
+                instanceName: instanceName2,
+                role: role,
+                securityGroup: sg,
+                blockDevices: [{
+                    deviceName: `/dev/xvda`,
+                    volume: ec2.BlockDeviceVolume.ebs(8, {
+                        encrypted: true,
+                        volumeType: ec2.EbsDeviceVolumeType.GP3,
+                        iops: 3000,
+                    }),
+                }]
+            }
+        );
+        instance2.userData.addCommands(
+            `hostnamectl set-hostname ${instanceName2}`,
+            'echo "preserve_hostname: true" >> /etc/cloud/cloud.cfg',
+            'timedatectl set-timezone Asia/Tokyo',
+            'yum update -y'
+        );
+        // EC2終了保護
+        new EC2Construct(this, 'EC2TerminationProtection2', {
+            ec2Instance: instance2,
+            namingStackProps: props.namingStackProps
+        });
+
+        cdk.Tags.of(instance2).add('Name', instanceName2);
+    
+            // EC2 Instance#3
+        const instanceName3 = ResourceNameBuilder.makeResourceNameStr({
+            serviceName: 'ec2',
+            use: 'Sagyou',
+            ...props.namingStackProps
+        });
+        const instance3 = new ec2.Instance(this, 'ec2-Sagyou',
+            {
+                vpc: props.vpc,
+                vpcSubnets: { subnets: props.privateSubnets },
+                instanceType: new ec2.InstanceType(props.instanceType || 't3.micro'),
+                machineImage: ec2.MachineImage.latestAmazonLinux({ generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2 }),
+                instanceName: instanceName3,
+                role: role,
+                securityGroup: sg,
+                blockDevices: [{
+                    deviceName: `/dev/xvda`,
+                    volume: ec2.BlockDeviceVolume.ebs(8, {
+                        encrypted: true,
+                        volumeType: ec2.EbsDeviceVolumeType.GP3,
+                        iops: 3000,
+                    }),
+                }]
+            }
+        );
+
+        // EC2終了保護
+        new EC2Construct(this, 'EC2TerminationProtection3', {
+            ec2Instance: instance3,
+            namingStackProps: props.namingStackProps
+        });
+
+        cdk.Tags.of(instance3).add('Name', instanceName3);  
+        
+        // EC2 Instance#4
+        const instanceName4 = ResourceNameBuilder.makeResourceNameStr({
+            serviceName: 'ec2',
+            use: 'bat',
+            ...props.namingStackProps
+        });
+        const instance4 = new ec2.Instance(this, 'ec2-bat',
+            {
+                vpc: props.vpc,
+                vpcSubnets: { subnets: props.privateSubnets },
+                instanceType: new ec2.InstanceType(props.instanceType || 't3.micro'),
+                machineImage: ec2.MachineImage.latestAmazonLinux({ generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2 }),
+                instanceName: instanceName4,
+                role: role,
+                securityGroup: sg,
+                blockDevices: [{
+                    deviceName: `/dev/xvda`,
+                    volume: ec2.BlockDeviceVolume.ebs(8, {
+                        encrypted: true,
+                        volumeType: ec2.EbsDeviceVolumeType.GP3,
+                        iops: 3000,
+                    }),
+                }]
+            }
+        );
+
+        // EC2終了保護
+        new EC2Construct(this, 'EC2TerminationProtection4', {
+            ec2Instance: instance4,
+            namingStackProps: props.namingStackProps
+        });
+
+        cdk.Tags.of(instance4).add('Name', instanceName4);   
+        
+        // EC2 Instance#5
+        const instanceName5 = ResourceNameBuilder.makeResourceNameStr({
+            serviceName: 'ec2',
+            use: 'mailtest',
+            ...props.namingStackProps
+        });
+        const instance5 = new ec2.Instance(this, 'ec2-mailtest',
+            {
+                vpc: props.vpc,
+                vpcSubnets: { subnets: props.privateSubnets },
+                instanceType: new ec2.InstanceType(props.instanceType || 't3.micro'),
+                machineImage: ec2.MachineImage.latestAmazonLinux({ generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2 }),
+                instanceName: instanceName5,
+                role: role,
+                securityGroup: sg,
+                blockDevices: [{
+                    deviceName: `/dev/xvda`,
+                    volume: ec2.BlockDeviceVolume.ebs(8, {
+                        encrypted: true,
+                        volumeType: ec2.EbsDeviceVolumeType.GP3,
+                        iops: 3000,
+                    }),
+                }]
+            }
+        );
+
+        // EC2終了保護
+        new EC2Construct(this, 'EC2TerminationProtection5', {
+            ec2Instance: instance5,
+            namingStackProps: props.namingStackProps
+        });
+
+        cdk.Tags.of(instance5).add('Name', instanceName5);   
+
+        // EC2 Instance#6
+        const instanceName6 = ResourceNameBuilder.makeResourceNameStr({
+            serviceName: 'ec2',
+            use: 'sorry',
+            ...props.namingStackProps
+        });
+        const instance6 = new ec2.Instance(this, 'ec2-mail',
+            {
+                vpc: props.vpc,
+                vpcSubnets: { subnets: props.privateSubnets },
+                instanceType: new ec2.InstanceType(props.instanceType || 't3.micro'),
+                machineImage: ec2.MachineImage.latestAmazonLinux({ generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2 }),
+                instanceName: instanceName6,
+                role: role,
+                securityGroup: sg,
+                blockDevices: [{
+                    deviceName: `/dev/xvda`,
+                    volume: ec2.BlockDeviceVolume.ebs(8, {
+                        encrypted: true,
+                        volumeType: ec2.EbsDeviceVolumeType.GP3,
+                        iops: 3000,
+                    }),
+                }]
+            }
+        );
+
+        // EC2終了保護
+        new EC2Construct(this, 'EC2TerminationProtection6', {
+            ec2Instance: instance2,
+            namingStackProps: props.namingStackProps
+        });
+
+        cdk.Tags.of(instance6).add('Name', instanceName6);  
+        
+        // EC2 Instance#7
+        const instanceName7 = ResourceNameBuilder.makeResourceNameStr({
+            serviceName: 'ec2',
+            use: 'mypage AP#1',
+            ...props.namingStackProps
+        });
+        const instance7 = new ec2.Instance(this, 'ec2-mypage AP#1',
+            {
+                vpc: props.vpc,
+                vpcSubnets: { subnets: props.privateSubnets },
+                instanceType: new ec2.InstanceType(props.instanceType || 't3.micro'),
+                machineImage: ec2.MachineImage.latestAmazonLinux({ generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2 }),
+                instanceName: instanceName7,
+                role: role,
+                securityGroup: sg,
+                blockDevices: [{
+                    deviceName: `/dev/xvda`,
+                    volume: ec2.BlockDeviceVolume.ebs(8, {
+                        encrypted: true,
+                        volumeType: ec2.EbsDeviceVolumeType.GP3,
+                        iops: 3000,
+                    }),
+                }]
+            }
+        );
+
+        // EC2終了保護
+        new EC2Construct(this, 'EC2TerminationProtection7', {
+            ec2Instance: instance2,
+            namingStackProps: props.namingStackProps
+        });
+
+        cdk.Tags.of(instance7).add('Name', instanceName7); 
+        
+        // EC2 Instance#8
+        const instanceName8 = ResourceNameBuilder.makeResourceNameStr({
+            serviceName: 'ec2',
+            use: 'mypage AP#2',
+            ...props.namingStackProps
+        });
+        const instance8 = new ec2.Instance(this, 'ec2-mypage AP#2',
+            {
+                vpc: props.vpc,
+                vpcSubnets: { subnets: props.privateSubnets },
+                instanceType: new ec2.InstanceType(props.instanceType || 't3.micro'),
+                machineImage: ec2.MachineImage.latestAmazonLinux({ generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2 }),
+                instanceName: instanceName8,
+                role: role,
+                securityGroup: sg,
+                blockDevices: [{
+                    deviceName: `/dev/xvda`,
+                    volume: ec2.BlockDeviceVolume.ebs(8, {
+                        encrypted: true,
+                        volumeType: ec2.EbsDeviceVolumeType.GP3,
+                        iops: 3000,
+                    }),
+                }]
+            }
+        );
+
+        // EC2終了保護
+        new EC2Construct(this, 'EC2TerminationProtection8', {
+            ec2Instance: instance2,
+            namingStackProps: props.namingStackProps
+        });
+        
+        cdk.Tags.of(instance8).add('Name', instanceName8); 
+        
+         // EC2 Instance#9
+        const instanceName9 = ResourceNameBuilder.makeResourceNameStr({
+            serviceName: 'ec2',
+            use: 'WCC/CC AP#1',
+            ...props.namingStackProps
+        });
+        const instance9 = new ec2.Instance(this, 'ec2-WCC/CC AP#1',
+            {
+                vpc: props.vpc,
+                vpcSubnets: { subnets: props.privateSubnets },
+                instanceType: new ec2.InstanceType(props.instanceType || 't3.micro'),
+                machineImage: ec2.MachineImage.latestAmazonLinux({ generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2 }),
+                instanceName: instanceName9,
+                role: role,
+                securityGroup: sg,
+                blockDevices: [{
+                    deviceName: `/dev/xvda`,
+                    volume: ec2.BlockDeviceVolume.ebs(8, {
+                        encrypted: true,
+                        volumeType: ec2.EbsDeviceVolumeType.GP3,
+                        iops: 3000,
+                    }),
+                }]
+            }
+        );
+
+        // EC2終了保護
+        new EC2Construct(this, 'EC2TerminationProtection9', {
+            ec2Instance: instance2,
+            namingStackProps: props.namingStackProps
+        }); 
+        
+        cdk.Tags.of(instance9).add('Name', instanceName9); 
+        
+         // EC2 Instance#10
+        const instanceName10 = ResourceNameBuilder.makeResourceNameStr({
+            serviceName: 'ec2',
+            use: 'WCC/CC AP#2',
+            ...props.namingStackProps
+        });
+        const instance10 = new ec2.Instance(this, 'WCC/CC AP#2',
+            {
+                vpc: props.vpc,
+                vpcSubnets: { subnets: props.privateSubnets },
+                instanceType: new ec2.InstanceType(props.instanceType || 't3.micro'),
+                machineImage: ec2.MachineImage.latestAmazonLinux({ generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2 }),
+                instanceName: instanceName10,
+                role: role,
+                securityGroup: sg,
+                blockDevices: [{
+                    deviceName: `/dev/xvda`,
+                    volume: ec2.BlockDeviceVolume.ebs(8, {
+                        encrypted: true,
+                        volumeType: ec2.EbsDeviceVolumeType.GP3,
+                        iops: 3000,
+                    }),
+                }]
+            }
+        );
+
+        // EC2終了保護
+        new EC2Construct(this, 'EC2TerminationProtection10', {
+            ec2Instance: instance2,
+            namingStackProps: props.namingStackProps
+        });
+
+        cdk.Tags.of(instance10).add('Name', instanceName10);         
+    }
+}

@@ -1,0 +1,3755 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "dev-cpi-network": {
+        "id": "dev-cpi-network",
+        "path": "dev-cpi-network",
+        "children": {
+          "S3LogBucket": {
+            "id": "S3LogBucket",
+            "path": "dev-cpi-network/S3LogBucket",
+            "children": {
+              "s3Bucket": {
+                "id": "s3Bucket",
+                "path": "dev-cpi-network/S3LogBucket/s3Bucket",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dev-cpi-network/S3LogBucket/s3Bucket/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                      "aws:cdk:cloudformation:props": {
+                        "bucketEncryption": {
+                          "serverSideEncryptionConfiguration": [
+                            {
+                              "serverSideEncryptionByDefault": {
+                                "sseAlgorithm": "AES256"
+                              }
+                            }
+                          ]
+                        },
+                        "bucketName": "cpi-s3-ps-dev-s3-accesslog-01",
+                        "lifecycleConfiguration": {
+                          "rules": [
+                            {
+                              "expirationInDays": 7,
+                              "id": "cpi-lifecycle-ps-dev-accesslog-01",
+                              "noncurrentVersionExpiration": {
+                                "noncurrentDays": 7
+                              },
+                              "status": "Enabled"
+                            }
+                          ]
+                        },
+                        "ownershipControls": {
+                          "rules": [
+                            {
+                              "objectOwnership": "BucketOwnerEnforced"
+                            }
+                          ]
+                        },
+                        "publicAccessBlockConfiguration": {
+                          "blockPublicAcls": true,
+                          "blockPublicPolicy": true,
+                          "ignorePublicAcls": true,
+                          "restrictPublicBuckets": true
+                        },
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "cpi-s3-ps-dev-s3-accesslog-01"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "Policy": {
+                    "id": "Policy",
+                    "path": "dev-cpi-network/S3LogBucket/s3Bucket/Policy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "dev-cpi-network/S3LogBucket/s3Bucket/Policy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::S3::BucketPolicy",
+                          "aws:cdk:cloudformation:props": {
+                            "bucket": {
+                              "Ref": "S3LogBuckets3Bucket9252A6FD"
+                            },
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "s3:*",
+                                  "Condition": {
+                                    "Bool": {
+                                      "aws:SecureTransport": "false"
+                                    }
+                                  },
+                                  "Effect": "Deny",
+                                  "Principal": {
+                                    "AWS": "*"
+                                  },
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "S3LogBuckets3Bucket9252A6FD",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "S3LogBuckets3Bucket9252A6FD",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Action": [
+                                    "s3:GetBucketLocation",
+                                    "s3:ListBucket",
+                                    "s3:ListBucketMultipartUploads"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "AWS": [
+                                      "arn:aws:iam::679182460211:user/CPI-YILIPAN",
+                                      "arn:aws:iam::679182460211:user/CPI-YILIPAN"
+                                    ]
+                                  },
+                                  "Resource": {
+                                    "Fn::GetAtt": [
+                                      "S3LogBuckets3Bucket9252A6FD",
+                                      "Arn"
+                                    ]
+                                  }
+                                },
+                                {
+                                  "Action": [
+                                    "s3:AbortMultipartUpload",
+                                    "s3:DeleteObject",
+                                    "s3:GetObject",
+                                    "s3:ListMultipartUploadParts",
+                                    "s3:PutObjectTagging",
+                                    "s3:GetObjectTagging",
+                                    "s3:PutObject"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "AWS": [
+                                      "arn:aws:iam::679182460211:user/CPI-YILIPAN",
+                                      "arn:aws:iam::679182460211:user/CPI-YILIPAN"
+                                    ]
+                                  },
+                                  "Resource": {
+                                    "Fn::Join": [
+                                      "",
+                                      [
+                                        {
+                                          "Fn::GetAtt": [
+                                            "S3LogBuckets3Bucket9252A6FD",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "/*"
+                                      ]
+                                    ]
+                                  }
+                                },
+                                {
+                                  "Action": "s3:ListBucket",
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "AWS": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":iam::679182460211:root"
+                                        ]
+                                      ]
+                                    }
+                                  },
+                                  "Resource": {
+                                    "Fn::GetAtt": [
+                                      "S3LogBuckets3Bucket9252A6FD",
+                                      "Arn"
+                                    ]
+                                  }
+                                },
+                                {
+                                  "Action": "s3:PutObject",
+                                  "Condition": {
+                                    "StringEquals": {
+                                      "aws:SourceAccount": "679182460211"
+                                    }
+                                  },
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "Service": "logging.s3.amazonaws.com"
+                                  },
+                                  "Resource": {
+                                    "Fn::Join": [
+                                      "",
+                                      [
+                                        {
+                                          "Fn::GetAtt": [
+                                            "S3LogBuckets3Bucket9252A6FD",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "/*"
+                                      ]
+                                    ]
+                                  }
+                                },
+                                {
+                                  "Action": [
+                                    "s3:PutObject",
+                                    "s3:PutObjectLegalHold",
+                                    "s3:PutObjectRetention",
+                                    "s3:PutObjectTagging",
+                                    "s3:PutObjectVersionTagging",
+                                    "s3:Abort*"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "AWS": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":iam::582318560864:root"
+                                        ]
+                                      ]
+                                    }
+                                  },
+                                  "Resource": {
+                                    "Fn::Join": [
+                                      "",
+                                      [
+                                        {
+                                          "Fn::GetAtt": [
+                                            "S3LogBuckets3Bucket9252A6FD",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "/accesslog/AWSLogs/679182460211/*"
+                                      ]
+                                    ]
+                                  }
+                                },
+                                {
+                                  "Action": "s3:PutObject",
+                                  "Condition": {
+                                    "StringEquals": {
+                                      "s3:x-amz-acl": "bucket-owner-full-control"
+                                    }
+                                  },
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "Service": "delivery.logs.amazonaws.com"
+                                  },
+                                  "Resource": {
+                                    "Fn::Join": [
+                                      "",
+                                      [
+                                        {
+                                          "Fn::GetAtt": [
+                                            "S3LogBuckets3Bucket9252A6FD",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "/accesslog/AWSLogs/679182460211/*"
+                                      ]
+                                    ]
+                                  }
+                                },
+                                {
+                                  "Action": "s3:GetBucketAcl",
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "Service": "delivery.logs.amazonaws.com"
+                                  },
+                                  "Resource": {
+                                    "Fn::GetAtt": [
+                                      "S3LogBuckets3Bucket9252A6FD",
+                                      "Arn"
+                                    ]
+                                  }
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3.CfnBucketPolicy",
+                          "version": "2.66.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketPolicy",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.Bucket",
+                  "version": "2.66.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.137"
+            }
+          },
+          "PsVpc": {
+            "id": "PsVpc",
+            "path": "dev-cpi-network/PsVpc",
+            "children": {
+              "Vpc": {
+                "id": "Vpc",
+                "path": "dev-cpi-network/PsVpc/Vpc",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dev-cpi-network/PsVpc/Vpc/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::VPC",
+                      "aws:cdk:cloudformation:props": {
+                        "cidrBlock": "10.200.0.0/16",
+                        "enableDnsHostnames": true,
+                        "enableDnsSupport": true,
+                        "instanceTenancy": "default",
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "cpi-vpc-ps-dev-apne1-01"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnVPC",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "S3GatewayEp": {
+                    "id": "S3GatewayEp",
+                    "path": "dev-cpi-network/PsVpc/Vpc/S3GatewayEp",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "dev-cpi-network/PsVpc/Vpc/S3GatewayEp/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::VPCEndpoint",
+                          "aws:cdk:cloudformation:props": {
+                            "serviceName": {
+                              "Fn::Join": [
+                                "",
+                                [
+                                  "com.amazonaws.",
+                                  {
+                                    "Ref": "AWS::Region"
+                                  },
+                                  ".s3"
+                                ]
+                              ]
+                            },
+                            "vpcId": {
+                              "Ref": "PsVpcB3B0C151"
+                            },
+                            "routeTableIds": [
+                              {
+                                "Ref": "PsVpcPublicSubnet0PublicSubnetRouteTableB244480B"
+                              },
+                              {
+                                "Ref": "PsVpcPublicSubnet1PublicSubnetRouteTable6BA5313F"
+                              },
+                              {
+                                "Ref": "PsVpcPrivateSubnet0PrivateSubnetRouteTable30A55845"
+                              },
+                              {
+                                "Ref": "PsVpcPrivateSubnet1PrivateSubnetRouteTable3C5D049F"
+                              }
+                            ],
+                            "vpcEndpointType": "Gateway"
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnVPCEndpoint",
+                          "version": "2.66.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.GatewayVpcEndpoint",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "Ec2MessagesInterfaceEp": {
+                    "id": "Ec2MessagesInterfaceEp",
+                    "path": "dev-cpi-network/PsVpc/Vpc/Ec2MessagesInterfaceEp",
+                    "children": {
+                      "SecurityGroup": {
+                        "id": "SecurityGroup",
+                        "path": "dev-cpi-network/PsVpc/Vpc/Ec2MessagesInterfaceEp/SecurityGroup",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "dev-cpi-network/PsVpc/Vpc/Ec2MessagesInterfaceEp/SecurityGroup/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
+                              "aws:cdk:cloudformation:props": {
+                                "groupDescription": "dev-cpi-network/PsVpc/Vpc/Ec2MessagesInterfaceEp/SecurityGroup",
+                                "securityGroupEgress": [
+                                  {
+                                    "cidrIp": "0.0.0.0/0",
+                                    "description": "Allow all outbound traffic by default",
+                                    "ipProtocol": "-1"
+                                  }
+                                ],
+                                "securityGroupIngress": [
+                                  {
+                                    "cidrIp": {
+                                      "Fn::GetAtt": [
+                                        "PsVpcB3B0C151",
+                                        "CidrBlock"
+                                      ]
+                                    },
+                                    "ipProtocol": "tcp",
+                                    "fromPort": 443,
+                                    "toPort": 443,
+                                    "description": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "from ",
+                                          {
+                                            "Fn::GetAtt": [
+                                              "PsVpcB3B0C151",
+                                              "CidrBlock"
+                                            ]
+                                          },
+                                          ":443"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                ],
+                                "tags": [
+                                  {
+                                    "key": "CTC_Bill02_System",
+                                    "value": "ps-dev"
+                                  },
+                                  {
+                                    "key": "Name",
+                                    "value": "cpi-vpc-ps-dev-apne1-01"
+                                  }
+                                ],
+                                "vpcId": {
+                                  "Ref": "PsVpcB3B0C151"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroup",
+                              "version": "2.66.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.SecurityGroup",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "dev-cpi-network/PsVpc/Vpc/Ec2MessagesInterfaceEp/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::VPCEndpoint",
+                          "aws:cdk:cloudformation:props": {
+                            "serviceName": "com.amazonaws.ap-northeast-1.ec2messages",
+                            "vpcId": {
+                              "Ref": "PsVpcB3B0C151"
+                            },
+                            "privateDnsEnabled": true,
+                            "securityGroupIds": [
+                              {
+                                "Fn::GetAtt": [
+                                  "PsVpcEc2MessagesInterfaceEpSecurityGroupA7E42F28",
+                                  "GroupId"
+                                ]
+                              }
+                            ],
+                            "subnetIds": [
+                              {
+                                "Ref": "PsVpcPrivateSubnet0PrivateSubnetE40A98D3"
+                              },
+                              {
+                                "Ref": "PsVpcPrivateSubnet1PrivateSubnetD6B6AC37"
+                              }
+                            ],
+                            "vpcEndpointType": "Interface"
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnVPCEndpoint",
+                          "version": "2.66.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.InterfaceVpcEndpoint",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "SsmInterfaceEp": {
+                    "id": "SsmInterfaceEp",
+                    "path": "dev-cpi-network/PsVpc/Vpc/SsmInterfaceEp",
+                    "children": {
+                      "SecurityGroup": {
+                        "id": "SecurityGroup",
+                        "path": "dev-cpi-network/PsVpc/Vpc/SsmInterfaceEp/SecurityGroup",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "dev-cpi-network/PsVpc/Vpc/SsmInterfaceEp/SecurityGroup/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
+                              "aws:cdk:cloudformation:props": {
+                                "groupDescription": "dev-cpi-network/PsVpc/Vpc/SsmInterfaceEp/SecurityGroup",
+                                "securityGroupEgress": [
+                                  {
+                                    "cidrIp": "0.0.0.0/0",
+                                    "description": "Allow all outbound traffic by default",
+                                    "ipProtocol": "-1"
+                                  }
+                                ],
+                                "securityGroupIngress": [
+                                  {
+                                    "cidrIp": {
+                                      "Fn::GetAtt": [
+                                        "PsVpcB3B0C151",
+                                        "CidrBlock"
+                                      ]
+                                    },
+                                    "ipProtocol": "tcp",
+                                    "fromPort": 443,
+                                    "toPort": 443,
+                                    "description": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "from ",
+                                          {
+                                            "Fn::GetAtt": [
+                                              "PsVpcB3B0C151",
+                                              "CidrBlock"
+                                            ]
+                                          },
+                                          ":443"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                ],
+                                "tags": [
+                                  {
+                                    "key": "CTC_Bill02_System",
+                                    "value": "ps-dev"
+                                  },
+                                  {
+                                    "key": "Name",
+                                    "value": "cpi-vpc-ps-dev-apne1-01"
+                                  }
+                                ],
+                                "vpcId": {
+                                  "Ref": "PsVpcB3B0C151"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroup",
+                              "version": "2.66.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.SecurityGroup",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "dev-cpi-network/PsVpc/Vpc/SsmInterfaceEp/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::VPCEndpoint",
+                          "aws:cdk:cloudformation:props": {
+                            "serviceName": "com.amazonaws.ap-northeast-1.ssm",
+                            "vpcId": {
+                              "Ref": "PsVpcB3B0C151"
+                            },
+                            "privateDnsEnabled": true,
+                            "securityGroupIds": [
+                              {
+                                "Fn::GetAtt": [
+                                  "PsVpcSsmInterfaceEpSecurityGroup08A93B32",
+                                  "GroupId"
+                                ]
+                              }
+                            ],
+                            "subnetIds": [
+                              {
+                                "Ref": "PsVpcPrivateSubnet0PrivateSubnetE40A98D3"
+                              },
+                              {
+                                "Ref": "PsVpcPrivateSubnet1PrivateSubnetD6B6AC37"
+                              }
+                            ],
+                            "vpcEndpointType": "Interface"
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnVPCEndpoint",
+                          "version": "2.66.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.InterfaceVpcEndpoint",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "SsmMessagesInterfaceEp": {
+                    "id": "SsmMessagesInterfaceEp",
+                    "path": "dev-cpi-network/PsVpc/Vpc/SsmMessagesInterfaceEp",
+                    "children": {
+                      "SecurityGroup": {
+                        "id": "SecurityGroup",
+                        "path": "dev-cpi-network/PsVpc/Vpc/SsmMessagesInterfaceEp/SecurityGroup",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "dev-cpi-network/PsVpc/Vpc/SsmMessagesInterfaceEp/SecurityGroup/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
+                              "aws:cdk:cloudformation:props": {
+                                "groupDescription": "dev-cpi-network/PsVpc/Vpc/SsmMessagesInterfaceEp/SecurityGroup",
+                                "securityGroupEgress": [
+                                  {
+                                    "cidrIp": "0.0.0.0/0",
+                                    "description": "Allow all outbound traffic by default",
+                                    "ipProtocol": "-1"
+                                  }
+                                ],
+                                "securityGroupIngress": [
+                                  {
+                                    "cidrIp": {
+                                      "Fn::GetAtt": [
+                                        "PsVpcB3B0C151",
+                                        "CidrBlock"
+                                      ]
+                                    },
+                                    "ipProtocol": "tcp",
+                                    "fromPort": 443,
+                                    "toPort": 443,
+                                    "description": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "from ",
+                                          {
+                                            "Fn::GetAtt": [
+                                              "PsVpcB3B0C151",
+                                              "CidrBlock"
+                                            ]
+                                          },
+                                          ":443"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                ],
+                                "tags": [
+                                  {
+                                    "key": "CTC_Bill02_System",
+                                    "value": "ps-dev"
+                                  },
+                                  {
+                                    "key": "Name",
+                                    "value": "cpi-vpc-ps-dev-apne1-01"
+                                  }
+                                ],
+                                "vpcId": {
+                                  "Ref": "PsVpcB3B0C151"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroup",
+                              "version": "2.66.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.SecurityGroup",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "dev-cpi-network/PsVpc/Vpc/SsmMessagesInterfaceEp/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::VPCEndpoint",
+                          "aws:cdk:cloudformation:props": {
+                            "serviceName": "com.amazonaws.ap-northeast-1.ssmmessages",
+                            "vpcId": {
+                              "Ref": "PsVpcB3B0C151"
+                            },
+                            "privateDnsEnabled": true,
+                            "securityGroupIds": [
+                              {
+                                "Fn::GetAtt": [
+                                  "PsVpcSsmMessagesInterfaceEpSecurityGroupBA464C26",
+                                  "GroupId"
+                                ]
+                              }
+                            ],
+                            "subnetIds": [
+                              {
+                                "Ref": "PsVpcPrivateSubnet0PrivateSubnetE40A98D3"
+                              },
+                              {
+                                "Ref": "PsVpcPrivateSubnet1PrivateSubnetD6B6AC37"
+                              }
+                            ],
+                            "vpcEndpointType": "Interface"
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnVPCEndpoint",
+                          "version": "2.66.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.InterfaceVpcEndpoint",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.Vpc",
+                  "version": "2.66.0"
+                }
+              },
+              "Igw": {
+                "id": "Igw",
+                "path": "dev-cpi-network/PsVpc/Igw",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::EC2::InternetGateway",
+                  "aws:cdk:cloudformation:props": {
+                    "tags": [
+                      {
+                        "key": "CTC_Bill02_System",
+                        "value": "ps-dev"
+                      },
+                      {
+                        "key": "Name",
+                        "value": "cpi-igw-ps-dev-01"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.CfnInternetGateway",
+                  "version": "2.66.0"
+                }
+              },
+              "IgwAtt": {
+                "id": "IgwAtt",
+                "path": "dev-cpi-network/PsVpc/IgwAtt",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::EC2::VPCGatewayAttachment",
+                  "aws:cdk:cloudformation:props": {
+                    "vpcId": {
+                      "Ref": "PsVpcB3B0C151"
+                    },
+                    "internetGatewayId": {
+                      "Ref": "PsVpcIgw5C685DB3"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.CfnVPCGatewayAttachment",
+                  "version": "2.66.0"
+                }
+              },
+              "PublicSubnet0": {
+                "id": "PublicSubnet0",
+                "path": "dev-cpi-network/PsVpc/PublicSubnet0",
+                "children": {
+                  "PublicSubnet": {
+                    "id": "PublicSubnet",
+                    "path": "dev-cpi-network/PsVpc/PublicSubnet0/PublicSubnet",
+                    "children": {
+                      "Subnet": {
+                        "id": "Subnet",
+                        "path": "dev-cpi-network/PsVpc/PublicSubnet0/PublicSubnet/Subnet",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "PsVpcB3B0C151"
+                            },
+                            "availabilityZone": "ap-northeast-1a",
+                            "cidrBlock": "10.200.0.0/24",
+                            "tags": [
+                              {
+                                "key": "CTC_Bill02_System",
+                                "value": "ps-dev"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "cpi-subnet-ps-dev-public-a-01"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "Acl": {
+                        "id": "Acl",
+                        "path": "dev-cpi-network/PsVpc/PublicSubnet0/PublicSubnet/Acl",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "RouteTable": {
+                        "id": "RouteTable",
+                        "path": "dev-cpi-network/PsVpc/PublicSubnet0/PublicSubnet/RouteTable",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "PsVpcB3B0C151"
+                            },
+                            "tags": [
+                              {
+                                "key": "CTC_Bill02_System",
+                                "value": "ps-dev"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "cpi-rtb-ps-dev-public-a-01"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "RouteTableAssociation": {
+                        "id": "RouteTableAssociation",
+                        "path": "dev-cpi-network/PsVpc/PublicSubnet0/PublicSubnet/RouteTableAssociation",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "PsVpcPublicSubnet0PublicSubnetRouteTableB244480B"
+                            },
+                            "subnetId": {
+                              "Ref": "PsVpcPublicSubnet0PublicSubnet2D08C832"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "DefaultRoute": {
+                        "id": "DefaultRoute",
+                        "path": "dev-cpi-network/PsVpc/PublicSubnet0/PublicSubnet/DefaultRoute",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "PsVpcPublicSubnet0PublicSubnetRouteTableB244480B"
+                            },
+                            "destinationCidrBlock": "0.0.0.0/0",
+                            "gatewayId": {
+                              "Ref": "PsVpcIgw5C685DB3"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRoute",
+                          "version": "2.66.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.PublicSubnet",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "Eip": {
+                    "id": "Eip",
+                    "path": "dev-cpi-network/PsVpc/PublicSubnet0/Eip",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::EIP",
+                      "aws:cdk:cloudformation:props": {
+                        "domain": "vpc",
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "cpi-eip-ps-dev-a-01"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnEIP",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "NatGateway": {
+                    "id": "NatGateway",
+                    "path": "dev-cpi-network/PsVpc/PublicSubnet0/NatGateway",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::NatGateway",
+                      "aws:cdk:cloudformation:props": {
+                        "subnetId": {
+                          "Ref": "PsVpcPublicSubnet0PublicSubnet2D08C832"
+                        },
+                        "allocationId": {
+                          "Fn::GetAtt": [
+                            "PsVpcPublicSubnet0Eip29037005",
+                            "AllocationId"
+                          ]
+                        },
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "cpi-nat-ps-dev-a-01"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnNatGateway",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "constructs.Construct",
+                  "version": "10.1.137"
+                }
+              },
+              "PublicSubnet1": {
+                "id": "PublicSubnet1",
+                "path": "dev-cpi-network/PsVpc/PublicSubnet1",
+                "children": {
+                  "PublicSubnet": {
+                    "id": "PublicSubnet",
+                    "path": "dev-cpi-network/PsVpc/PublicSubnet1/PublicSubnet",
+                    "children": {
+                      "Subnet": {
+                        "id": "Subnet",
+                        "path": "dev-cpi-network/PsVpc/PublicSubnet1/PublicSubnet/Subnet",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "PsVpcB3B0C151"
+                            },
+                            "availabilityZone": "ap-northeast-1c",
+                            "cidrBlock": "10.200.100.0/24",
+                            "tags": [
+                              {
+                                "key": "CTC_Bill02_System",
+                                "value": "ps-dev"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "cpi-subnet-ps-dev-public-c-01"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "Acl": {
+                        "id": "Acl",
+                        "path": "dev-cpi-network/PsVpc/PublicSubnet1/PublicSubnet/Acl",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "RouteTable": {
+                        "id": "RouteTable",
+                        "path": "dev-cpi-network/PsVpc/PublicSubnet1/PublicSubnet/RouteTable",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "PsVpcB3B0C151"
+                            },
+                            "tags": [
+                              {
+                                "key": "CTC_Bill02_System",
+                                "value": "ps-dev"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "cpi-rtb-ps-dev-public-c-01"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "RouteTableAssociation": {
+                        "id": "RouteTableAssociation",
+                        "path": "dev-cpi-network/PsVpc/PublicSubnet1/PublicSubnet/RouteTableAssociation",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "PsVpcPublicSubnet1PublicSubnetRouteTable6BA5313F"
+                            },
+                            "subnetId": {
+                              "Ref": "PsVpcPublicSubnet1PublicSubnetF4FCB026"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "DefaultRoute": {
+                        "id": "DefaultRoute",
+                        "path": "dev-cpi-network/PsVpc/PublicSubnet1/PublicSubnet/DefaultRoute",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "PsVpcPublicSubnet1PublicSubnetRouteTable6BA5313F"
+                            },
+                            "destinationCidrBlock": "0.0.0.0/0",
+                            "gatewayId": {
+                              "Ref": "PsVpcIgw5C685DB3"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRoute",
+                          "version": "2.66.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.PublicSubnet",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "Eip": {
+                    "id": "Eip",
+                    "path": "dev-cpi-network/PsVpc/PublicSubnet1/Eip",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::EIP",
+                      "aws:cdk:cloudformation:props": {
+                        "domain": "vpc",
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "cpi-eip-ps-dev-c-01"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnEIP",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "NatGateway": {
+                    "id": "NatGateway",
+                    "path": "dev-cpi-network/PsVpc/PublicSubnet1/NatGateway",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::NatGateway",
+                      "aws:cdk:cloudformation:props": {
+                        "subnetId": {
+                          "Ref": "PsVpcPublicSubnet1PublicSubnetF4FCB026"
+                        },
+                        "allocationId": {
+                          "Fn::GetAtt": [
+                            "PsVpcPublicSubnet1EipB03695F1",
+                            "AllocationId"
+                          ]
+                        },
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "cpi-nat-ps-dev-c-01"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnNatGateway",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "constructs.Construct",
+                  "version": "10.1.137"
+                }
+              },
+              "PrivateSubnet0": {
+                "id": "PrivateSubnet0",
+                "path": "dev-cpi-network/PsVpc/PrivateSubnet0",
+                "children": {
+                  "PrivateSubnet": {
+                    "id": "PrivateSubnet",
+                    "path": "dev-cpi-network/PsVpc/PrivateSubnet0/PrivateSubnet",
+                    "children": {
+                      "Subnet": {
+                        "id": "Subnet",
+                        "path": "dev-cpi-network/PsVpc/PrivateSubnet0/PrivateSubnet/Subnet",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "PsVpcB3B0C151"
+                            },
+                            "availabilityZone": "ap-northeast-1a",
+                            "cidrBlock": "10.200.1.0/24",
+                            "tags": [
+                              {
+                                "key": "CTC_Bill02_System",
+                                "value": "ps-dev"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "cpi-subnet-ps-dev-private-a-01"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "Acl": {
+                        "id": "Acl",
+                        "path": "dev-cpi-network/PsVpc/PrivateSubnet0/PrivateSubnet/Acl",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "RouteTable": {
+                        "id": "RouteTable",
+                        "path": "dev-cpi-network/PsVpc/PrivateSubnet0/PrivateSubnet/RouteTable",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "PsVpcB3B0C151"
+                            },
+                            "tags": [
+                              {
+                                "key": "CTC_Bill02_System",
+                                "value": "ps-dev"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "cpi-rtb-ps-dev-private-a-01"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "RouteTableAssociation": {
+                        "id": "RouteTableAssociation",
+                        "path": "dev-cpi-network/PsVpc/PrivateSubnet0/PrivateSubnet/RouteTableAssociation",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "PsVpcPrivateSubnet0PrivateSubnetRouteTable30A55845"
+                            },
+                            "subnetId": {
+                              "Ref": "PsVpcPrivateSubnet0PrivateSubnetE40A98D3"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "DefaultRoute": {
+                        "id": "DefaultRoute",
+                        "path": "dev-cpi-network/PsVpc/PrivateSubnet0/PrivateSubnet/DefaultRoute",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "PsVpcPrivateSubnet0PrivateSubnetRouteTable30A55845"
+                            },
+                            "destinationCidrBlock": "0.0.0.0/0",
+                            "natGatewayId": {
+                              "Ref": "PsVpcPublicSubnet0NatGateway1C7BC65D"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRoute",
+                          "version": "2.66.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.PrivateSubnet",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "constructs.Construct",
+                  "version": "10.1.137"
+                }
+              },
+              "PrivateSubnet1": {
+                "id": "PrivateSubnet1",
+                "path": "dev-cpi-network/PsVpc/PrivateSubnet1",
+                "children": {
+                  "PrivateSubnet": {
+                    "id": "PrivateSubnet",
+                    "path": "dev-cpi-network/PsVpc/PrivateSubnet1/PrivateSubnet",
+                    "children": {
+                      "Subnet": {
+                        "id": "Subnet",
+                        "path": "dev-cpi-network/PsVpc/PrivateSubnet1/PrivateSubnet/Subnet",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "PsVpcB3B0C151"
+                            },
+                            "availabilityZone": "ap-northeast-1c",
+                            "cidrBlock": "10.200.101.0/24",
+                            "tags": [
+                              {
+                                "key": "CTC_Bill02_System",
+                                "value": "ps-dev"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "cpi-subnet-ps-dev-private-c-01"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "Acl": {
+                        "id": "Acl",
+                        "path": "dev-cpi-network/PsVpc/PrivateSubnet1/PrivateSubnet/Acl",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "RouteTable": {
+                        "id": "RouteTable",
+                        "path": "dev-cpi-network/PsVpc/PrivateSubnet1/PrivateSubnet/RouteTable",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "PsVpcB3B0C151"
+                            },
+                            "tags": [
+                              {
+                                "key": "CTC_Bill02_System",
+                                "value": "ps-dev"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "cpi-rtb-ps-dev-private-c-01"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "RouteTableAssociation": {
+                        "id": "RouteTableAssociation",
+                        "path": "dev-cpi-network/PsVpc/PrivateSubnet1/PrivateSubnet/RouteTableAssociation",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "PsVpcPrivateSubnet1PrivateSubnetRouteTable3C5D049F"
+                            },
+                            "subnetId": {
+                              "Ref": "PsVpcPrivateSubnet1PrivateSubnetD6B6AC37"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "DefaultRoute": {
+                        "id": "DefaultRoute",
+                        "path": "dev-cpi-network/PsVpc/PrivateSubnet1/PrivateSubnet/DefaultRoute",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "PsVpcPrivateSubnet1PrivateSubnetRouteTable3C5D049F"
+                            },
+                            "destinationCidrBlock": "0.0.0.0/0",
+                            "natGatewayId": {
+                              "Ref": "PsVpcPublicSubnet1NatGateway449156E1"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRoute",
+                          "version": "2.66.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.PrivateSubnet",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "constructs.Construct",
+                  "version": "10.1.137"
+                }
+              },
+              "vpcFlowLog": {
+                "id": "vpcFlowLog",
+                "path": "dev-cpi-network/PsVpc/vpcFlowLog",
+                "children": {
+                  "FlowLog": {
+                    "id": "FlowLog",
+                    "path": "dev-cpi-network/PsVpc/vpcFlowLog/FlowLog",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::FlowLog",
+                      "aws:cdk:cloudformation:props": {
+                        "resourceId": {
+                          "Ref": "PsVpcB3B0C151"
+                        },
+                        "resourceType": "VPC",
+                        "logDestination": {
+                          "Fn::Join": [
+                            "",
+                            [
+                              "arn:",
+                              {
+                                "Ref": "AWS::Partition"
+                              },
+                              ":s3:::",
+                              {
+                                "Ref": "S3LogBuckets3Bucket9252A6FD"
+                              },
+                              "/cpi-s3-ps-dev-log-vpcflowlog-01/"
+                            ]
+                          ]
+                        },
+                        "logDestinationType": "s3",
+                        "maxAggregationInterval": 60,
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "cpi-s3-ps-dev-log-vpcflowlog-01"
+                          }
+                        ],
+                        "trafficType": "ALL"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnFlowLog",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.FlowLog",
+                  "version": "2.66.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.137"
+            }
+          },
+          "AccessLogBucket": {
+            "id": "AccessLogBucket",
+            "path": "dev-cpi-network/AccessLogBucket",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+              "version": "2.66.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "dev-cpi-network/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "dev-cpi-network/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.66.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.137"
+            }
+          },
+          "Exports": {
+            "id": "Exports",
+            "path": "dev-cpi-network/Exports",
+            "children": {
+              "Output{\"Ref\":\"PsVpcB3B0C151\"}": {
+                "id": "Output{\"Ref\":\"PsVpcB3B0C151\"}",
+                "path": "dev-cpi-network/Exports/Output{\"Ref\":\"PsVpcB3B0C151\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.66.0"
+                }
+              },
+              "Output{\"Ref\":\"S3LogBuckets3Bucket9252A6FD\"}": {
+                "id": "Output{\"Ref\":\"S3LogBuckets3Bucket9252A6FD\"}",
+                "path": "dev-cpi-network/Exports/Output{\"Ref\":\"S3LogBuckets3Bucket9252A6FD\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.66.0"
+                }
+              },
+              "Output{\"Ref\":\"PsVpcPublicSubnet0PublicSubnet2D08C832\"}": {
+                "id": "Output{\"Ref\":\"PsVpcPublicSubnet0PublicSubnet2D08C832\"}",
+                "path": "dev-cpi-network/Exports/Output{\"Ref\":\"PsVpcPublicSubnet0PublicSubnet2D08C832\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.66.0"
+                }
+              },
+              "Output{\"Ref\":\"PsVpcPublicSubnet1PublicSubnetF4FCB026\"}": {
+                "id": "Output{\"Ref\":\"PsVpcPublicSubnet1PublicSubnetF4FCB026\"}",
+                "path": "dev-cpi-network/Exports/Output{\"Ref\":\"PsVpcPublicSubnet1PublicSubnetF4FCB026\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.66.0"
+                }
+              },
+              "Output{\"Ref\":\"PsVpcPrivateSubnet0PrivateSubnetE40A98D3\"}": {
+                "id": "Output{\"Ref\":\"PsVpcPrivateSubnet0PrivateSubnetE40A98D3\"}",
+                "path": "dev-cpi-network/Exports/Output{\"Ref\":\"PsVpcPrivateSubnet0PrivateSubnetE40A98D3\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.66.0"
+                }
+              },
+              "Output{\"Ref\":\"PsVpcPrivateSubnet1PrivateSubnetD6B6AC37\"}": {
+                "id": "Output{\"Ref\":\"PsVpcPrivateSubnet1PrivateSubnetD6B6AC37\"}",
+                "path": "dev-cpi-network/Exports/Output{\"Ref\":\"PsVpcPrivateSubnet1PrivateSubnetD6B6AC37\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.66.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.137"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "dev-cpi-network/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.66.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "dev-cpi-network/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.66.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.66.0"
+        }
+      },
+      "dev-cpi-appConnection": {
+        "id": "dev-cpi-appConnection",
+        "path": "dev-cpi-appConnection",
+        "children": {
+          "LemsALB": {
+            "id": "LemsALB",
+            "path": "dev-cpi-appConnection/LemsALB",
+            "children": {
+              "sg-alb": {
+                "id": "sg-alb",
+                "path": "dev-cpi-appConnection/LemsALB/sg-alb",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dev-cpi-appConnection/LemsALB/sg-alb/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
+                      "aws:cdk:cloudformation:props": {
+                        "groupDescription": "dev-cpi-appConnection/LemsALB/sg-alb",
+                        "groupName": "cpi-sg-ps-dev-alb-01",
+                        "securityGroupEgress": [
+                          {
+                            "cidrIp": "0.0.0.0/0",
+                            "description": "Allow all outbound traffic by default",
+                            "ipProtocol": "-1"
+                          }
+                        ],
+                        "securityGroupIngress": [
+                          {
+                            "cidrIp": "0.0.0.0/0",
+                            "ipProtocol": "tcp",
+                            "fromPort": 443,
+                            "toPort": 443,
+                            "description": "from 0.0.0.0/0:443"
+                          }
+                        ],
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "cpi-sg-ps-dev-alb-01"
+                          }
+                        ],
+                        "vpcId": {
+                          "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcB3B0C151B33DF0C2"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroup",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.SecurityGroup",
+                  "version": "2.66.0"
+                }
+              },
+              "Alb": {
+                "id": "Alb",
+                "path": "dev-cpi-appConnection/LemsALB/Alb",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dev-cpi-appConnection/LemsALB/Alb/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+                      "aws:cdk:cloudformation:props": {
+                        "loadBalancerAttributes": [
+                          {
+                            "key": "deletion_protection.enabled",
+                            "value": "true"
+                          },
+                          {
+                            "key": "access_logs.s3.enabled",
+                            "value": "true"
+                          },
+                          {
+                            "key": "access_logs.s3.bucket",
+                            "value": {
+                              "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefS3LogBuckets3Bucket9252A6FD51C30570"
+                            }
+                          },
+                          {
+                            "key": "access_logs.s3.prefix",
+                            "value": "accesslog"
+                          }
+                        ],
+                        "name": "cpi-alb-ps-dev-lems-01",
+                        "scheme": "internet-facing",
+                        "securityGroups": [
+                          {
+                            "Fn::GetAtt": [
+                              "LemsALBsgalb360F0F1A",
+                              "GroupId"
+                            ]
+                          }
+                        ],
+                        "subnets": [
+                          {
+                            "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcPublicSubnet0PublicSubnet2D08C83284F96B1D"
+                          },
+                          {
+                            "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcPublicSubnet1PublicSubnetF4FCB026F17E1682"
+                          }
+                        ],
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "cpi-alb-ps-dev-lems-01"
+                          }
+                        ],
+                        "type": "application"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.CfnLoadBalancer",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "AlbListener": {
+                    "id": "AlbListener",
+                    "path": "dev-cpi-appConnection/LemsALB/Alb/AlbListener",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "dev-cpi-appConnection/LemsALB/Alb/AlbListener/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ElasticLoadBalancingV2::Listener",
+                          "aws:cdk:cloudformation:props": {
+                            "defaultActions": [
+                              {
+                                "type": "forward",
+                                "targetGroupArn": {
+                                  "Ref": "LemsALBTargetGroupE97E445E"
+                                }
+                              }
+                            ],
+                            "loadBalancerArn": {
+                              "Ref": "LemsALBAlb29929891"
+                            },
+                            "certificates": [
+                              {
+                                "certificateArn": "arn:aws:acm:ap-northeast-1:679182460211:certificate/a18d7803-5223-417a-95fe-7f5f1283c69f"
+                              }
+                            ],
+                            "port": 443,
+                            "protocol": "HTTPS"
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.CfnListener",
+                          "version": "2.66.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ApplicationListener",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ApplicationLoadBalancer",
+                  "version": "2.66.0"
+                }
+              },
+              "acm": {
+                "id": "acm",
+                "path": "dev-cpi-appConnection/LemsALB/acm",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.66.0"
+                }
+              },
+              "TargetGroup": {
+                "id": "TargetGroup",
+                "path": "dev-cpi-appConnection/LemsALB/TargetGroup",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dev-cpi-appConnection/LemsALB/TargetGroup/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+                      "aws:cdk:cloudformation:props": {
+                        "port": 443,
+                        "protocol": "HTTP",
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          }
+                        ],
+                        "targetGroupAttributes": [
+                          {
+                            "key": "stickiness.enabled",
+                            "value": "false"
+                          }
+                        ],
+                        "targets": [
+                          {
+                            "id": {
+                              "Fn::ImportValue": "dev-cpi-server:ExportsOutputRefEC2InstanceConstructEC2bastion747ED3695EEEBAD0"
+                            }
+                          },
+                          {
+                            "id": {
+                              "Fn::ImportValue": "dev-cpi-server:ExportsOutputRefEC2InstanceConstructEC2sagyou91DC81FA3FA79780"
+                            }
+                          }
+                        ],
+                        "targetType": "instance",
+                        "vpcId": {
+                          "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcB3B0C151B33DF0C2"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.CfnTargetGroup",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ApplicationTargetGroup",
+                  "version": "2.66.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.137"
+            }
+          },
+          "Nlb": {
+            "id": "Nlb",
+            "path": "dev-cpi-appConnection/Nlb",
+            "children": {
+              "Nlb": {
+                "id": "Nlb",
+                "path": "dev-cpi-appConnection/Nlb/Nlb",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dev-cpi-appConnection/Nlb/Nlb/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+                      "aws:cdk:cloudformation:props": {
+                        "loadBalancerAttributes": [
+                          {
+                            "key": "deletion_protection.enabled",
+                            "value": "true"
+                          },
+                          {
+                            "key": "load_balancing.cross_zone.enabled",
+                            "value": "true"
+                          }
+                        ],
+                        "name": "cpi-nlb-ps-dev-lems-01",
+                        "scheme": "internet-facing",
+                        "subnets": [
+                          {
+                            "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcPublicSubnet0PublicSubnet2D08C83284F96B1D"
+                          },
+                          {
+                            "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcPublicSubnet1PublicSubnetF4FCB026F17E1682"
+                          }
+                        ],
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "cpi-nlb-ps-dev-lems-01"
+                          }
+                        ],
+                        "type": "network"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.CfnLoadBalancer",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "NlbListener": {
+                    "id": "NlbListener",
+                    "path": "dev-cpi-appConnection/Nlb/Nlb/NlbListener",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "dev-cpi-appConnection/Nlb/Nlb/NlbListener/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ElasticLoadBalancingV2::Listener",
+                          "aws:cdk:cloudformation:props": {
+                            "defaultActions": [
+                              {
+                                "type": "forward",
+                                "targetGroupArn": {
+                                  "Ref": "NlbTargetGroup9B90BE2A"
+                                }
+                              }
+                            ],
+                            "loadBalancerArn": {
+                              "Ref": "Nlb055C53DF"
+                            },
+                            "port": 80,
+                            "protocol": "TCP"
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.CfnListener",
+                          "version": "2.66.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.NetworkListener",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.NetworkLoadBalancer",
+                  "version": "2.66.0"
+                }
+              },
+              "TargetGroup": {
+                "id": "TargetGroup",
+                "path": "dev-cpi-appConnection/Nlb/TargetGroup",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dev-cpi-appConnection/Nlb/TargetGroup/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+                      "aws:cdk:cloudformation:props": {
+                        "port": 443,
+                        "protocol": "TCP",
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          }
+                        ],
+                        "targetType": "instance",
+                        "vpcId": {
+                          "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcB3B0C151B33DF0C2"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.CfnTargetGroup",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.NetworkTargetGroup",
+                  "version": "2.66.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.137"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "dev-cpi-appConnection/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "dev-cpi-appConnection/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.66.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.137"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "dev-cpi-appConnection/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.66.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "dev-cpi-appConnection/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.66.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.66.0"
+        }
+      },
+      "dev-cpi-server": {
+        "id": "dev-cpi-server",
+        "path": "dev-cpi-server",
+        "children": {
+          "EC2-Instance-Construct": {
+            "id": "EC2-Instance-Construct",
+            "path": "dev-cpi-server/EC2-Instance-Construct",
+            "children": {
+              "sg-ec2-1": {
+                "id": "sg-ec2-1",
+                "path": "dev-cpi-server/EC2-Instance-Construct/sg-ec2-1",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dev-cpi-server/EC2-Instance-Construct/sg-ec2-1/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
+                      "aws:cdk:cloudformation:props": {
+                        "groupDescription": "dev-cpi-server/EC2-Instance-Construct/sg-ec2-1",
+                        "securityGroupEgress": [
+                          {
+                            "cidrIp": "0.0.0.0/0",
+                            "description": "Allow all outbound traffic by default",
+                            "ipProtocol": "-1"
+                          }
+                        ],
+                        "securityGroupIngress": [
+                          {
+                            "cidrIp": "10.200.1.0/24",
+                            "ipProtocol": "tcp",
+                            "fromPort": 443,
+                            "toPort": 443,
+                            "description": "allow HTTPS port access."
+                          },
+                          {
+                            "cidrIp": "10.200.101.0/24",
+                            "ipProtocol": "tcp",
+                            "fromPort": 443,
+                            "toPort": 443,
+                            "description": "allow HTTPS port access."
+                          }
+                        ],
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "cpi-sg-ps-dev-2-01"
+                          }
+                        ],
+                        "vpcId": {
+                          "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcB3B0C151B33DF0C2"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroup",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.SecurityGroup",
+                  "version": "2.66.0"
+                }
+              },
+              "sg-ec2-bastion2": {
+                "id": "sg-ec2-bastion2",
+                "path": "dev-cpi-server/EC2-Instance-Construct/sg-ec2-bastion2",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dev-cpi-server/EC2-Instance-Construct/sg-ec2-bastion2/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
+                      "aws:cdk:cloudformation:props": {
+                        "groupDescription": "dev-cpi-server/EC2-Instance-Construct/sg-ec2-bastion2",
+                        "groupName": "cpi-sg-ps-dev-2-01",
+                        "securityGroupEgress": [
+                          {
+                            "cidrIp": "0.0.0.0/0",
+                            "description": "Allow all outbound traffic by default",
+                            "ipProtocol": "-1"
+                          }
+                        ],
+                        "securityGroupIngress": [
+                          {
+                            "cidrIp": "10.200.1.0/24",
+                            "ipProtocol": "-1",
+                            "description": "Allow all traffic from private subnets"
+                          },
+                          {
+                            "cidrIp": "10.200.101.0/24",
+                            "ipProtocol": "-1",
+                            "description": "Allow all traffic from private subnets"
+                          },
+                          {
+                            "cidrIp": "0.0.0.0/0",
+                            "ipProtocol": "tcp",
+                            "fromPort": 443,
+                            "toPort": 443,
+                            "description": "Allow TCP traffic on port 443"
+                          }
+                        ],
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          }
+                        ],
+                        "vpcId": {
+                          "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcB3B0C151B33DF0C2"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroup",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.SecurityGroup",
+                  "version": "2.66.0"
+                }
+              },
+              "EC2-bastion": {
+                "id": "EC2-bastion",
+                "path": "dev-cpi-server/EC2-Instance-Construct/EC2-bastion",
+                "children": {
+                  "InstanceRole": {
+                    "id": "InstanceRole",
+                    "path": "dev-cpi-server/EC2-Instance-Construct/EC2-bastion/InstanceRole",
+                    "children": {
+                      "ImportInstanceRole": {
+                        "id": "ImportInstanceRole",
+                        "path": "dev-cpi-server/EC2-Instance-Construct/EC2-bastion/InstanceRole/ImportInstanceRole",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "dev-cpi-server/EC2-Instance-Construct/EC2-bastion/InstanceRole/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                          "aws:cdk:cloudformation:props": {
+                            "assumeRolePolicyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "sts:AssumeRole",
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "Service": "ec2.amazonaws.com"
+                                  }
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "tags": [
+                              {
+                                "key": "CTC_Bill02_System",
+                                "value": "ps-dev"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "cpi-ec2-ps-dev-bastion-01"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                          "version": "2.66.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Role",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "InstanceProfile": {
+                    "id": "InstanceProfile",
+                    "path": "dev-cpi-server/EC2-Instance-Construct/EC2-bastion/InstanceProfile",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::InstanceProfile",
+                      "aws:cdk:cloudformation:props": {
+                        "roles": [
+                          {
+                            "Ref": "EC2InstanceConstructEC2bastionInstanceRole67F21BDB"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnInstanceProfile",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dev-cpi-server/EC2-Instance-Construct/EC2-bastion/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Instance",
+                      "aws:cdk:cloudformation:props": {
+                        "availabilityZone": "ap-northeast-1a",
+                        "blockDeviceMappings": [
+                          {
+                            "deviceName": "/dev/xvda",
+                            "ebs": {
+                              "encrypted": true,
+                              "volumeSize": 8,
+                              "iops": 3000,
+                              "volumeType": "gp3"
+                            }
+                          }
+                        ],
+                        "disableApiTermination": true,
+                        "iamInstanceProfile": {
+                          "Ref": "EC2InstanceConstructEC2bastionInstanceProfile37AC8AE2"
+                        },
+                        "imageId": {
+                          "Ref": "SsmParameterValueawsserviceamiamazonlinuxlatestamzn2amihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter"
+                        },
+                        "instanceType": "t3.medium",
+                        "securityGroupIds": [
+                          {
+                            "Fn::GetAtt": [
+                              "EC2InstanceConstructsgec2bastion22EA48C4E",
+                              "GroupId"
+                            ]
+                          }
+                        ],
+                        "subnetId": {
+                          "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcPrivateSubnet0PrivateSubnetE40A98D30D9DAA90"
+                        },
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "cpi-ec2-ps-dev-bastion-01"
+                          }
+                        ],
+                        "userData": {
+                          "Fn::Base64": "#!/bin/bash\nhostnamectl set-hostname cpi-ec2-ps-dev-bastion-01\necho \"preserve_hostname: true\" >> /etc/cloud/cloud.cfg\ntimedatectl set-timezone Asia/Tokyo\nyum update -y\nyum install -y amazon-cloudwatch-agent\nsystemctl start amazon-cloudwatch-agent\nsystemctl enable amazon-cloudwatch-agent\necho '{\"metrics\":{\"append_dimensions\":{\"InstanceId\":\"${aws:InstanceId}\"},\"metrics_collected\":{\"mem\":{\"measurement\":[\"used_percent\"]}}},\"logs\":{}}' > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json\nsystemctl start amazon-cloudwatch-agent\nsystemctl enable amazon-cloudwatch-agent"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnInstance",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.Instance",
+                  "version": "2.66.0"
+                }
+              },
+              "EC2-sagyou": {
+                "id": "EC2-sagyou",
+                "path": "dev-cpi-server/EC2-Instance-Construct/EC2-sagyou",
+                "children": {
+                  "InstanceRole": {
+                    "id": "InstanceRole",
+                    "path": "dev-cpi-server/EC2-Instance-Construct/EC2-sagyou/InstanceRole",
+                    "children": {
+                      "ImportInstanceRole": {
+                        "id": "ImportInstanceRole",
+                        "path": "dev-cpi-server/EC2-Instance-Construct/EC2-sagyou/InstanceRole/ImportInstanceRole",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.66.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "dev-cpi-server/EC2-Instance-Construct/EC2-sagyou/InstanceRole/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                          "aws:cdk:cloudformation:props": {
+                            "assumeRolePolicyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "sts:AssumeRole",
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "Service": "ec2.amazonaws.com"
+                                  }
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "tags": [
+                              {
+                                "key": "CTC_Bill02_System",
+                                "value": "ps-dev"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "cpi-ec2-ps-dev-Sagyou-01"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                          "version": "2.66.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Role",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "InstanceProfile": {
+                    "id": "InstanceProfile",
+                    "path": "dev-cpi-server/EC2-Instance-Construct/EC2-sagyou/InstanceProfile",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::InstanceProfile",
+                      "aws:cdk:cloudformation:props": {
+                        "roles": [
+                          {
+                            "Ref": "EC2InstanceConstructEC2sagyouInstanceRole89DCD7DC"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnInstanceProfile",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dev-cpi-server/EC2-Instance-Construct/EC2-sagyou/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Instance",
+                      "aws:cdk:cloudformation:props": {
+                        "availabilityZone": "ap-northeast-1c",
+                        "blockDeviceMappings": [
+                          {
+                            "deviceName": "/dev/xvda",
+                            "ebs": {
+                              "encrypted": true,
+                              "volumeSize": 8,
+                              "iops": 3000,
+                              "volumeType": "gp3"
+                            }
+                          }
+                        ],
+                        "disableApiTermination": true,
+                        "iamInstanceProfile": {
+                          "Ref": "EC2InstanceConstructEC2sagyouInstanceProfile2A090D3A"
+                        },
+                        "imageId": {
+                          "Ref": "SsmParameterValueawsserviceamiwindowslatestWindowsServer2019EnglishFullBaseC96584B6F00A464EAD1953AFF4B05118Parameter"
+                        },
+                        "instanceType": "t3.medium",
+                        "securityGroupIds": [
+                          {
+                            "Fn::GetAtt": [
+                              "EC2InstanceConstructsgec21DE2F2108",
+                              "GroupId"
+                            ]
+                          }
+                        ],
+                        "subnetId": {
+                          "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcPrivateSubnet1PrivateSubnetD6B6AC376E7E9A65"
+                        },
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "cpi-ec2-ps-dev-Sagyou-01"
+                          }
+                        ],
+                        "userData": {
+                          "Fn::Base64": "<powershell>Set-ExecutionPolicy Unrestricted -Force\nImport-Module AWS.Tools.Installer\nInstall-AWSToolsModule AWS.Tools.EC2, AWS.Tools.CloudWatch -CleanUp\nSet-Location C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\nNew-Item -Path . -Name \"amazon-cloudwatch-agent.json\" -ItemType \"file\" -Force\nAdd-Content -Path \".\\amazon-cloudwatch-agent.json\" -Value '{\"metrics\":{\"append_dimensions\":{\"InstanceId\":\"${aws:InstanceId}\"},\"metrics_collected\":{\"LogicalDisk\":[{\"measurement\":[\"FreeSpace\"],\"resources\":[\"C:\"]}],\"Memory\":{\"measurement\":[\"% Committed Bytes In Use\"]}}},\"logs\":{}}'\nC:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.exe -config \"C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.json\"</powershell>"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnInstance",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.Instance",
+                  "version": "2.66.0"
+                }
+              },
+              "Instance1errorLog": {
+                "id": "Instance1errorLog",
+                "path": "dev-cpi-server/EC2-Instance-Construct/Instance1errorLog",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.66.0"
+                }
+              },
+              "Instance2errorLog": {
+                "id": "Instance2errorLog",
+                "path": "dev-cpi-server/EC2-Instance-Construct/Instance2errorLog",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.66.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.137"
+            }
+          },
+          "SsmParameterValue:--aws--service--ami-amazon-linux-latest--amzn2-ami-hvm-x86_64-gp2:C96584B6-F00A-464E-AD19-53AFF4B05118.Parameter": {
+            "id": "SsmParameterValue:--aws--service--ami-amazon-linux-latest--amzn2-ami-hvm-x86_64-gp2:C96584B6-F00A-464E-AD19-53AFF4B05118.Parameter",
+            "path": "dev-cpi-server/SsmParameterValue:--aws--service--ami-amazon-linux-latest--amzn2-ami-hvm-x86_64-gp2:C96584B6-F00A-464E-AD19-53AFF4B05118.Parameter",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.66.0"
+            }
+          },
+          "SsmParameterValue:--aws--service--ami-amazon-linux-latest--amzn2-ami-hvm-x86_64-gp2:C96584B6-F00A-464E-AD19-53AFF4B05118": {
+            "id": "SsmParameterValue:--aws--service--ami-amazon-linux-latest--amzn2-ami-hvm-x86_64-gp2:C96584B6-F00A-464E-AD19-53AFF4B05118",
+            "path": "dev-cpi-server/SsmParameterValue:--aws--service--ami-amazon-linux-latest--amzn2-ami-hvm-x86_64-gp2:C96584B6-F00A-464E-AD19-53AFF4B05118",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.Resource",
+              "version": "2.66.0"
+            }
+          },
+          "SsmParameterValue:--aws--service--ami-windows-latest--Windows_Server-2019-English-Full-Base:C96584B6-F00A-464E-AD19-53AFF4B05118.Parameter": {
+            "id": "SsmParameterValue:--aws--service--ami-windows-latest--Windows_Server-2019-English-Full-Base:C96584B6-F00A-464E-AD19-53AFF4B05118.Parameter",
+            "path": "dev-cpi-server/SsmParameterValue:--aws--service--ami-windows-latest--Windows_Server-2019-English-Full-Base:C96584B6-F00A-464E-AD19-53AFF4B05118.Parameter",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.66.0"
+            }
+          },
+          "SsmParameterValue:--aws--service--ami-windows-latest--Windows_Server-2019-English-Full-Base:C96584B6-F00A-464E-AD19-53AFF4B05118": {
+            "id": "SsmParameterValue:--aws--service--ami-windows-latest--Windows_Server-2019-English-Full-Base:C96584B6-F00A-464E-AD19-53AFF4B05118",
+            "path": "dev-cpi-server/SsmParameterValue:--aws--service--ami-windows-latest--Windows_Server-2019-English-Full-Base:C96584B6-F00A-464E-AD19-53AFF4B05118",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.Resource",
+              "version": "2.66.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "dev-cpi-server/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "dev-cpi-server/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.66.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.137"
+            }
+          },
+          "Exports": {
+            "id": "Exports",
+            "path": "dev-cpi-server/Exports",
+            "children": {
+              "Output{\"Ref\":\"EC2InstanceConstructEC2bastion747ED369\"}": {
+                "id": "Output{\"Ref\":\"EC2InstanceConstructEC2bastion747ED369\"}",
+                "path": "dev-cpi-server/Exports/Output{\"Ref\":\"EC2InstanceConstructEC2bastion747ED369\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.66.0"
+                }
+              },
+              "Output{\"Ref\":\"EC2InstanceConstructEC2sagyou91DC81FA\"}": {
+                "id": "Output{\"Ref\":\"EC2InstanceConstructEC2sagyou91DC81FA\"}",
+                "path": "dev-cpi-server/Exports/Output{\"Ref\":\"EC2InstanceConstructEC2sagyou91DC81FA\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.66.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.137"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "dev-cpi-server/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.66.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "dev-cpi-server/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.66.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.66.0"
+        }
+      },
+      "dev-cpi-storage": {
+        "id": "dev-cpi-storage",
+        "path": "dev-cpi-storage",
+        "children": {
+          "S3AppLogBucket": {
+            "id": "S3AppLogBucket",
+            "path": "dev-cpi-storage/S3AppLogBucket",
+            "children": {
+              "s3Bucket": {
+                "id": "s3Bucket",
+                "path": "dev-cpi-storage/S3AppLogBucket/s3Bucket",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dev-cpi-storage/S3AppLogBucket/s3Bucket/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                      "aws:cdk:cloudformation:props": {
+                        "bucketEncryption": {
+                          "serverSideEncryptionConfiguration": [
+                            {
+                              "serverSideEncryptionByDefault": {
+                                "sseAlgorithm": "AES256"
+                              }
+                            }
+                          ]
+                        },
+                        "bucketName": "cpi-s3-ps-dev-s3-applog-01",
+                        "lifecycleConfiguration": {
+                          "rules": [
+                            {
+                              "expirationInDays": 7,
+                              "id": "cpi-lifecycle-ps-dev-applog-01",
+                              "noncurrentVersionExpiration": {
+                                "noncurrentDays": 7
+                              },
+                              "status": "Enabled"
+                            }
+                          ]
+                        },
+                        "ownershipControls": {
+                          "rules": [
+                            {
+                              "objectOwnership": "BucketOwnerEnforced"
+                            }
+                          ]
+                        },
+                        "publicAccessBlockConfiguration": {
+                          "blockPublicAcls": true,
+                          "blockPublicPolicy": true,
+                          "ignorePublicAcls": true,
+                          "restrictPublicBuckets": true
+                        },
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "cpi-s3-ps-dev-s3-applog-01"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "Policy": {
+                    "id": "Policy",
+                    "path": "dev-cpi-storage/S3AppLogBucket/s3Bucket/Policy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "dev-cpi-storage/S3AppLogBucket/s3Bucket/Policy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::S3::BucketPolicy",
+                          "aws:cdk:cloudformation:props": {
+                            "bucket": {
+                              "Ref": "S3AppLogBuckets3Bucket7CB23DEB"
+                            },
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "s3:*",
+                                  "Condition": {
+                                    "Bool": {
+                                      "aws:SecureTransport": "false"
+                                    }
+                                  },
+                                  "Effect": "Deny",
+                                  "Principal": {
+                                    "AWS": "*"
+                                  },
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "S3AppLogBuckets3Bucket7CB23DEB",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "S3AppLogBuckets3Bucket7CB23DEB",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3.CfnBucketPolicy",
+                          "version": "2.66.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketPolicy",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.Bucket",
+                  "version": "2.66.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.137"
+            }
+          },
+          "S3CloudtrailLogBucket": {
+            "id": "S3CloudtrailLogBucket",
+            "path": "dev-cpi-storage/S3CloudtrailLogBucket",
+            "children": {
+              "s3Bucket": {
+                "id": "s3Bucket",
+                "path": "dev-cpi-storage/S3CloudtrailLogBucket/s3Bucket",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dev-cpi-storage/S3CloudtrailLogBucket/s3Bucket/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                      "aws:cdk:cloudformation:props": {
+                        "bucketEncryption": {
+                          "serverSideEncryptionConfiguration": [
+                            {
+                              "serverSideEncryptionByDefault": {
+                                "sseAlgorithm": "AES256"
+                              }
+                            }
+                          ]
+                        },
+                        "bucketName": "cpi-s3-ps-dev-s3-cloudtraillog-01",
+                        "lifecycleConfiguration": {
+                          "rules": [
+                            {
+                              "expirationInDays": 7,
+                              "id": "cpi-lifecycle-ps-dev-cloudtraillog-01",
+                              "noncurrentVersionExpiration": {
+                                "noncurrentDays": 7
+                              },
+                              "status": "Enabled"
+                            }
+                          ]
+                        },
+                        "ownershipControls": {
+                          "rules": [
+                            {
+                              "objectOwnership": "BucketOwnerEnforced"
+                            }
+                          ]
+                        },
+                        "publicAccessBlockConfiguration": {
+                          "blockPublicAcls": true,
+                          "blockPublicPolicy": true,
+                          "ignorePublicAcls": true,
+                          "restrictPublicBuckets": true
+                        },
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "cpi-s3-ps-dev-s3-cloudtraillog-01"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "Policy": {
+                    "id": "Policy",
+                    "path": "dev-cpi-storage/S3CloudtrailLogBucket/s3Bucket/Policy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "dev-cpi-storage/S3CloudtrailLogBucket/s3Bucket/Policy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::S3::BucketPolicy",
+                          "aws:cdk:cloudformation:props": {
+                            "bucket": {
+                              "Ref": "S3CloudtrailLogBuckets3Bucket4D0399A5"
+                            },
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "s3:*",
+                                  "Condition": {
+                                    "Bool": {
+                                      "aws:SecureTransport": "false"
+                                    }
+                                  },
+                                  "Effect": "Deny",
+                                  "Principal": {
+                                    "AWS": "*"
+                                  },
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "S3CloudtrailLogBuckets3Bucket4D0399A5",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "S3CloudtrailLogBuckets3Bucket4D0399A5",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3.CfnBucketPolicy",
+                          "version": "2.66.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketPolicy",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.Bucket",
+                  "version": "2.66.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.137"
+            }
+          },
+          "S3FileBucket": {
+            "id": "S3FileBucket",
+            "path": "dev-cpi-storage/S3FileBucket",
+            "children": {
+              "s3Bucket": {
+                "id": "s3Bucket",
+                "path": "dev-cpi-storage/S3FileBucket/s3Bucket",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dev-cpi-storage/S3FileBucket/s3Bucket/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                      "aws:cdk:cloudformation:props": {
+                        "bucketEncryption": {
+                          "serverSideEncryptionConfiguration": [
+                            {
+                              "serverSideEncryptionByDefault": {
+                                "sseAlgorithm": "AES256"
+                              }
+                            }
+                          ]
+                        },
+                        "bucketName": "cpi-s3-ps-dev-s3-file-01",
+                        "lifecycleConfiguration": {
+                          "rules": [
+                            {
+                              "expirationInDays": 7,
+                              "id": "cpi-lifecycle-ps-dev-file-01",
+                              "noncurrentVersionExpiration": {
+                                "noncurrentDays": 7
+                              },
+                              "status": "Enabled"
+                            }
+                          ]
+                        },
+                        "ownershipControls": {
+                          "rules": [
+                            {
+                              "objectOwnership": "BucketOwnerEnforced"
+                            }
+                          ]
+                        },
+                        "publicAccessBlockConfiguration": {
+                          "blockPublicAcls": true,
+                          "blockPublicPolicy": true,
+                          "ignorePublicAcls": true,
+                          "restrictPublicBuckets": true
+                        },
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "cpi-s3-ps-dev-s3-file-01"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "Policy": {
+                    "id": "Policy",
+                    "path": "dev-cpi-storage/S3FileBucket/s3Bucket/Policy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "dev-cpi-storage/S3FileBucket/s3Bucket/Policy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::S3::BucketPolicy",
+                          "aws:cdk:cloudformation:props": {
+                            "bucket": {
+                              "Ref": "S3FileBuckets3Bucket37DE9D32"
+                            },
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "s3:*",
+                                  "Condition": {
+                                    "Bool": {
+                                      "aws:SecureTransport": "false"
+                                    }
+                                  },
+                                  "Effect": "Deny",
+                                  "Principal": {
+                                    "AWS": "*"
+                                  },
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "S3FileBuckets3Bucket37DE9D32",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "S3FileBuckets3Bucket37DE9D32",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3.CfnBucketPolicy",
+                          "version": "2.66.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketPolicy",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.Bucket",
+                  "version": "2.66.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.137"
+            }
+          },
+          "S3WafLogBucket": {
+            "id": "S3WafLogBucket",
+            "path": "dev-cpi-storage/S3WafLogBucket",
+            "children": {
+              "s3Bucket": {
+                "id": "s3Bucket",
+                "path": "dev-cpi-storage/S3WafLogBucket/s3Bucket",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dev-cpi-storage/S3WafLogBucket/s3Bucket/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                      "aws:cdk:cloudformation:props": {
+                        "bucketEncryption": {
+                          "serverSideEncryptionConfiguration": [
+                            {
+                              "serverSideEncryptionByDefault": {
+                                "sseAlgorithm": "AES256"
+                              }
+                            }
+                          ]
+                        },
+                        "bucketName": "cpi-s3-ps-dev-s3-waflog-01",
+                        "lifecycleConfiguration": {
+                          "rules": [
+                            {
+                              "expirationInDays": 7,
+                              "id": "cpi-lifecycle-ps-dev-waflog-01",
+                              "noncurrentVersionExpiration": {
+                                "noncurrentDays": 7
+                              },
+                              "status": "Enabled"
+                            }
+                          ]
+                        },
+                        "ownershipControls": {
+                          "rules": [
+                            {
+                              "objectOwnership": "BucketOwnerEnforced"
+                            }
+                          ]
+                        },
+                        "publicAccessBlockConfiguration": {
+                          "blockPublicAcls": true,
+                          "blockPublicPolicy": true,
+                          "ignorePublicAcls": true,
+                          "restrictPublicBuckets": true
+                        },
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "cpi-s3-ps-dev-s3-waflog-01"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "Policy": {
+                    "id": "Policy",
+                    "path": "dev-cpi-storage/S3WafLogBucket/s3Bucket/Policy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "dev-cpi-storage/S3WafLogBucket/s3Bucket/Policy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::S3::BucketPolicy",
+                          "aws:cdk:cloudformation:props": {
+                            "bucket": {
+                              "Ref": "S3WafLogBuckets3BucketFB6535F4"
+                            },
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "s3:*",
+                                  "Condition": {
+                                    "Bool": {
+                                      "aws:SecureTransport": "false"
+                                    }
+                                  },
+                                  "Effect": "Deny",
+                                  "Principal": {
+                                    "AWS": "*"
+                                  },
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "S3WafLogBuckets3BucketFB6535F4",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "S3WafLogBuckets3BucketFB6535F4",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3.CfnBucketPolicy",
+                          "version": "2.66.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketPolicy",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.Bucket",
+                  "version": "2.66.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.137"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "dev-cpi-storage/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "dev-cpi-storage/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.66.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.137"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "dev-cpi-storage/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.66.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "dev-cpi-storage/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.66.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.66.0"
+        }
+      },
+      "dev-cpi-ops": {
+        "id": "dev-cpi-ops",
+        "path": "dev-cpi-ops",
+        "children": {
+          "Backup-Construct": {
+            "id": "Backup-Construct",
+            "path": "dev-cpi-ops/Backup-Construct",
+            "children": {
+              "BackupVault": {
+                "id": "BackupVault",
+                "path": "dev-cpi-ops/Backup-Construct/BackupVault",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Backup::BackupVault",
+                  "aws:cdk:cloudformation:props": {
+                    "backupVaultName": "testVaultName"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_backup.CfnBackupVault",
+                  "version": "2.66.0"
+                }
+              },
+              "CustomResource": {
+                "id": "CustomResource",
+                "path": "dev-cpi-ops/Backup-Construct/CustomResource",
+                "children": {
+                  "Provider": {
+                    "id": "Provider",
+                    "path": "dev-cpi-ops/Backup-Construct/CustomResource/Provider",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.SingletonFunction",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dev-cpi-ops/Backup-Construct/CustomResource/Resource",
+                    "children": {
+                      "Default": {
+                        "id": "Default",
+                        "path": "dev-cpi-ops/Backup-Construct/CustomResource/Resource/Default",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.CfnResource",
+                          "version": "2.66.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CustomResource",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "CustomResourcePolicy": {
+                    "id": "CustomResourcePolicy",
+                    "path": "dev-cpi-ops/Backup-Construct/CustomResource/CustomResourcePolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "dev-cpi-ops/Backup-Construct/CustomResource/CustomResourcePolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "backup:DescribeBackupVault",
+                                  "Effect": "Allow",
+                                  "Resource": "*"
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "BackupConstructCustomResourceCustomResourcePolicy16CC1306",
+                            "roles": [
+                              {
+                                "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.66.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.custom_resources.AwsCustomResource",
+                  "version": "2.66.0"
+                }
+              },
+              "BackupPlan": {
+                "id": "BackupPlan",
+                "path": "dev-cpi-ops/Backup-Construct/BackupPlan",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Backup::BackupPlan",
+                  "aws:cdk:cloudformation:props": {
+                    "backupPlan": {
+                      "backupPlanName": "testPlanName",
+                      "backupPlanRule": [
+                        {
+                          "ruleName": "DailyBackup",
+                          "scheduleExpression": "cron(0 0 * * ? *)",
+                          "targetBackupVault": "testVaultName"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_backup.CfnBackupPlan",
+                  "version": "2.66.0"
+                }
+              },
+              "BackupRole": {
+                "id": "BackupRole",
+                "path": "dev-cpi-ops/Backup-Construct/BackupRole",
+                "children": {
+                  "ImportBackupRole": {
+                    "id": "ImportBackupRole",
+                    "path": "dev-cpi-ops/Backup-Construct/BackupRole/ImportBackupRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dev-cpi-ops/Backup-Construct/BackupRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "backup.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
+                              ]
+                            ]
+                          }
+                        ],
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.66.0"
+                }
+              },
+              "BackupSelection": {
+                "id": "BackupSelection",
+                "path": "dev-cpi-ops/Backup-Construct/BackupSelection",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Backup::BackupSelection",
+                  "aws:cdk:cloudformation:props": {
+                    "backupPlanId": {
+                      "Ref": "BackupConstructBackupPlan7F2C2B5D"
+                    },
+                    "backupSelection": {
+                      "selectionName": "EBSVolumesAndS3",
+                      "resources": [
+                        "arn:aws:ec2:*:*:volume/*",
+                        "arn:aws:s3:::*/*"
+                      ],
+                      "iamRoleArn": {
+                        "Fn::GetAtt": [
+                          "BackupConstructBackupRole53D2E43C",
+                          "Arn"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_backup.CfnBackupSelection",
+                  "version": "2.66.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.137"
+            }
+          },
+          "AWS679f53fac002430cb0da5b7982bd2287": {
+            "id": "AWS679f53fac002430cb0da5b7982bd2287",
+            "path": "dev-cpi-ops/AWS679f53fac002430cb0da5b7982bd2287",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "dev-cpi-ops/AWS679f53fac002430cb0da5b7982bd2287/ServiceRole",
+                "children": {
+                  "ImportServiceRole": {
+                    "id": "ImportServiceRole",
+                    "path": "dev-cpi-ops/AWS679f53fac002430cb0da5b7982bd2287/ServiceRole/ImportServiceRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dev-cpi-ops/AWS679f53fac002430cb0da5b7982bd2287/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ],
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.66.0"
+                }
+              },
+              "Code": {
+                "id": "Code",
+                "path": "dev-cpi-ops/AWS679f53fac002430cb0da5b7982bd2287/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "dev-cpi-ops/AWS679f53fac002430cb0da5b7982bd2287/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "dev-cpi-ops/AWS679f53fac002430cb0da5b7982bd2287/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.66.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "dev-cpi-ops/AWS679f53fac002430cb0da5b7982bd2287/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": "cdk-hnb659fds-assets-679182460211-ap-northeast-1",
+                      "s3Key": "400f664767ec04a0966c8d688fa643ee8f6d0c94c8d91a71d3af814cc9b9e6ab.zip"
+                    },
+                    "role": {
+                      "Fn::GetAtt": [
+                        "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
+                        "Arn"
+                      ]
+                    },
+                    "handler": "index.handler",
+                    "runtime": "nodejs14.x",
+                    "tags": [
+                      {
+                        "key": "CTC_Bill02_System",
+                        "value": "ps-dev"
+                      }
+                    ],
+                    "timeout": 120
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.66.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.66.0"
+            }
+          },
+          "IamConstruct": {
+            "id": "IamConstruct",
+            "path": "dev-cpi-ops/IamConstruct",
+            "children": {
+              "MyRole1": {
+                "id": "MyRole1",
+                "path": "dev-cpi-ops/IamConstruct/MyRole1",
+                "children": {
+                  "ImportMyRole1": {
+                    "id": "ImportMyRole1",
+                    "path": "dev-cpi-ops/IamConstruct/MyRole1/ImportMyRole1",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dev-cpi-ops/IamConstruct/MyRole1/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "ec2.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/AmazonS3FullAccess"
+                              ]
+                            ]
+                          },
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/AmazonRDSFullAccess"
+                              ]
+                            ]
+                          },
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/AmazonVPCFullAccess"
+                              ]
+                            ]
+                          },
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/AmazonEC2FullAccess"
+                              ]
+                            ]
+                          }
+                        ],
+                        "roleName": "MyExampleRole1",
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.66.0"
+                }
+              },
+              "MyRole2": {
+                "id": "MyRole2",
+                "path": "dev-cpi-ops/IamConstruct/MyRole2",
+                "children": {
+                  "ImportMyRole2": {
+                    "id": "ImportMyRole2",
+                    "path": "dev-cpi-ops/IamConstruct/MyRole2/ImportMyRole2",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.66.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dev-cpi-ops/IamConstruct/MyRole2/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "ec2.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/AmazonS3FullAccess"
+                              ]
+                            ]
+                          },
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/AmazonRDSFullAccess"
+                              ]
+                            ]
+                          },
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/AmazonVPCFullAccess"
+                              ]
+                            ]
+                          },
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/AmazonEC2FullAccess"
+                              ]
+                            ]
+                          }
+                        ],
+                        "roleName": "MyExampleRole2",
+                        "tags": [
+                          {
+                            "key": "CTC_Bill02_System",
+                            "value": "ps-dev"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.66.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.66.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.137"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "dev-cpi-ops/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "dev-cpi-ops/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.66.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.137"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "dev-cpi-ops/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.66.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "dev-cpi-ops/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.66.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.66.0"
+        }
+      },
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "constructs.Construct",
+          "version": "10.1.137"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "aws-cdk-lib.App",
+      "version": "2.66.0"
+    }
+  }
+}

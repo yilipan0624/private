@@ -1,0 +1,359 @@
+{
+ "Resources": {
+  "EC2InstanceConstructsgec21DE2F2108": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "dev-cpi-server/EC2-Instance-Construct/sg-ec2-1",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": "10.200.1.0/24",
+      "Description": "allow HTTPS port access.",
+      "FromPort": 443,
+      "IpProtocol": "tcp",
+      "ToPort": 443
+     },
+     {
+      "CidrIp": "10.200.101.0/24",
+      "Description": "allow HTTPS port access.",
+      "FromPort": 443,
+      "IpProtocol": "tcp",
+      "ToPort": 443
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-sg-ps-dev-2-01"
+     }
+    ],
+    "VpcId": {
+     "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcB3B0C151B33DF0C2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-server/EC2-Instance-Construct/sg-ec2-1/Resource"
+   }
+  },
+  "EC2InstanceConstructsgec2bastion22EA48C4E": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "dev-cpi-server/EC2-Instance-Construct/sg-ec2-bastion2",
+    "GroupName": "cpi-sg-ps-dev-2-01",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": "10.200.1.0/24",
+      "Description": "Allow all traffic from private subnets",
+      "IpProtocol": "-1"
+     },
+     {
+      "CidrIp": "10.200.101.0/24",
+      "Description": "Allow all traffic from private subnets",
+      "IpProtocol": "-1"
+     },
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow TCP traffic on port 443",
+      "FromPort": 443,
+      "IpProtocol": "tcp",
+      "ToPort": 443
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     }
+    ],
+    "VpcId": {
+     "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcB3B0C151B33DF0C2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-server/EC2-Instance-Construct/sg-ec2-bastion2/Resource"
+   }
+  },
+  "EC2InstanceConstructEC2bastionInstanceRole67F21BDB": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ec2.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-ec2-ps-dev-bastion-01"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-server/EC2-Instance-Construct/EC2-bastion/InstanceRole/Resource"
+   }
+  },
+  "EC2InstanceConstructEC2bastionInstanceProfile37AC8AE2": {
+   "Type": "AWS::IAM::InstanceProfile",
+   "Properties": {
+    "Roles": [
+     {
+      "Ref": "EC2InstanceConstructEC2bastionInstanceRole67F21BDB"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-server/EC2-Instance-Construct/EC2-bastion/InstanceProfile"
+   }
+  },
+  "EC2InstanceConstructEC2bastion747ED369": {
+   "Type": "AWS::EC2::Instance",
+   "Properties": {
+    "AvailabilityZone": "ap-northeast-1a",
+    "BlockDeviceMappings": [
+     {
+      "DeviceName": "/dev/xvda",
+      "Ebs": {
+       "Encrypted": true,
+       "Iops": 3000,
+       "VolumeSize": 8,
+       "VolumeType": "gp3"
+      }
+     }
+    ],
+    "DisableApiTermination": true,
+    "IamInstanceProfile": {
+     "Ref": "EC2InstanceConstructEC2bastionInstanceProfile37AC8AE2"
+    },
+    "ImageId": {
+     "Ref": "SsmParameterValueawsserviceamiamazonlinuxlatestamzn2amihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "InstanceType": "t3.medium",
+    "SecurityGroupIds": [
+     {
+      "Fn::GetAtt": [
+       "EC2InstanceConstructsgec2bastion22EA48C4E",
+       "GroupId"
+      ]
+     }
+    ],
+    "SubnetId": {
+     "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcPrivateSubnet0PrivateSubnetE40A98D30D9DAA90"
+    },
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-ec2-ps-dev-bastion-01"
+     }
+    ],
+    "UserData": {
+     "Fn::Base64": "#!/bin/bash\nhostnamectl set-hostname cpi-ec2-ps-dev-bastion-01\necho \"preserve_hostname: true\" >> /etc/cloud/cloud.cfg\ntimedatectl set-timezone Asia/Tokyo\nyum update -y\nyum install -y amazon-cloudwatch-agent\nsystemctl start amazon-cloudwatch-agent\nsystemctl enable amazon-cloudwatch-agent\necho '{\"metrics\":{\"append_dimensions\":{\"InstanceId\":\"${aws:InstanceId}\"},\"metrics_collected\":{\"mem\":{\"measurement\":[\"used_percent\"]}}},\"logs\":{}}' > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json\nsystemctl start amazon-cloudwatch-agent\nsystemctl enable amazon-cloudwatch-agent"
+    }
+   },
+   "DependsOn": [
+    "EC2InstanceConstructEC2bastionInstanceRole67F21BDB"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-server/EC2-Instance-Construct/EC2-bastion/Resource"
+   }
+  },
+  "EC2InstanceConstructEC2sagyouInstanceRole89DCD7DC": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ec2.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-ec2-ps-dev-Sagyou-01"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-server/EC2-Instance-Construct/EC2-sagyou/InstanceRole/Resource"
+   }
+  },
+  "EC2InstanceConstructEC2sagyouInstanceProfile2A090D3A": {
+   "Type": "AWS::IAM::InstanceProfile",
+   "Properties": {
+    "Roles": [
+     {
+      "Ref": "EC2InstanceConstructEC2sagyouInstanceRole89DCD7DC"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-server/EC2-Instance-Construct/EC2-sagyou/InstanceProfile"
+   }
+  },
+  "EC2InstanceConstructEC2sagyou91DC81FA": {
+   "Type": "AWS::EC2::Instance",
+   "Properties": {
+    "AvailabilityZone": "ap-northeast-1c",
+    "BlockDeviceMappings": [
+     {
+      "DeviceName": "/dev/xvda",
+      "Ebs": {
+       "Encrypted": true,
+       "Iops": 3000,
+       "VolumeSize": 8,
+       "VolumeType": "gp3"
+      }
+     }
+    ],
+    "DisableApiTermination": true,
+    "IamInstanceProfile": {
+     "Ref": "EC2InstanceConstructEC2sagyouInstanceProfile2A090D3A"
+    },
+    "ImageId": {
+     "Ref": "SsmParameterValueawsserviceamiwindowslatestWindowsServer2019EnglishFullBaseC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "InstanceType": "t3.medium",
+    "SecurityGroupIds": [
+     {
+      "Fn::GetAtt": [
+       "EC2InstanceConstructsgec21DE2F2108",
+       "GroupId"
+      ]
+     }
+    ],
+    "SubnetId": {
+     "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcPrivateSubnet1PrivateSubnetD6B6AC376E7E9A65"
+    },
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-ec2-ps-dev-Sagyou-01"
+     }
+    ],
+    "UserData": {
+     "Fn::Base64": "<powershell>Set-ExecutionPolicy Unrestricted -Force\nImport-Module AWS.Tools.Installer\nInstall-AWSToolsModule AWS.Tools.EC2, AWS.Tools.CloudWatch -CleanUp\nSet-Location C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\nNew-Item -Path . -Name \"amazon-cloudwatch-agent.json\" -ItemType \"file\" -Force\nAdd-Content -Path \".\\amazon-cloudwatch-agent.json\" -Value '{\"metrics\":{\"append_dimensions\":{\"InstanceId\":\"${aws:InstanceId}\"},\"metrics_collected\":{\"LogicalDisk\":[{\"measurement\":[\"FreeSpace\"],\"resources\":[\"C:\"]}],\"Memory\":{\"measurement\":[\"% Committed Bytes In Use\"]}}},\"logs\":{}}'\nC:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.exe -config \"C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.json\"</powershell>"
+    }
+   },
+   "DependsOn": [
+    "EC2InstanceConstructEC2sagyouInstanceRole89DCD7DC"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-server/EC2-Instance-Construct/EC2-sagyou/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WOQQ6CMBBFz+K+jNgFF3Bh3JF6AFLLkAzQ1kxbjSG9uxVk4er/eS8/GQlNA/VBv0Jl+qma6Q7LLWoziYK6BY0sN5rEFN8X9ukhzoP7B1cXonYGv2bvWZC2sCg/r3jPXbfsB5oxZ6Ew+MTbuNWsLUbkdfITWTjfI4zh+Dw1IOvy7BiIKk4ukkVQW34AhVAIFcgAAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-server/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "SsmParameterValueawsserviceamiamazonlinuxlatestamzn2amihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter": {
+   "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+   "Default": "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
+  },
+  "SsmParameterValueawsserviceamiwindowslatestWindowsServer2019EnglishFullBaseC96584B6F00A464EAD1953AFF4B05118Parameter": {
+   "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+   "Default": "/aws/service/ami-windows-latest/Windows_Server-2019-English-Full-Base"
+  },
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Outputs": {
+  "ExportsOutputRefEC2InstanceConstructEC2bastion747ED3695EEEBAD0": {
+   "Value": {
+    "Ref": "EC2InstanceConstructEC2bastion747ED369"
+   },
+   "Export": {
+    "Name": "dev-cpi-server:ExportsOutputRefEC2InstanceConstructEC2bastion747ED3695EEEBAD0"
+   }
+  },
+  "ExportsOutputRefEC2InstanceConstructEC2sagyou91DC81FA3FA79780": {
+   "Value": {
+    "Ref": "EC2InstanceConstructEC2sagyou91DC81FA"
+   },
+   "Export": {
+    "Name": "dev-cpi-server:ExportsOutputRefEC2InstanceConstructEC2sagyou91DC81FA3FA79780"
+   }
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
