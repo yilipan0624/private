@@ -1,0 +1,2347 @@
+[
+    {
+        "type": "m6gd.4xlarge",
+        "vcpu": 16,
+        "memory": 65536
+    },
+    {
+        "type": "c6gn.16xlarge",
+        "vcpu": 64,
+        "memory": 131072
+    },
+    {
+        "type": "m5d.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "is4gen.4xlarge",
+        "vcpu": 16,
+        "memory": 98304
+    },
+    {
+        "type": "r6g.8xlarge",
+        "vcpu": 32,
+        "memory": 262144
+    },
+    {
+        "type": "m5.8xlarge",
+        "vcpu": 32,
+        "memory": 131072
+    },
+    {
+        "type": "r5a.2xlarge",
+        "vcpu": 8,
+        "memory": 65536
+    },
+    {
+        "type": "x2iedn.xlarge",
+        "vcpu": 4,
+        "memory": 131072
+    },
+    {
+        "type": "m5.24xlarge",
+        "vcpu": 96,
+        "memory": 393216
+    },
+    {
+        "type": "i3en.3xlarge",
+        "vcpu": 12,
+        "memory": 98304
+    },
+    {
+        "type": "r6i.xlarge",
+        "vcpu": 4,
+        "memory": 32768
+    },
+    {
+        "type": "m6gd.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "r4.16xlarge",
+        "vcpu": 64,
+        "memory": 499712
+    },
+    {
+        "type": "c5.4xlarge",
+        "vcpu": 16,
+        "memory": 32768
+    },
+    {
+        "type": "r6g.medium",
+        "vcpu": 1,
+        "memory": 8192
+    },
+    {
+        "type": "m6id.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "m5zn.6xlarge",
+        "vcpu": 24,
+        "memory": 98304
+    },
+    {
+        "type": "r6id.12xlarge",
+        "vcpu": 48,
+        "memory": 393216
+    },
+    {
+        "type": "c6a.16xlarge",
+        "vcpu": 64,
+        "memory": 131072
+    },
+    {
+        "type": "c6i.4xlarge",
+        "vcpu": 16,
+        "memory": 32768
+    },
+    {
+        "type": "i3en.24xlarge",
+        "vcpu": 96,
+        "memory": 786432
+    },
+    {
+        "type": "m5a.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "x1e.2xlarge",
+        "vcpu": 8,
+        "memory": 249856
+    },
+    {
+        "type": "t3a.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "im4gn.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "c4.4xlarge",
+        "vcpu": 16,
+        "memory": 30720
+    },
+    {
+        "type": "r5.24xlarge",
+        "vcpu": 96,
+        "memory": 786432
+    },
+    {
+        "type": "c6g.16xlarge",
+        "vcpu": 64,
+        "memory": 131072
+    },
+    {
+        "type": "c6a.24xlarge",
+        "vcpu": 96,
+        "memory": 196608
+    },
+    {
+        "type": "m5zn.large",
+        "vcpu": 2,
+        "memory": 8192
+    },
+    {
+        "type": "g5.4xlarge",
+        "vcpu": 16,
+        "memory": 65536
+    },
+    {
+        "type": "m5dn.12xlarge",
+        "vcpu": 48,
+        "memory": 196608
+    },
+    {
+        "type": "c5d.12xlarge",
+        "vcpu": 48,
+        "memory": 98304
+    },
+    {
+        "type": "r6g.16xlarge",
+        "vcpu": 64,
+        "memory": 524288
+    },
+    {
+        "type": "c6a.48xlarge",
+        "vcpu": 192,
+        "memory": 393216
+    },
+    {
+        "type": "r5a.xlarge",
+        "vcpu": 4,
+        "memory": 32768
+    },
+    {
+        "type": "m5ad.4xlarge",
+        "vcpu": 16,
+        "memory": 65536
+    },
+    {
+        "type": "m6i.large",
+        "vcpu": 2,
+        "memory": 8192
+    },
+    {
+        "type": "t4g.nano",
+        "vcpu": 2,
+        "memory": 512
+    },
+    {
+        "type": "im4gn.8xlarge",
+        "vcpu": 32,
+        "memory": 131072
+    },
+    {
+        "type": "r5b.12xlarge",
+        "vcpu": 48,
+        "memory": 393216
+    },
+    {
+        "type": "d2.8xlarge",
+        "vcpu": 36,
+        "memory": 249856
+    },
+    {
+        "type": "x1.16xlarge",
+        "vcpu": 64,
+        "memory": 999424
+    },
+    {
+        "type": "c6gd.metal",
+        "vcpu": 64,
+        "memory": 131072
+    },
+    {
+        "type": "m6i.24xlarge",
+        "vcpu": 96,
+        "memory": 393216
+    },
+    {
+        "type": "c6i.32xlarge",
+        "vcpu": 128,
+        "memory": 262144
+    },
+    {
+        "type": "m6id.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "c6i.8xlarge",
+        "vcpu": 32,
+        "memory": 65536
+    },
+    {
+        "type": "m5ad.12xlarge",
+        "vcpu": 48,
+        "memory": 196608
+    },
+    {
+        "type": "i3en.12xlarge",
+        "vcpu": 48,
+        "memory": 393216
+    },
+    {
+        "type": "m6gd.12xlarge",
+        "vcpu": 48,
+        "memory": 196608
+    },
+    {
+        "type": "c6id.24xlarge",
+        "vcpu": 96,
+        "memory": 196608
+    },
+    {
+        "type": "m5a.4xlarge",
+        "vcpu": 16,
+        "memory": 65536
+    },
+    {
+        "type": "r6id.16xlarge",
+        "vcpu": 64,
+        "memory": 524288
+    },
+    {
+        "type": "c4.8xlarge",
+        "vcpu": 36,
+        "memory": 61440
+    },
+    {
+        "type": "i4i.16xlarge",
+        "vcpu": 64,
+        "memory": 524288
+    },
+    {
+        "type": "c5n.large",
+        "vcpu": 2,
+        "memory": 5376
+    },
+    {
+        "type": "r5dn.8xlarge",
+        "vcpu": 32,
+        "memory": 262144
+    },
+    {
+        "type": "m5a.16xlarge",
+        "vcpu": 64,
+        "memory": 262144
+    },
+    {
+        "type": "x1e.32xlarge",
+        "vcpu": 128,
+        "memory": 3997696
+    },
+    {
+        "type": "m5zn.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "c6id.8xlarge",
+        "vcpu": 32,
+        "memory": 65536
+    },
+    {
+        "type": "r6gd.2xlarge",
+        "vcpu": 8,
+        "memory": 65536
+    },
+    {
+        "type": "c5d.large",
+        "vcpu": 2,
+        "memory": 4096
+    },
+    {
+        "type": "r5n.12xlarge",
+        "vcpu": 48,
+        "memory": 393216
+    },
+    {
+        "type": "m5n.16xlarge",
+        "vcpu": 64,
+        "memory": 262144
+    },
+    {
+        "type": "m4.4xlarge",
+        "vcpu": 16,
+        "memory": 65536
+    },
+    {
+        "type": "c6gn.xlarge",
+        "vcpu": 4,
+        "memory": 8192
+    },
+    {
+        "type": "r6id.xlarge",
+        "vcpu": 4,
+        "memory": 32768
+    },
+    {
+        "type": "m6a.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "x1e.8xlarge",
+        "vcpu": 32,
+        "memory": 999424
+    },
+    {
+        "type": "z1d.2xlarge",
+        "vcpu": 8,
+        "memory": 65536
+    },
+    {
+        "type": "r5ad.24xlarge",
+        "vcpu": 96,
+        "memory": 786432
+    },
+    {
+        "type": "x2iezn.4xlarge",
+        "vcpu": 16,
+        "memory": 524288
+    },
+    {
+        "type": "x2iedn.2xlarge",
+        "vcpu": 8,
+        "memory": 262144
+    },
+    {
+        "type": "c6i.2xlarge",
+        "vcpu": 8,
+        "memory": 16384
+    },
+    {
+        "type": "r6gd.medium",
+        "vcpu": 1,
+        "memory": 8192
+    },
+    {
+        "type": "m5dn.large",
+        "vcpu": 2,
+        "memory": 8192
+    },
+    {
+        "type": "m6id.12xlarge",
+        "vcpu": 48,
+        "memory": 196608
+    },
+    {
+        "type": "c6a.32xlarge",
+        "vcpu": 128,
+        "memory": 262144
+    },
+    {
+        "type": "g5.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "t2.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "m5d.8xlarge",
+        "vcpu": 32,
+        "memory": 131072
+    },
+    {
+        "type": "r6g.large",
+        "vcpu": 2,
+        "memory": 16384
+    },
+    {
+        "type": "r6gd.xlarge",
+        "vcpu": 4,
+        "memory": 32768
+    },
+    {
+        "type": "m6a.large",
+        "vcpu": 2,
+        "memory": 8192
+    },
+    {
+        "type": "m5dn.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "m6gd.medium",
+        "vcpu": 1,
+        "memory": 4096
+    },
+    {
+        "type": "is4gen.xlarge",
+        "vcpu": 4,
+        "memory": 24576
+    },
+    {
+        "type": "c6i.large",
+        "vcpu": 2,
+        "memory": 4096
+    },
+    {
+        "type": "g3.16xlarge",
+        "vcpu": 64,
+        "memory": 499712
+    },
+    {
+        "type": "r6id.2xlarge",
+        "vcpu": 8,
+        "memory": 65536
+    },
+    {
+        "type": "c5n.2xlarge",
+        "vcpu": 8,
+        "memory": 21504
+    },
+    {
+        "type": "c6id.large",
+        "vcpu": 2,
+        "memory": 4096
+    },
+    {
+        "type": "r5ad.12xlarge",
+        "vcpu": 48,
+        "memory": 393216
+    },
+    {
+        "type": "r5a.large",
+        "vcpu": 2,
+        "memory": 16384
+    },
+    {
+        "type": "g5g.2xlarge",
+        "vcpu": 8,
+        "memory": 16384
+    },
+    {
+        "type": "r6gd.metal",
+        "vcpu": 64,
+        "memory": 524288
+    },
+    {
+        "type": "c5a.4xlarge",
+        "vcpu": 16,
+        "memory": 32768
+    },
+    {
+        "type": "m5ad.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "i4i.4xlarge",
+        "vcpu": 16,
+        "memory": 131072
+    },
+    {
+        "type": "r5d.4xlarge",
+        "vcpu": 16,
+        "memory": 131072
+    },
+    {
+        "type": "m6id.32xlarge",
+        "vcpu": 128,
+        "memory": 524288
+    },
+    {
+        "type": "m4.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "c6id.16xlarge",
+        "vcpu": 64,
+        "memory": 131072
+    },
+    {
+        "type": "r6i.4xlarge",
+        "vcpu": 16,
+        "memory": 131072
+    },
+    {
+        "type": "d2.2xlarge",
+        "vcpu": 8,
+        "memory": 62464
+    },
+    {
+        "type": "t3a.small",
+        "vcpu": 2,
+        "memory": 2048
+    },
+    {
+        "type": "g4dn.metal",
+        "vcpu": 96,
+        "memory": 393216
+    },
+    {
+        "type": "m6g.metal",
+        "vcpu": 64,
+        "memory": 262144
+    },
+    {
+        "type": "r5a.16xlarge",
+        "vcpu": 64,
+        "memory": 524288
+    },
+    {
+        "type": "t4g.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "m6g.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "m5zn.3xlarge",
+        "vcpu": 12,
+        "memory": 49152
+    },
+    {
+        "type": "m6gd.16xlarge",
+        "vcpu": 64,
+        "memory": 262144
+    },
+    {
+        "type": "m5d.large",
+        "vcpu": 2,
+        "memory": 8192
+    },
+    {
+        "type": "m5d.metal",
+        "vcpu": 96,
+        "memory": 393216
+    },
+    {
+        "type": "t3.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "g4ad.8xlarge",
+        "vcpu": 32,
+        "memory": 131072
+    },
+    {
+        "type": "m6i.8xlarge",
+        "vcpu": 32,
+        "memory": 131072
+    },
+    {
+        "type": "p2.8xlarge",
+        "vcpu": 32,
+        "memory": 499712
+    },
+    {
+        "type": "r5.large",
+        "vcpu": 2,
+        "memory": 16384
+    },
+    {
+        "type": "g4ad.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "r5.4xlarge",
+        "vcpu": 16,
+        "memory": 131072
+    },
+    {
+        "type": "x2idn.24xlarge",
+        "vcpu": 96,
+        "memory": 1572864
+    },
+    {
+        "type": "r5n.4xlarge",
+        "vcpu": 16,
+        "memory": 131072
+    },
+    {
+        "type": "i4i.metal",
+        "vcpu": 128,
+        "memory": 1048576
+    },
+    {
+        "type": "c6g.xlarge",
+        "vcpu": 4,
+        "memory": 8192
+    },
+    {
+        "type": "g5.24xlarge",
+        "vcpu": 96,
+        "memory": 393216
+    },
+    {
+        "type": "c6i.24xlarge",
+        "vcpu": 96,
+        "memory": 196608
+    },
+    {
+        "type": "u-12tb1.112xlarge",
+        "vcpu": 448,
+        "memory": 12582912
+    },
+    {
+        "type": "c6gn.12xlarge",
+        "vcpu": 48,
+        "memory": 98304
+    },
+    {
+        "type": "x2iezn.8xlarge",
+        "vcpu": 32,
+        "memory": 1048576
+    },
+    {
+        "type": "r6id.4xlarge",
+        "vcpu": 16,
+        "memory": 131072
+    },
+    {
+        "type": "r6g.12xlarge",
+        "vcpu": 48,
+        "memory": 393216
+    },
+    {
+        "type": "inf1.xlarge",
+        "vcpu": 4,
+        "memory": 8192
+    },
+    {
+        "type": "c5d.24xlarge",
+        "vcpu": 96,
+        "memory": 196608
+    },
+    {
+        "type": "m5.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "m5d.16xlarge",
+        "vcpu": 64,
+        "memory": 262144
+    },
+    {
+        "type": "r6i.24xlarge",
+        "vcpu": 96,
+        "memory": 786432
+    },
+    {
+        "type": "m5ad.8xlarge",
+        "vcpu": 32,
+        "memory": 131072
+    },
+    {
+        "type": "c6i.16xlarge",
+        "vcpu": 64,
+        "memory": 131072
+    },
+    {
+        "type": "vt1.3xlarge",
+        "vcpu": 12,
+        "memory": 24576
+    },
+    {
+        "type": "g4ad.4xlarge",
+        "vcpu": 16,
+        "memory": 65536
+    },
+    {
+        "type": "u-3tb1.56xlarge",
+        "vcpu": 224,
+        "memory": 3145728
+    },
+    {
+        "type": "c5n.4xlarge",
+        "vcpu": 16,
+        "memory": 43008
+    },
+    {
+        "type": "c5d.2xlarge",
+        "vcpu": 8,
+        "memory": 16384
+    },
+    {
+        "type": "d3.xlarge",
+        "vcpu": 4,
+        "memory": 32768
+    },
+    {
+        "type": "m5dn.8xlarge",
+        "vcpu": 32,
+        "memory": 131072
+    },
+    {
+        "type": "r5ad.8xlarge",
+        "vcpu": 32,
+        "memory": 262144
+    },
+    {
+        "type": "m5ad.large",
+        "vcpu": 2,
+        "memory": 8192
+    },
+    {
+        "type": "t4g.medium",
+        "vcpu": 2,
+        "memory": 4096
+    },
+    {
+        "type": "g4dn.12xlarge",
+        "vcpu": 48,
+        "memory": 196608
+    },
+    {
+        "type": "d3.8xlarge",
+        "vcpu": 32,
+        "memory": 262144
+    },
+    {
+        "type": "t3.medium",
+        "vcpu": 2,
+        "memory": 4096
+    },
+    {
+        "type": "c5a.12xlarge",
+        "vcpu": 48,
+        "memory": 98304
+    },
+    {
+        "type": "mac1.metal",
+        "vcpu": 12,
+        "memory": 32768
+    },
+    {
+        "type": "c6g.large",
+        "vcpu": 2,
+        "memory": 4096
+    },
+    {
+        "type": "r5a.12xlarge",
+        "vcpu": 48,
+        "memory": 393216
+    },
+    {
+        "type": "x2iedn.metal",
+        "vcpu": 128,
+        "memory": 4194304
+    },
+    {
+        "type": "c6g.12xlarge",
+        "vcpu": 48,
+        "memory": 98304
+    },
+    {
+        "type": "m5.12xlarge",
+        "vcpu": 48,
+        "memory": 196608
+    },
+    {
+        "type": "c4.large",
+        "vcpu": 2,
+        "memory": 3840
+    },
+    {
+        "type": "r5b.large",
+        "vcpu": 2,
+        "memory": 16384
+    },
+    {
+        "type": "r5b.metal",
+        "vcpu": 96,
+        "memory": 786432
+    },
+    {
+        "type": "m5n.12xlarge",
+        "vcpu": 48,
+        "memory": 196608
+    },
+    {
+        "type": "t3.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "m5n.8xlarge",
+        "vcpu": 32,
+        "memory": 131072
+    },
+    {
+        "type": "im4gn.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "c6gn.4xlarge",
+        "vcpu": 16,
+        "memory": 32768
+    },
+    {
+        "type": "c5a.xlarge",
+        "vcpu": 4,
+        "memory": 8192
+    },
+    {
+        "type": "c5.xlarge",
+        "vcpu": 4,
+        "memory": 8192
+    },
+    {
+        "type": "g3.8xlarge",
+        "vcpu": 32,
+        "memory": 249856
+    },
+    {
+        "type": "m5.metal",
+        "vcpu": 96,
+        "memory": 393216
+    },
+    {
+        "type": "p3.2xlarge",
+        "vcpu": 8,
+        "memory": 62464
+    },
+    {
+        "type": "c5.12xlarge",
+        "vcpu": 48,
+        "memory": 98304
+    },
+    {
+        "type": "c6gd.16xlarge",
+        "vcpu": 64,
+        "memory": 131072
+    },
+    {
+        "type": "t3.large",
+        "vcpu": 2,
+        "memory": 8192
+    },
+    {
+        "type": "c5n.9xlarge",
+        "vcpu": 36,
+        "memory": 98304
+    },
+    {
+        "type": "m5dn.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "z1d.xlarge",
+        "vcpu": 4,
+        "memory": 32768
+    },
+    {
+        "type": "m6gd.metal",
+        "vcpu": 64,
+        "memory": 262144
+    },
+    {
+        "type": "r6gd.large",
+        "vcpu": 2,
+        "memory": 16384
+    },
+    {
+        "type": "t2.large",
+        "vcpu": 2,
+        "memory": 8192
+    },
+    {
+        "type": "m6a.metal",
+        "vcpu": 192,
+        "memory": 786432
+    },
+    {
+        "type": "r6g.4xlarge",
+        "vcpu": 16,
+        "memory": 131072
+    },
+    {
+        "type": "c5n.18xlarge",
+        "vcpu": 72,
+        "memory": 196608
+    },
+    {
+        "type": "c6a.12xlarge",
+        "vcpu": 48,
+        "memory": 98304
+    },
+    {
+        "type": "m5dn.metal",
+        "vcpu": 96,
+        "memory": 393216
+    },
+    {
+        "type": "t3.micro",
+        "vcpu": 2,
+        "memory": 1024
+    },
+    {
+        "type": "t4g.micro",
+        "vcpu": 2,
+        "memory": 1024
+    },
+    {
+        "type": "m6g.4xlarge",
+        "vcpu": 16,
+        "memory": 65536
+    },
+    {
+        "type": "i3.xlarge",
+        "vcpu": 4,
+        "memory": 31232
+    },
+    {
+        "type": "m6i.4xlarge",
+        "vcpu": 16,
+        "memory": 65536
+    },
+    {
+        "type": "r6i.16xlarge",
+        "vcpu": 64,
+        "memory": 524288
+    },
+    {
+        "type": "g5g.metal",
+        "vcpu": 64,
+        "memory": 131072
+    },
+    {
+        "type": "m5zn.metal",
+        "vcpu": 48,
+        "memory": 196608
+    },
+    {
+        "type": "is4gen.2xlarge",
+        "vcpu": 8,
+        "memory": 49152
+    },
+    {
+        "type": "r5dn.xlarge",
+        "vcpu": 4,
+        "memory": 32768
+    },
+    {
+        "type": "c6a.8xlarge",
+        "vcpu": 32,
+        "memory": 65536
+    },
+    {
+        "type": "c5d.18xlarge",
+        "vcpu": 72,
+        "memory": 147456
+    },
+    {
+        "type": "r5b.4xlarge",
+        "vcpu": 16,
+        "memory": 131072
+    },
+    {
+        "type": "m5ad.24xlarge",
+        "vcpu": 96,
+        "memory": 393216
+    },
+    {
+        "type": "m5n.large",
+        "vcpu": 2,
+        "memory": 8192
+    },
+    {
+        "type": "t3a.medium",
+        "vcpu": 2,
+        "memory": 4096
+    },
+    {
+        "type": "d3.2xlarge",
+        "vcpu": 8,
+        "memory": 65536
+    },
+    {
+        "type": "m4.large",
+        "vcpu": 2,
+        "memory": 8192
+    },
+    {
+        "type": "r4.xlarge",
+        "vcpu": 4,
+        "memory": 31232
+    },
+    {
+        "type": "c5a.24xlarge",
+        "vcpu": 96,
+        "memory": 196608
+    },
+    {
+        "type": "r5d.16xlarge",
+        "vcpu": 64,
+        "memory": 524288
+    },
+    {
+        "type": "m6i.metal",
+        "vcpu": 128,
+        "memory": 524288
+    },
+    {
+        "type": "c6gd.xlarge",
+        "vcpu": 4,
+        "memory": 8192
+    },
+    {
+        "type": "m6g.large",
+        "vcpu": 2,
+        "memory": 8192
+    },
+    {
+        "type": "c6gn.medium",
+        "vcpu": 1,
+        "memory": 2048
+    },
+    {
+        "type": "r5b.2xlarge",
+        "vcpu": 8,
+        "memory": 65536
+    },
+    {
+        "type": "x2idn.metal",
+        "vcpu": 128,
+        "memory": 2097152
+    },
+    {
+        "type": "r5ad.large",
+        "vcpu": 2,
+        "memory": 16384
+    },
+    {
+        "type": "m6i.32xlarge",
+        "vcpu": 128,
+        "memory": 524288
+    },
+    {
+        "type": "g5.12xlarge",
+        "vcpu": 48,
+        "memory": 196608
+    },
+    {
+        "type": "t4g.large",
+        "vcpu": 2,
+        "memory": 8192
+    },
+    {
+        "type": "r5d.24xlarge",
+        "vcpu": 96,
+        "memory": 786432
+    },
+    {
+        "type": "r5.metal",
+        "vcpu": 96,
+        "memory": 786432
+    },
+    {
+        "type": "c4.2xlarge",
+        "vcpu": 8,
+        "memory": 15360
+    },
+    {
+        "type": "t2.micro",
+        "vcpu": 1,
+        "memory": 1024
+    },
+    {
+        "type": "r5d.2xlarge",
+        "vcpu": 8,
+        "memory": 65536
+    },
+    {
+        "type": "m5.4xlarge",
+        "vcpu": 16,
+        "memory": 65536
+    },
+    {
+        "type": "r5d.xlarge",
+        "vcpu": 4,
+        "memory": 32768
+    },
+    {
+        "type": "i4i.2xlarge",
+        "vcpu": 8,
+        "memory": 65536
+    },
+    {
+        "type": "r5ad.2xlarge",
+        "vcpu": 8,
+        "memory": 65536
+    },
+    {
+        "type": "r5dn.metal",
+        "vcpu": 96,
+        "memory": 786432
+    },
+    {
+        "type": "c5d.4xlarge",
+        "vcpu": 16,
+        "memory": 32768
+    },
+    {
+        "type": "r6id.24xlarge",
+        "vcpu": 96,
+        "memory": 786432
+    },
+    {
+        "type": "m5n.metal",
+        "vcpu": 96,
+        "memory": 393216
+    },
+    {
+        "type": "g5g.16xlarge",
+        "vcpu": 64,
+        "memory": 131072
+    },
+    {
+        "type": "m5d.24xlarge",
+        "vcpu": 96,
+        "memory": 393216
+    },
+    {
+        "type": "u-6tb1.56xlarge",
+        "vcpu": 224,
+        "memory": 6291456
+    },
+    {
+        "type": "c6a.metal",
+        "vcpu": 192,
+        "memory": 393216
+    },
+    {
+        "type": "m6id.metal",
+        "vcpu": 128,
+        "memory": 524288
+    },
+    {
+        "type": "r5n.24xlarge",
+        "vcpu": 96,
+        "memory": 786432
+    },
+    {
+        "type": "r5a.4xlarge",
+        "vcpu": 16,
+        "memory": 131072
+    },
+    {
+        "type": "i4i.large",
+        "vcpu": 2,
+        "memory": 16384
+    },
+    {
+        "type": "inf1.6xlarge",
+        "vcpu": 24,
+        "memory": 49152
+    },
+    {
+        "type": "g3.4xlarge",
+        "vcpu": 16,
+        "memory": 124928
+    },
+    {
+        "type": "c5.9xlarge",
+        "vcpu": 36,
+        "memory": 73728
+    },
+    {
+        "type": "inf1.2xlarge",
+        "vcpu": 8,
+        "memory": 16384
+    },
+    {
+        "type": "c6a.xlarge",
+        "vcpu": 4,
+        "memory": 8192
+    },
+    {
+        "type": "m4.16xlarge",
+        "vcpu": 64,
+        "memory": 262144
+    },
+    {
+        "type": "m6id.16xlarge",
+        "vcpu": 64,
+        "memory": 262144
+    },
+    {
+        "type": "m6a.16xlarge",
+        "vcpu": 64,
+        "memory": 262144
+    },
+    {
+        "type": "c6id.32xlarge",
+        "vcpu": 128,
+        "memory": 262144
+    },
+    {
+        "type": "m6a.4xlarge",
+        "vcpu": 16,
+        "memory": 65536
+    },
+    {
+        "type": "m5a.8xlarge",
+        "vcpu": 32,
+        "memory": 131072
+    },
+    {
+        "type": "x2iedn.4xlarge",
+        "vcpu": 16,
+        "memory": 524288
+    },
+    {
+        "type": "t3.nano",
+        "vcpu": 2,
+        "memory": 512
+    },
+    {
+        "type": "r5n.2xlarge",
+        "vcpu": 8,
+        "memory": 65536
+    },
+    {
+        "type": "c4.xlarge",
+        "vcpu": 4,
+        "memory": 7680
+    },
+    {
+        "type": "r5b.24xlarge",
+        "vcpu": 96,
+        "memory": 786432
+    },
+    {
+        "type": "r5dn.large",
+        "vcpu": 2,
+        "memory": 16384
+    },
+    {
+        "type": "c5.metal",
+        "vcpu": 96,
+        "memory": 196608
+    },
+    {
+        "type": "p4d.24xlarge",
+        "vcpu": 96,
+        "memory": 1179648
+    },
+    {
+        "type": "c5.24xlarge",
+        "vcpu": 96,
+        "memory": 196608
+    },
+    {
+        "type": "r6id.32xlarge",
+        "vcpu": 128,
+        "memory": 1048576
+    },
+    {
+        "type": "m5n.4xlarge",
+        "vcpu": 16,
+        "memory": 65536
+    },
+    {
+        "type": "r6gd.4xlarge",
+        "vcpu": 16,
+        "memory": 131072
+    },
+    {
+        "type": "m6g.8xlarge",
+        "vcpu": 32,
+        "memory": 131072
+    },
+    {
+        "type": "x2iezn.12xlarge",
+        "vcpu": 48,
+        "memory": 1572864
+    },
+    {
+        "type": "m5zn.12xlarge",
+        "vcpu": 48,
+        "memory": 196608
+    },
+    {
+        "type": "m6i.16xlarge",
+        "vcpu": 64,
+        "memory": 262144
+    },
+    {
+        "type": "c5a.2xlarge",
+        "vcpu": 8,
+        "memory": 16384
+    },
+    {
+        "type": "r5d.large",
+        "vcpu": 2,
+        "memory": 16384
+    },
+    {
+        "type": "t4g.small",
+        "vcpu": 2,
+        "memory": 2048
+    },
+    {
+        "type": "r4.2xlarge",
+        "vcpu": 8,
+        "memory": 62464
+    },
+    {
+        "type": "u-6tb1.112xlarge",
+        "vcpu": 448,
+        "memory": 6291456
+    },
+    {
+        "type": "r5n.16xlarge",
+        "vcpu": 64,
+        "memory": 524288
+    },
+    {
+        "type": "r5.16xlarge",
+        "vcpu": 64,
+        "memory": 524288
+    },
+    {
+        "type": "r5b.xlarge",
+        "vcpu": 4,
+        "memory": 32768
+    },
+    {
+        "type": "g5g.8xlarge",
+        "vcpu": 32,
+        "memory": 65536
+    },
+    {
+        "type": "vt1.6xlarge",
+        "vcpu": 24,
+        "memory": 49152
+    },
+    {
+        "type": "x1e.16xlarge",
+        "vcpu": 64,
+        "memory": 1998848
+    },
+    {
+        "type": "x2iedn.16xlarge",
+        "vcpu": 64,
+        "memory": 2097152
+    },
+    {
+        "type": "r6id.metal",
+        "vcpu": 128,
+        "memory": 1048576
+    },
+    {
+        "type": "m5dn.16xlarge",
+        "vcpu": 64,
+        "memory": 262144
+    },
+    {
+        "type": "r5dn.12xlarge",
+        "vcpu": 48,
+        "memory": 393216
+    },
+    {
+        "type": "m6g.12xlarge",
+        "vcpu": 48,
+        "memory": 196608
+    },
+    {
+        "type": "r5dn.2xlarge",
+        "vcpu": 8,
+        "memory": 65536
+    },
+    {
+        "type": "c5a.16xlarge",
+        "vcpu": 64,
+        "memory": 131072
+    },
+    {
+        "type": "z1d.large",
+        "vcpu": 2,
+        "memory": 16384
+    },
+    {
+        "type": "r5.12xlarge",
+        "vcpu": 48,
+        "memory": 393216
+    },
+    {
+        "type": "x1e.xlarge",
+        "vcpu": 4,
+        "memory": 124928
+    },
+    {
+        "type": "m6g.16xlarge",
+        "vcpu": 64,
+        "memory": 262144
+    },
+    {
+        "type": "d2.4xlarge",
+        "vcpu": 16,
+        "memory": 124928
+    },
+    {
+        "type": "x2iezn.metal",
+        "vcpu": 48,
+        "memory": 1572864
+    },
+    {
+        "type": "m6gd.8xlarge",
+        "vcpu": 32,
+        "memory": 131072
+    },
+    {
+        "type": "m5.16xlarge",
+        "vcpu": 64,
+        "memory": 262144
+    },
+    {
+        "type": "c6a.2xlarge",
+        "vcpu": 8,
+        "memory": 16384
+    },
+    {
+        "type": "g5.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "m6id.4xlarge",
+        "vcpu": 16,
+        "memory": 65536
+    },
+    {
+        "type": "x2iedn.24xlarge",
+        "vcpu": 96,
+        "memory": 3145728
+    },
+    {
+        "type": "im4gn.large",
+        "vcpu": 2,
+        "memory": 8192
+    },
+    {
+        "type": "c5a.8xlarge",
+        "vcpu": 32,
+        "memory": 65536
+    },
+    {
+        "type": "m5a.large",
+        "vcpu": 2,
+        "memory": 8192
+    },
+    {
+        "type": "r5.8xlarge",
+        "vcpu": 32,
+        "memory": 262144
+    },
+    {
+        "type": "i3en.2xlarge",
+        "vcpu": 8,
+        "memory": 65536
+    },
+    {
+        "type": "m5ad.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "g4dn.16xlarge",
+        "vcpu": 64,
+        "memory": 262144
+    },
+    {
+        "type": "m5.large",
+        "vcpu": 2,
+        "memory": 8192
+    },
+    {
+        "type": "p3.16xlarge",
+        "vcpu": 64,
+        "memory": 499712
+    },
+    {
+        "type": "m6i.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "i3.large",
+        "vcpu": 2,
+        "memory": 15616
+    },
+    {
+        "type": "i3.16xlarge",
+        "vcpu": 64,
+        "memory": 499712
+    },
+    {
+        "type": "r5d.8xlarge",
+        "vcpu": 32,
+        "memory": 262144
+    },
+    {
+        "type": "m5n.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "t4g.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "r6id.8xlarge",
+        "vcpu": 32,
+        "memory": 262144
+    },
+    {
+        "type": "r4.large",
+        "vcpu": 2,
+        "memory": 15616
+    },
+    {
+        "type": "t3a.large",
+        "vcpu": 2,
+        "memory": 8192
+    },
+    {
+        "type": "im4gn.4xlarge",
+        "vcpu": 16,
+        "memory": 65536
+    },
+    {
+        "type": "m5dn.4xlarge",
+        "vcpu": 16,
+        "memory": 65536
+    },
+    {
+        "type": "r5ad.4xlarge",
+        "vcpu": 16,
+        "memory": 131072
+    },
+    {
+        "type": "x2iezn.2xlarge",
+        "vcpu": 8,
+        "memory": 262144
+    },
+    {
+        "type": "t2.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "r5b.16xlarge",
+        "vcpu": 64,
+        "memory": 524288
+    },
+    {
+        "type": "r6i.12xlarge",
+        "vcpu": 48,
+        "memory": 393216
+    },
+    {
+        "type": "x2iezn.6xlarge",
+        "vcpu": 24,
+        "memory": 786432
+    },
+    {
+        "type": "c6a.4xlarge",
+        "vcpu": 16,
+        "memory": 32768
+    },
+    {
+        "type": "g5.16xlarge",
+        "vcpu": 64,
+        "memory": 262144
+    },
+    {
+        "type": "c5n.metal",
+        "vcpu": 72,
+        "memory": 196608
+    },
+    {
+        "type": "r5d.metal",
+        "vcpu": 96,
+        "memory": 786432
+    },
+    {
+        "type": "z1d.metal",
+        "vcpu": 48,
+        "memory": 393216
+    },
+    {
+        "type": "c6id.metal",
+        "vcpu": 128,
+        "memory": 262144
+    },
+    {
+        "type": "m5d.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "r5.xlarge",
+        "vcpu": 4,
+        "memory": 32768
+    },
+    {
+        "type": "m4.10xlarge",
+        "vcpu": 40,
+        "memory": 163840
+    },
+    {
+        "type": "r5dn.16xlarge",
+        "vcpu": 64,
+        "memory": 524288
+    },
+    {
+        "type": "r5n.8xlarge",
+        "vcpu": 32,
+        "memory": 262144
+    },
+    {
+        "type": "c6gn.2xlarge",
+        "vcpu": 8,
+        "memory": 16384
+    },
+    {
+        "type": "c5.2xlarge",
+        "vcpu": 8,
+        "memory": 16384
+    },
+    {
+        "type": "c6g.medium",
+        "vcpu": 1,
+        "memory": 2048
+    },
+    {
+        "type": "c5d.metal",
+        "vcpu": 96,
+        "memory": 196608
+    },
+    {
+        "type": "m5n.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "c6gn.large",
+        "vcpu": 2,
+        "memory": 4096
+    },
+    {
+        "type": "m5n.24xlarge",
+        "vcpu": 96,
+        "memory": 393216
+    },
+    {
+        "type": "r6g.xlarge",
+        "vcpu": 4,
+        "memory": 32768
+    },
+    {
+        "type": "z1d.6xlarge",
+        "vcpu": 24,
+        "memory": 196608
+    },
+    {
+        "type": "m5dn.24xlarge",
+        "vcpu": 96,
+        "memory": 393216
+    },
+    {
+        "type": "m5zn.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "r6i.metal",
+        "vcpu": 128,
+        "memory": 1048576
+    },
+    {
+        "type": "r5ad.16xlarge",
+        "vcpu": 64,
+        "memory": 524288
+    },
+    {
+        "type": "r5n.xlarge",
+        "vcpu": 4,
+        "memory": 32768
+    },
+    {
+        "type": "t2.medium",
+        "vcpu": 2,
+        "memory": 4096
+    },
+    {
+        "type": "z1d.12xlarge",
+        "vcpu": 48,
+        "memory": 393216
+    },
+    {
+        "type": "r6gd.8xlarge",
+        "vcpu": 32,
+        "memory": 262144
+    },
+    {
+        "type": "r6gd.16xlarge",
+        "vcpu": 64,
+        "memory": 524288
+    },
+    {
+        "type": "c5d.xlarge",
+        "vcpu": 4,
+        "memory": 8192
+    },
+    {
+        "type": "x2idn.32xlarge",
+        "vcpu": 128,
+        "memory": 2097152
+    },
+    {
+        "type": "c6id.12xlarge",
+        "vcpu": 48,
+        "memory": 98304
+    },
+    {
+        "type": "x2idn.16xlarge",
+        "vcpu": 64,
+        "memory": 1048576
+    },
+    {
+        "type": "m4.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "m5d.12xlarge",
+        "vcpu": 48,
+        "memory": 196608
+    },
+    {
+        "type": "i3.8xlarge",
+        "vcpu": 32,
+        "memory": 249856
+    },
+    {
+        "type": "c5.large",
+        "vcpu": 2,
+        "memory": 4096
+    },
+    {
+        "type": "g4dn.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "g4ad.16xlarge",
+        "vcpu": 64,
+        "memory": 262144
+    },
+    {
+        "type": "r4.8xlarge",
+        "vcpu": 32,
+        "memory": 249856
+    },
+    {
+        "type": "vt1.24xlarge",
+        "vcpu": 96,
+        "memory": 196608
+    },
+    {
+        "type": "r5ad.xlarge",
+        "vcpu": 4,
+        "memory": 32768
+    },
+    {
+        "type": "c6gn.8xlarge",
+        "vcpu": 32,
+        "memory": 65536
+    },
+    {
+        "type": "m5.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "r5.2xlarge",
+        "vcpu": 8,
+        "memory": 65536
+    },
+    {
+        "type": "r6id.large",
+        "vcpu": 2,
+        "memory": 16384
+    },
+    {
+        "type": "is4gen.large",
+        "vcpu": 2,
+        "memory": 12288
+    },
+    {
+        "type": "m5a.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "g4dn.4xlarge",
+        "vcpu": 16,
+        "memory": 65536
+    },
+    {
+        "type": "m6a.48xlarge",
+        "vcpu": 192,
+        "memory": 786432
+    },
+    {
+        "type": "r5n.large",
+        "vcpu": 2,
+        "memory": 16384
+    },
+    {
+        "type": "m5a.12xlarge",
+        "vcpu": 48,
+        "memory": 196608
+    },
+    {
+        "type": "im4gn.16xlarge",
+        "vcpu": 64,
+        "memory": 262144
+    },
+    {
+        "type": "c6g.4xlarge",
+        "vcpu": 16,
+        "memory": 32768
+    },
+    {
+        "type": "g3s.xlarge",
+        "vcpu": 4,
+        "memory": 31232
+    },
+    {
+        "type": "g5.48xlarge",
+        "vcpu": 192,
+        "memory": 786432
+    },
+    {
+        "type": "m6i.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "t2.small",
+        "vcpu": 1,
+        "memory": 2048
+    },
+    {
+        "type": "c6gd.large",
+        "vcpu": 2,
+        "memory": 4096
+    },
+    {
+        "type": "r5a.24xlarge",
+        "vcpu": 96,
+        "memory": 786432
+    },
+    {
+        "type": "c5d.9xlarge",
+        "vcpu": 36,
+        "memory": 73728
+    },
+    {
+        "type": "c6id.xlarge",
+        "vcpu": 4,
+        "memory": 8192
+    },
+    {
+        "type": "c6id.2xlarge",
+        "vcpu": 8,
+        "memory": 16384
+    },
+    {
+        "type": "t3a.nano",
+        "vcpu": 2,
+        "memory": 512
+    },
+    {
+        "type": "g4dn.8xlarge",
+        "vcpu": 32,
+        "memory": 131072
+    },
+    {
+        "type": "r4.4xlarge",
+        "vcpu": 16,
+        "memory": 124928
+    },
+    {
+        "type": "r6gd.12xlarge",
+        "vcpu": 48,
+        "memory": 393216
+    },
+    {
+        "type": "c6g.2xlarge",
+        "vcpu": 8,
+        "memory": 16384
+    },
+    {
+        "type": "i3en.xlarge",
+        "vcpu": 4,
+        "memory": 32768
+    },
+    {
+        "type": "c6a.large",
+        "vcpu": 2,
+        "memory": 4096
+    },
+    {
+        "type": "i3.4xlarge",
+        "vcpu": 16,
+        "memory": 124928
+    },
+    {
+        "type": "m5a.24xlarge",
+        "vcpu": 96,
+        "memory": 393216
+    },
+    {
+        "type": "r6i.2xlarge",
+        "vcpu": 8,
+        "memory": 65536
+    },
+    {
+        "type": "r6g.2xlarge",
+        "vcpu": 8,
+        "memory": 65536
+    },
+    {
+        "type": "m6id.large",
+        "vcpu": 2,
+        "memory": 8192
+    },
+    {
+        "type": "c6gd.medium",
+        "vcpu": 1,
+        "memory": 2048
+    },
+    {
+        "type": "p2.16xlarge",
+        "vcpu": 64,
+        "memory": 749568
+    },
+    {
+        "type": "i4i.8xlarge",
+        "vcpu": 32,
+        "memory": 262144
+    },
+    {
+        "type": "c5n.xlarge",
+        "vcpu": 4,
+        "memory": 10752
+    },
+    {
+        "type": "u-9tb1.112xlarge",
+        "vcpu": 448,
+        "memory": 9437184
+    },
+    {
+        "type": "m6i.12xlarge",
+        "vcpu": 48,
+        "memory": 196608
+    },
+    {
+        "type": "r5d.12xlarge",
+        "vcpu": 48,
+        "memory": 393216
+    },
+    {
+        "type": "m6gd.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "i3en.large",
+        "vcpu": 2,
+        "memory": 16384
+    },
+    {
+        "type": "inf1.24xlarge",
+        "vcpu": 96,
+        "memory": 196608
+    },
+    {
+        "type": "c6gd.12xlarge",
+        "vcpu": 48,
+        "memory": 98304
+    },
+    {
+        "type": "c6i.xlarge",
+        "vcpu": 4,
+        "memory": 8192
+    },
+    {
+        "type": "m6gd.large",
+        "vcpu": 2,
+        "memory": 8192
+    },
+    {
+        "type": "d3.4xlarge",
+        "vcpu": 16,
+        "memory": 131072
+    },
+    {
+        "type": "p3dn.24xlarge",
+        "vcpu": 96,
+        "memory": 786432
+    },
+    {
+        "type": "m6a.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "r6i.8xlarge",
+        "vcpu": 32,
+        "memory": 262144
+    },
+    {
+        "type": "x2iedn.8xlarge",
+        "vcpu": 32,
+        "memory": 1048576
+    },
+    {
+        "type": "is4gen.medium",
+        "vcpu": 1,
+        "memory": 6144
+    },
+    {
+        "type": "c6gd.8xlarge",
+        "vcpu": 32,
+        "memory": 65536
+    },
+    {
+        "type": "r6g.metal",
+        "vcpu": 64,
+        "memory": 524288
+    },
+    {
+        "type": "g5.8xlarge",
+        "vcpu": 32,
+        "memory": 131072
+    },
+    {
+        "type": "p3.8xlarge",
+        "vcpu": 32,
+        "memory": 249856
+    },
+    {
+        "type": "c6g.8xlarge",
+        "vcpu": 32,
+        "memory": 65536
+    },
+    {
+        "type": "p2.xlarge",
+        "vcpu": 4,
+        "memory": 62464
+    },
+    {
+        "type": "c6i.12xlarge",
+        "vcpu": 48,
+        "memory": 98304
+    },
+    {
+        "type": "c6id.4xlarge",
+        "vcpu": 16,
+        "memory": 32768
+    },
+    {
+        "type": "z1d.3xlarge",
+        "vcpu": 12,
+        "memory": 98304
+    },
+    {
+        "type": "m6g.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "r5a.8xlarge",
+        "vcpu": 32,
+        "memory": 262144
+    },
+    {
+        "type": "m6g.medium",
+        "vcpu": 1,
+        "memory": 4096
+    },
+    {
+        "type": "r5dn.4xlarge",
+        "vcpu": 16,
+        "memory": 131072
+    },
+    {
+        "type": "m5d.4xlarge",
+        "vcpu": 16,
+        "memory": 65536
+    },
+    {
+        "type": "c6i.metal",
+        "vcpu": 128,
+        "memory": 262144
+    },
+    {
+        "type": "r6i.large",
+        "vcpu": 2,
+        "memory": 16384
+    },
+    {
+        "type": "r5n.metal",
+        "vcpu": 96,
+        "memory": 786432
+    },
+    {
+        "type": "i3en.metal",
+        "vcpu": 96,
+        "memory": 786432
+    },
+    {
+        "type": "m6a.12xlarge",
+        "vcpu": 48,
+        "memory": 196608
+    },
+    {
+        "type": "d2.xlarge",
+        "vcpu": 4,
+        "memory": 31232
+    },
+    {
+        "type": "t3.small",
+        "vcpu": 2,
+        "memory": 2048
+    },
+    {
+        "type": "m6a.32xlarge",
+        "vcpu": 128,
+        "memory": 524288
+    },
+    {
+        "type": "c6gd.4xlarge",
+        "vcpu": 16,
+        "memory": 32768
+    },
+    {
+        "type": "t3a.micro",
+        "vcpu": 2,
+        "memory": 1024
+    },
+    {
+        "type": "m6id.24xlarge",
+        "vcpu": 96,
+        "memory": 393216
+    },
+    {
+        "type": "g5g.4xlarge",
+        "vcpu": 16,
+        "memory": 32768
+    },
+    {
+        "type": "x1.32xlarge",
+        "vcpu": 128,
+        "memory": 1998848
+    },
+    {
+        "type": "m6a.24xlarge",
+        "vcpu": 96,
+        "memory": 393216
+    },
+    {
+        "type": "r5b.8xlarge",
+        "vcpu": 32,
+        "memory": 262144
+    },
+    {
+        "type": "t2.nano",
+        "vcpu": 1,
+        "memory": 512
+    },
+    {
+        "type": "is4gen.8xlarge",
+        "vcpu": 32,
+        "memory": 196608
+    },
+    {
+        "type": "r6i.32xlarge",
+        "vcpu": 128,
+        "memory": 1048576
+    },
+    {
+        "type": "c6gd.2xlarge",
+        "vcpu": 8,
+        "memory": 16384
+    },
+    {
+        "type": "i3.2xlarge",
+        "vcpu": 8,
+        "memory": 62464
+    },
+    {
+        "type": "m6id.8xlarge",
+        "vcpu": 32,
+        "memory": 131072
+    },
+    {
+        "type": "m6a.8xlarge",
+        "vcpu": 32,
+        "memory": 131072
+    },
+    {
+        "type": "c5a.large",
+        "vcpu": 2,
+        "memory": 4096
+    },
+    {
+        "type": "i4i.32xlarge",
+        "vcpu": 128,
+        "memory": 1048576
+    },
+    {
+        "type": "i4i.xlarge",
+        "vcpu": 4,
+        "memory": 32768
+    },
+    {
+        "type": "g5g.xlarge",
+        "vcpu": 4,
+        "memory": 8192
+    },
+    {
+        "type": "c6g.metal",
+        "vcpu": 64,
+        "memory": 131072
+    },
+    {
+        "type": "g4ad.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "i3.metal",
+        "vcpu": 72,
+        "memory": 524288
+    },
+    {
+        "type": "x1e.4xlarge",
+        "vcpu": 16,
+        "memory": 499712
+    },
+    {
+        "type": "m5ad.16xlarge",
+        "vcpu": 64,
+        "memory": 262144
+    },
+    {
+        "type": "x2iedn.32xlarge",
+        "vcpu": 128,
+        "memory": 4194304
+    },
+    {
+        "type": "t3a.xlarge",
+        "vcpu": 4,
+        "memory": 16384
+    },
+    {
+        "type": "i3en.6xlarge",
+        "vcpu": 24,
+        "memory": 196608
+    },
+    {
+        "type": "c5.18xlarge",
+        "vcpu": 72,
+        "memory": 147456
+    },
+    {
+        "type": "g4dn.2xlarge",
+        "vcpu": 8,
+        "memory": 32768
+    },
+    {
+        "type": "r5dn.24xlarge",
+        "vcpu": 96,
+        "memory": 786432
+    }
+]

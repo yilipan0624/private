@@ -1,0 +1,111 @@
+import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import * as ec2  from 'aws-cdk-lib/aws-ec2';
+import * as s3   from 'aws-cdk-lib/aws-s3';
+import * as elb  from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import * as acm  from 'aws-cdk-lib/aws-certificatemanager'
+
+/**
+ * AlbConstruct プロパティ
+ */
+type AlbConstructProps = {
+    /**
+     * VPC
+     */
+    vpc: ec2.Vpc;
+    /**
+     * パブリックサブネット
+     */
+    publicSubnets: ec2.ISubnet[];
+    /**
+     * ALB名
+     */
+    albName?: string
+    /**
+     * ALB SecurityGroup 名
+     */
+    albSgName?: string;
+    /**
+     * ALBにホストするACMのArn
+     */
+    acmArn: string;
+    /**
+     * ターゲットグループ名
+     * @remark ターゲットグループ名を固定すると更新に失敗することがあるため、非推奨
+     */
+    targetGroupName?: string,
+    /** cdk Destroy した時に自動で削除するか(開発用) 。デフォルト:false */
+    cdkAutoRemove?: boolean;
+}
+export type AddAccessLogProps = {
+    /**
+     * アクセスログバケット
+     */
+    accessLogBucket: s3.IBucket;
+}
+
+
+/**
+ * パブリックALBを作成
+ */
+export class AlbConstruct extends Construct {
+    public readonly instanceProps: AlbConstructProps;
+    public readonly alb: elb.ApplicationLoadBalancer;
+    public readonly albListener: elb.ApplicationListener;
+    public readonly targetGroup: elb.ApplicationTargetGroup;
+
+    constructor(scope: Construct, id: string, props: AlbConstructProps) {
+        super(scope, id);
+        this.instanceProps = props;
+
+        // ALB SecurityGroup
+        const albSg = new ec2.SecurityGroup(this, 'sg-alb', {
+            vpc: props.vpc,
+            securityGroupName: props.albSgName,
+            allowAllOutbound: true
+        });
+        albSg.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(443));
+        if (props.albSgName) {
+            cdk.Tags.of(albSg).add('Name', props.albSgName);
+        }
+
+        // ALB
+        this.alb = new elb.ApplicationLoadBalancer(this, "Alb", {
+            vpc: props.vpc,
+            internetFacing: true,
+            vpcSubnets: { subnets: props.publicSubnets },
+            securityGroup: albSg,
+            loadBalancerName: props.albName,
+            deletionProtection: !props.cdkAutoRemove
+        });
+        if (props.albName) {
+            cdk.Tags.of(this.alb).add('Name', props.albName);
+        }
+        // ACM
+        const acm_ = acm.Certificate.fromCertificateArn(this, 'acm', props.acmArn);
+        
+        // TargetGroup
+        this.targetGroup = new elb.ApplicationTargetGroup(this, 'TargetGroup', {
+            vpc: props.vpc,
+            targetGroupName: props.targetGroupName,
+            targetType: elb.TargetType.INSTANCE, 
+            protocol: elb.ApplicationProtocol.HTTP,
+            port: 443, 
+        });
+
+        // Listener
+        this.albListener = this.alb.addListener("AlbListener", {
+            port: 443,
+            protocol: elb.ApplicationProtocol.HTTPS,
+            certificates: [acm_],
+            defaultAction: elb.ListenerAction.forward([this.targetGroup]),
+        });
+    }
+
+    /**
+     * AccessLogを追加
+     */
+    addAccessLog(props: AddAccessLogProps) {
+        this.alb.logAccessLogs(props.accessLogBucket, 'accesslog');
+    }
+}

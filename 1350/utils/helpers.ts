@@ -1,0 +1,63 @@
+import { ResourceNamingProps, InstanceTypeInfo } from './commonTypes';
+import InstanceTypeJson from './instanceTypeInfo.json';
+/**
+ * パラメータチェック関数
+ * @param object オブジェクト
+ * @param propName オブジェクトキー
+ * @returns 
+ */
+export function ensureStr(object: { [name: string]: string }, propName: string): string {
+    if (!object[propName] || object[propName].trim().length === 0)
+        throw new Error(propName + " does not exist or is empty");
+    return object[propName];
+}
+
+/**
+ * 命名ルール管理
+ */
+export class ResourceNameBuilder {
+
+    /**
+     * リソース名生成関数
+     * @returns リソース名
+     */
+    public static makeResourceNameStr(props: ResourceNamingProps): string {
+        if (props.increment) {
+            if (!(0 < props.increment && props.increment < 100 && Number.isInteger(props.increment))) {
+                throw new Error('Increments are integers from 0 to 99.');
+            }
+        }
+        let resultStr = `${props.pjPrefix}-${props.serviceName}-${props.systemId}-${props.envKey}`;
+        resultStr = resultStr + ((props.use === undefined || props.use === '') ? '' : '-' + props.use);
+        resultStr = resultStr + ((props.increment === undefined || props.increment === 0) ? '' : '-' + ('00' + props.increment).slice(-2));
+        return resultStr;
+    }
+}
+
+
+/**
+ * インスタンタイプ情報
+ * @remarks 下記コマンドにて最新のインスタンスタイプをCLIで取得して、utils/instanceTypeInfo.jsonを更新すること。
+aws ec2 describe-instance-types \
+--filters "Name=current-generation,Values=true" \
+--query "InstanceTypes[].{type:InstanceType,vcpu:VCpuInfo.DefaultVCpus,memory:MemoryInfo.SizeInMiB}" \
+> utils/instanceTypeInfo.json
+ */
+export class InstanceType {
+
+    private static InstanceTypeMap: { [type: string]: InstanceTypeInfo }
+    /**
+     * インスタンス情報取得
+     * @param instanceType インスタンスタイプ ex. m5.large
+     * @returns インスタンス情報
+     */
+    public static retriveInfo(instanceType: string): InstanceTypeInfo | undefined {
+        if (!this.InstanceTypeMap) {
+            this.InstanceTypeMap = {};
+            InstanceTypeJson.forEach(v_ => {
+                this.InstanceTypeMap[v_.type] = { vcpu: v_.vcpu, memory: v_.memory }
+            });
+        }
+        return this.InstanceTypeMap[instanceType];
+    }
+}

@@ -1,0 +1,1337 @@
+{
+ "Resources": {
+  "S3LogBuckets3Bucket9252A6FD": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "AES256"
+       }
+      }
+     ]
+    },
+    "BucketName": "cpi-s3-ps-dev-s3-accesslog-01",
+    "LifecycleConfiguration": {
+     "Rules": [
+      {
+       "ExpirationInDays": 7,
+       "Id": "cpi-lifecycle-ps-dev-accesslog-01",
+       "NoncurrentVersionExpiration": {
+        "NoncurrentDays": 7
+       },
+       "Status": "Enabled"
+      }
+     ]
+    },
+    "OwnershipControls": {
+     "Rules": [
+      {
+       "ObjectOwnership": "BucketOwnerEnforced"
+      }
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-s3-ps-dev-s3-accesslog-01"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/S3LogBucket/s3Bucket/Resource"
+   }
+  },
+  "S3LogBuckets3BucketPolicyDB375CE9": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "S3LogBuckets3Bucket9252A6FD"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:*",
+       "Condition": {
+        "Bool": {
+         "aws:SecureTransport": "false"
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "S3LogBuckets3Bucket9252A6FD",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "S3LogBuckets3Bucket9252A6FD",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetBucketLocation",
+        "s3:ListBucket",
+        "s3:ListBucketMultipartUploads"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": [
+         "arn:aws:iam::679182460211:user/CPI-YILIPAN",
+         "arn:aws:iam::679182460211:user/CPI-YILIPAN"
+        ]
+       },
+       "Resource": {
+        "Fn::GetAtt": [
+         "S3LogBuckets3Bucket9252A6FD",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "s3:AbortMultipartUpload",
+        "s3:DeleteObject",
+        "s3:GetObject",
+        "s3:ListMultipartUploadParts",
+        "s3:PutObjectTagging",
+        "s3:GetObjectTagging",
+        "s3:PutObject"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": [
+         "arn:aws:iam::679182460211:user/CPI-YILIPAN",
+         "arn:aws:iam::679182460211:user/CPI-YILIPAN"
+        ]
+       },
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          {
+           "Fn::GetAtt": [
+            "S3LogBuckets3Bucket9252A6FD",
+            "Arn"
+           ]
+          },
+          "/*"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": "s3:ListBucket",
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::679182460211:root"
+          ]
+         ]
+        }
+       },
+       "Resource": {
+        "Fn::GetAtt": [
+         "S3LogBuckets3Bucket9252A6FD",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "s3:PutObject",
+       "Condition": {
+        "StringEquals": {
+         "aws:SourceAccount": "679182460211"
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "logging.s3.amazonaws.com"
+       },
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          {
+           "Fn::GetAtt": [
+            "S3LogBuckets3Bucket9252A6FD",
+            "Arn"
+           ]
+          },
+          "/*"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::582318560864:root"
+          ]
+         ]
+        }
+       },
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          {
+           "Fn::GetAtt": [
+            "S3LogBuckets3Bucket9252A6FD",
+            "Arn"
+           ]
+          },
+          "/accesslog/AWSLogs/679182460211/*"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": "s3:PutObject",
+       "Condition": {
+        "StringEquals": {
+         "s3:x-amz-acl": "bucket-owner-full-control"
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "delivery.logs.amazonaws.com"
+       },
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          {
+           "Fn::GetAtt": [
+            "S3LogBuckets3Bucket9252A6FD",
+            "Arn"
+           ]
+          },
+          "/accesslog/AWSLogs/679182460211/*"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": "s3:GetBucketAcl",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "delivery.logs.amazonaws.com"
+       },
+       "Resource": {
+        "Fn::GetAtt": [
+         "S3LogBuckets3Bucket9252A6FD",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/S3LogBucket/s3Bucket/Policy/Resource"
+   }
+  },
+  "PsVpcB3B0C151": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "10.200.0.0/16",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-vpc-ps-dev-apne1-01"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/Vpc/Resource"
+   }
+  },
+  "PsVpcS3GatewayEp039F2B29": {
+   "Type": "AWS::EC2::VPCEndpoint",
+   "Properties": {
+    "ServiceName": {
+     "Fn::Join": [
+      "",
+      [
+       "com.amazonaws.",
+       {
+        "Ref": "AWS::Region"
+       },
+       ".s3"
+      ]
+     ]
+    },
+    "VpcId": {
+     "Ref": "PsVpcB3B0C151"
+    },
+    "RouteTableIds": [
+     {
+      "Ref": "PsVpcPublicSubnet0PublicSubnetRouteTableB244480B"
+     },
+     {
+      "Ref": "PsVpcPublicSubnet1PublicSubnetRouteTable6BA5313F"
+     },
+     {
+      "Ref": "PsVpcPrivateSubnet0PrivateSubnetRouteTable30A55845"
+     },
+     {
+      "Ref": "PsVpcPrivateSubnet1PrivateSubnetRouteTable3C5D049F"
+     },
+     {
+      "Ref": "PsVpcPrivateSubnet2PrivateSubnetRouteTable95471598"
+     },
+     {
+      "Ref": "PsVpcPrivateSubnet3PrivateSubnetRouteTable4711CA5A"
+     }
+    ],
+    "VpcEndpointType": "Gateway"
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/Vpc/S3GatewayEp/Resource"
+   }
+  },
+  "PsVpcEc2MessagesInterfaceEpSecurityGroupA7E42F28": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "dev-cpi-network/PsVpc/Vpc/Ec2MessagesInterfaceEp/SecurityGroup",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": {
+       "Fn::GetAtt": [
+        "PsVpcB3B0C151",
+        "CidrBlock"
+       ]
+      },
+      "Description": {
+       "Fn::Join": [
+        "",
+        [
+         "from ",
+         {
+          "Fn::GetAtt": [
+           "PsVpcB3B0C151",
+           "CidrBlock"
+          ]
+         },
+         ":443"
+        ]
+       ]
+      },
+      "FromPort": 443,
+      "IpProtocol": "tcp",
+      "ToPort": 443
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-vpc-ps-dev-apne1-01"
+     }
+    ],
+    "VpcId": {
+     "Ref": "PsVpcB3B0C151"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/Vpc/Ec2MessagesInterfaceEp/SecurityGroup/Resource"
+   }
+  },
+  "PsVpcEc2MessagesInterfaceEp5B71D0AF": {
+   "Type": "AWS::EC2::VPCEndpoint",
+   "Properties": {
+    "ServiceName": "com.amazonaws.ap-northeast-1.ec2messages",
+    "VpcId": {
+     "Ref": "PsVpcB3B0C151"
+    },
+    "PrivateDnsEnabled": true,
+    "SecurityGroupIds": [
+     {
+      "Fn::GetAtt": [
+       "PsVpcEc2MessagesInterfaceEpSecurityGroupA7E42F28",
+       "GroupId"
+      ]
+     }
+    ],
+    "SubnetIds": [
+     {
+      "Ref": "PsVpcPrivateSubnet0PrivateSubnetE40A98D3"
+     },
+     {
+      "Ref": "PsVpcPrivateSubnet3PrivateSubnetF9D7050C"
+     }
+    ],
+    "VpcEndpointType": "Interface"
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/Vpc/Ec2MessagesInterfaceEp/Resource"
+   }
+  },
+  "PsVpcSsmInterfaceEpSecurityGroup08A93B32": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "dev-cpi-network/PsVpc/Vpc/SsmInterfaceEp/SecurityGroup",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": {
+       "Fn::GetAtt": [
+        "PsVpcB3B0C151",
+        "CidrBlock"
+       ]
+      },
+      "Description": {
+       "Fn::Join": [
+        "",
+        [
+         "from ",
+         {
+          "Fn::GetAtt": [
+           "PsVpcB3B0C151",
+           "CidrBlock"
+          ]
+         },
+         ":443"
+        ]
+       ]
+      },
+      "FromPort": 443,
+      "IpProtocol": "tcp",
+      "ToPort": 443
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-vpc-ps-dev-apne1-01"
+     }
+    ],
+    "VpcId": {
+     "Ref": "PsVpcB3B0C151"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/Vpc/SsmInterfaceEp/SecurityGroup/Resource"
+   }
+  },
+  "PsVpcSsmInterfaceEp1CABA055": {
+   "Type": "AWS::EC2::VPCEndpoint",
+   "Properties": {
+    "ServiceName": "com.amazonaws.ap-northeast-1.ssm",
+    "VpcId": {
+     "Ref": "PsVpcB3B0C151"
+    },
+    "PrivateDnsEnabled": true,
+    "SecurityGroupIds": [
+     {
+      "Fn::GetAtt": [
+       "PsVpcSsmInterfaceEpSecurityGroup08A93B32",
+       "GroupId"
+      ]
+     }
+    ],
+    "SubnetIds": [
+     {
+      "Ref": "PsVpcPrivateSubnet0PrivateSubnetE40A98D3"
+     },
+     {
+      "Ref": "PsVpcPrivateSubnet3PrivateSubnetF9D7050C"
+     }
+    ],
+    "VpcEndpointType": "Interface"
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/Vpc/SsmInterfaceEp/Resource"
+   }
+  },
+  "PsVpcSsmMessagesInterfaceEpSecurityGroupBA464C26": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "dev-cpi-network/PsVpc/Vpc/SsmMessagesInterfaceEp/SecurityGroup",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": {
+       "Fn::GetAtt": [
+        "PsVpcB3B0C151",
+        "CidrBlock"
+       ]
+      },
+      "Description": {
+       "Fn::Join": [
+        "",
+        [
+         "from ",
+         {
+          "Fn::GetAtt": [
+           "PsVpcB3B0C151",
+           "CidrBlock"
+          ]
+         },
+         ":443"
+        ]
+       ]
+      },
+      "FromPort": 443,
+      "IpProtocol": "tcp",
+      "ToPort": 443
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-vpc-ps-dev-apne1-01"
+     }
+    ],
+    "VpcId": {
+     "Ref": "PsVpcB3B0C151"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/Vpc/SsmMessagesInterfaceEp/SecurityGroup/Resource"
+   }
+  },
+  "PsVpcSsmMessagesInterfaceEpAB120C6D": {
+   "Type": "AWS::EC2::VPCEndpoint",
+   "Properties": {
+    "ServiceName": "com.amazonaws.ap-northeast-1.ssmmessages",
+    "VpcId": {
+     "Ref": "PsVpcB3B0C151"
+    },
+    "PrivateDnsEnabled": true,
+    "SecurityGroupIds": [
+     {
+      "Fn::GetAtt": [
+       "PsVpcSsmMessagesInterfaceEpSecurityGroupBA464C26",
+       "GroupId"
+      ]
+     }
+    ],
+    "SubnetIds": [
+     {
+      "Ref": "PsVpcPrivateSubnet0PrivateSubnetE40A98D3"
+     },
+     {
+      "Ref": "PsVpcPrivateSubnet3PrivateSubnetF9D7050C"
+     }
+    ],
+    "VpcEndpointType": "Interface"
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/Vpc/SsmMessagesInterfaceEp/Resource"
+   }
+  },
+  "PsVpcIgw5C685DB3": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-igw-ps-dev-01"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/Igw"
+   }
+  },
+  "PsVpcIgwAtt70BBF2A3": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "VpcId": {
+     "Ref": "PsVpcB3B0C151"
+    },
+    "InternetGatewayId": {
+     "Ref": "PsVpcIgw5C685DB3"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/IgwAtt"
+   }
+  },
+  "PsVpcPublicSubnet0PublicSubnet2D08C832": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "PsVpcB3B0C151"
+    },
+    "AvailabilityZone": "ap-northeast-1a",
+    "CidrBlock": "10.200.0.0/24",
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-subnet-ps-dev-public-a-01"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PublicSubnet0/PublicSubnet/Subnet"
+   }
+  },
+  "PsVpcPublicSubnet0PublicSubnetRouteTableB244480B": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "PsVpcB3B0C151"
+    },
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-rtb-ps-dev-public-a-01"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PublicSubnet0/PublicSubnet/RouteTable"
+   }
+  },
+  "PsVpcPublicSubnet0PublicSubnetRouteTableAssociationB5186F48": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "PsVpcPublicSubnet0PublicSubnetRouteTableB244480B"
+    },
+    "SubnetId": {
+     "Ref": "PsVpcPublicSubnet0PublicSubnet2D08C832"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PublicSubnet0/PublicSubnet/RouteTableAssociation"
+   }
+  },
+  "PsVpcPublicSubnet0PublicSubnetDefaultRouteA06EF3AF": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "PsVpcPublicSubnet0PublicSubnetRouteTableB244480B"
+    },
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "PsVpcIgw5C685DB3"
+    }
+   },
+   "DependsOn": [
+    "PsVpcIgw5C685DB3"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PublicSubnet0/PublicSubnet/DefaultRoute"
+   }
+  },
+  "PsVpcPublicSubnet0Eip29037005": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-eip-ps-dev-a-01"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PublicSubnet0/Eip"
+   }
+  },
+  "PsVpcPublicSubnet0NatGateway1C7BC65D": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "SubnetId": {
+     "Ref": "PsVpcPublicSubnet0PublicSubnet2D08C832"
+    },
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "PsVpcPublicSubnet0Eip29037005",
+      "AllocationId"
+     ]
+    },
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-nat-ps-dev-a-01"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PublicSubnet0/NatGateway"
+   }
+  },
+  "PsVpcPublicSubnet1PublicSubnetF4FCB026": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "PsVpcB3B0C151"
+    },
+    "AvailabilityZone": "ap-northeast-1c",
+    "CidrBlock": "10.200.100.0/24",
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-subnet-ps-dev-public-c-01"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PublicSubnet1/PublicSubnet/Subnet"
+   }
+  },
+  "PsVpcPublicSubnet1PublicSubnetRouteTable6BA5313F": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "PsVpcB3B0C151"
+    },
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-rtb-ps-dev-public-c-01"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PublicSubnet1/PublicSubnet/RouteTable"
+   }
+  },
+  "PsVpcPublicSubnet1PublicSubnetRouteTableAssociation435B1413": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "PsVpcPublicSubnet1PublicSubnetRouteTable6BA5313F"
+    },
+    "SubnetId": {
+     "Ref": "PsVpcPublicSubnet1PublicSubnetF4FCB026"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PublicSubnet1/PublicSubnet/RouteTableAssociation"
+   }
+  },
+  "PsVpcPublicSubnet1PublicSubnetDefaultRouteE5FC4C06": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "PsVpcPublicSubnet1PublicSubnetRouteTable6BA5313F"
+    },
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "PsVpcIgw5C685DB3"
+    }
+   },
+   "DependsOn": [
+    "PsVpcIgw5C685DB3"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PublicSubnet1/PublicSubnet/DefaultRoute"
+   }
+  },
+  "PsVpcPublicSubnet1EipB03695F1": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-eip-ps-dev-c-01"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PublicSubnet1/Eip"
+   }
+  },
+  "PsVpcPublicSubnet1NatGateway449156E1": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "SubnetId": {
+     "Ref": "PsVpcPublicSubnet1PublicSubnetF4FCB026"
+    },
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "PsVpcPublicSubnet1EipB03695F1",
+      "AllocationId"
+     ]
+    },
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-nat-ps-dev-c-01"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PublicSubnet1/NatGateway"
+   }
+  },
+  "PsVpcPrivateSubnet0PrivateSubnetE40A98D3": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "PsVpcB3B0C151"
+    },
+    "AvailabilityZone": "ap-northeast-1a",
+    "CidrBlock": "10.200.1.0/24",
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-subnet-ps-dev-private-a-01"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PrivateSubnet0/PrivateSubnet/Subnet"
+   }
+  },
+  "PsVpcPrivateSubnet0PrivateSubnetRouteTable30A55845": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "PsVpcB3B0C151"
+    },
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-rtb-ps-dev-private-a-01"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PrivateSubnet0/PrivateSubnet/RouteTable"
+   }
+  },
+  "PsVpcPrivateSubnet0PrivateSubnetRouteTableAssociationA4BCDB43": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "PsVpcPrivateSubnet0PrivateSubnetRouteTable30A55845"
+    },
+    "SubnetId": {
+     "Ref": "PsVpcPrivateSubnet0PrivateSubnetE40A98D3"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PrivateSubnet0/PrivateSubnet/RouteTableAssociation"
+   }
+  },
+  "PsVpcPrivateSubnet0PrivateSubnetDefaultRoute4966EBAE": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "PsVpcPrivateSubnet0PrivateSubnetRouteTable30A55845"
+    },
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "PsVpcPublicSubnet0NatGateway1C7BC65D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PrivateSubnet0/PrivateSubnet/DefaultRoute"
+   }
+  },
+  "PsVpcPrivateSubnet1PrivateSubnetD6B6AC37": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "PsVpcB3B0C151"
+    },
+    "AvailabilityZone": "ap-northeast-1a",
+    "CidrBlock": "10.200.2.0/24",
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-subnet-ps-dev-private-a-01"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PrivateSubnet1/PrivateSubnet/Subnet"
+   }
+  },
+  "PsVpcPrivateSubnet1PrivateSubnetRouteTable3C5D049F": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "PsVpcB3B0C151"
+    },
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-rtb-ps-dev-private-a-01"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PrivateSubnet1/PrivateSubnet/RouteTable"
+   }
+  },
+  "PsVpcPrivateSubnet1PrivateSubnetRouteTableAssociationB5686E53": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "PsVpcPrivateSubnet1PrivateSubnetRouteTable3C5D049F"
+    },
+    "SubnetId": {
+     "Ref": "PsVpcPrivateSubnet1PrivateSubnetD6B6AC37"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PrivateSubnet1/PrivateSubnet/RouteTableAssociation"
+   }
+  },
+  "PsVpcPrivateSubnet1PrivateSubnetDefaultRoute8B1574DC": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "PsVpcPrivateSubnet1PrivateSubnetRouteTable3C5D049F"
+    },
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "PsVpcPublicSubnet0NatGateway1C7BC65D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PrivateSubnet1/PrivateSubnet/DefaultRoute"
+   }
+  },
+  "PsVpcPrivateSubnet2PrivateSubnet22D9407C": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "PsVpcB3B0C151"
+    },
+    "AvailabilityZone": "ap-northeast-1a",
+    "CidrBlock": "10.200.3.0/24",
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-subnet-ps-dev-private-a-01"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PrivateSubnet2/PrivateSubnet/Subnet"
+   }
+  },
+  "PsVpcPrivateSubnet2PrivateSubnetRouteTable95471598": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "PsVpcB3B0C151"
+    },
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-rtb-ps-dev-private-a-01"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PrivateSubnet2/PrivateSubnet/RouteTable"
+   }
+  },
+  "PsVpcPrivateSubnet2PrivateSubnetRouteTableAssociationA8BD0B3D": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "PsVpcPrivateSubnet2PrivateSubnetRouteTable95471598"
+    },
+    "SubnetId": {
+     "Ref": "PsVpcPrivateSubnet2PrivateSubnet22D9407C"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PrivateSubnet2/PrivateSubnet/RouteTableAssociation"
+   }
+  },
+  "PsVpcPrivateSubnet2PrivateSubnetDefaultRoute3BFEAC5C": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "PsVpcPrivateSubnet2PrivateSubnetRouteTable95471598"
+    },
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "PsVpcPublicSubnet0NatGateway1C7BC65D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PrivateSubnet2/PrivateSubnet/DefaultRoute"
+   }
+  },
+  "PsVpcPrivateSubnet3PrivateSubnetF9D7050C": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "PsVpcB3B0C151"
+    },
+    "AvailabilityZone": "ap-northeast-1c",
+    "CidrBlock": "10.200.101.0/24",
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-subnet-ps-dev-private-c-01"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PrivateSubnet3/PrivateSubnet/Subnet"
+   }
+  },
+  "PsVpcPrivateSubnet3PrivateSubnetRouteTable4711CA5A": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "PsVpcB3B0C151"
+    },
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-rtb-ps-dev-private-c-01"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PrivateSubnet3/PrivateSubnet/RouteTable"
+   }
+  },
+  "PsVpcPrivateSubnet3PrivateSubnetRouteTableAssociation5DA988E0": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "PsVpcPrivateSubnet3PrivateSubnetRouteTable4711CA5A"
+    },
+    "SubnetId": {
+     "Ref": "PsVpcPrivateSubnet3PrivateSubnetF9D7050C"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PrivateSubnet3/PrivateSubnet/RouteTableAssociation"
+   }
+  },
+  "PsVpcPrivateSubnet3PrivateSubnetDefaultRoute0632E12C": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "PsVpcPrivateSubnet3PrivateSubnetRouteTable4711CA5A"
+    },
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "PsVpcPublicSubnet1NatGateway449156E1"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/PrivateSubnet3/PrivateSubnet/DefaultRoute"
+   }
+  },
+  "PsVpcvpcFlowLog44076D7B": {
+   "Type": "AWS::EC2::FlowLog",
+   "Properties": {
+    "ResourceId": {
+     "Ref": "PsVpcB3B0C151"
+    },
+    "ResourceType": "VPC",
+    "LogDestination": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":s3:::",
+       {
+        "Ref": "S3LogBuckets3Bucket9252A6FD"
+       },
+       "/cpi-s3-ps-dev-log-vpcflowlog-01/"
+      ]
+     ]
+    },
+    "LogDestinationType": "s3",
+    "MaxAggregationInterval": 60,
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-s3-ps-dev-log-vpcflowlog-01"
+     }
+    ],
+    "TrafficType": "ALL"
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/PsVpc/vpcFlowLog/FlowLog"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/2VR0WrDMAz8lr07XpdC3tvSlcIoJhl9HY6jdm5SO9hyQwj599mNlwz2pLvz6SThlGYZXb3wziaiqpNGlnQokIuaeOlrsGs6bJ2oAcnuoiKaCtONFP0iRz6RLbcwEhApHc6tCKYz25EDR+h475W9qlotFcaXmR4VgrlwAX89BQhnJPYHo10bOv4JzzYFGAfE1Mg26O/5voNPYq70SxauVNNBC8q1Q/jkZQOLvmgba7WQHKVWszmA/ZGFcuLzZGbkw8MY/N7o7kNfgyfCcSQ5WO2MeAb84pEoXQG92dfHW0bTlf+Sm5UyMU6hvAPNp/oDNwFGxq4BAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-network/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "ExportsOutputRefPsVpcB3B0C151B33DF0C2": {
+   "Value": {
+    "Ref": "PsVpcB3B0C151"
+   },
+   "Export": {
+    "Name": "dev-cpi-network:ExportsOutputRefPsVpcB3B0C151B33DF0C2"
+   }
+  },
+  "ExportsOutputRefS3LogBuckets3Bucket9252A6FD51C30570": {
+   "Value": {
+    "Ref": "S3LogBuckets3Bucket9252A6FD"
+   },
+   "Export": {
+    "Name": "dev-cpi-network:ExportsOutputRefS3LogBuckets3Bucket9252A6FD51C30570"
+   }
+  },
+  "ExportsOutputRefPsVpcPublicSubnet0PublicSubnet2D08C83284F96B1D": {
+   "Value": {
+    "Ref": "PsVpcPublicSubnet0PublicSubnet2D08C832"
+   },
+   "Export": {
+    "Name": "dev-cpi-network:ExportsOutputRefPsVpcPublicSubnet0PublicSubnet2D08C83284F96B1D"
+   }
+  },
+  "ExportsOutputRefPsVpcPublicSubnet1PublicSubnetF4FCB026F17E1682": {
+   "Value": {
+    "Ref": "PsVpcPublicSubnet1PublicSubnetF4FCB026"
+   },
+   "Export": {
+    "Name": "dev-cpi-network:ExportsOutputRefPsVpcPublicSubnet1PublicSubnetF4FCB026F17E1682"
+   }
+  },
+  "ExportsOutputRefPsVpcPrivateSubnet1PrivateSubnetD6B6AC376E7E9A65": {
+   "Value": {
+    "Ref": "PsVpcPrivateSubnet1PrivateSubnetD6B6AC37"
+   },
+   "Export": {
+    "Name": "dev-cpi-network:ExportsOutputRefPsVpcPrivateSubnet1PrivateSubnetD6B6AC376E7E9A65"
+   }
+  },
+  "ExportsOutputRefPsVpcPrivateSubnet0PrivateSubnetE40A98D30D9DAA90": {
+   "Value": {
+    "Ref": "PsVpcPrivateSubnet0PrivateSubnetE40A98D3"
+   },
+   "Export": {
+    "Name": "dev-cpi-network:ExportsOutputRefPsVpcPrivateSubnet0PrivateSubnetE40A98D30D9DAA90"
+   }
+  },
+  "ExportsOutputRefPsVpcPrivateSubnet3PrivateSubnetF9D7050C93356736": {
+   "Value": {
+    "Ref": "PsVpcPrivateSubnet3PrivateSubnetF9D7050C"
+   },
+   "Export": {
+    "Name": "dev-cpi-network:ExportsOutputRefPsVpcPrivateSubnet3PrivateSubnetF9D7050C93356736"
+   }
+  },
+  "ExportsOutputFnGetAttPsVpcB3B0C151CidrBlockA83CC59E": {
+   "Value": {
+    "Fn::GetAtt": [
+     "PsVpcB3B0C151",
+     "CidrBlock"
+    ]
+   },
+   "Export": {
+    "Name": "dev-cpi-network:ExportsOutputFnGetAttPsVpcB3B0C151CidrBlockA83CC59E"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

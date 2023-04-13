@@ -1,0 +1,53 @@
+import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import * as route53 from 'aws-cdk-lib/aws-route53';
+
+
+/**
+ * Route53ConstructProps 
+ */
+type Route53ConstructProps = {
+  /**
+   * domain name
+   */
+  domainName: string;
+  /**
+   * ALB DNS name
+   */
+  albDnsName: string;
+};
+
+/**
+ * Route53 record
+ */
+export class Route53Construct extends Construct {
+  public readonly instanceProps: Route53ConstructProps;
+  public readonly hostedZone: route53.IHostedZone;
+  public readonly recordSet: route53.CfnRecordSet;
+
+  constructor(scope: Construct, id: string, props: Route53ConstructProps) {
+    super(scope, id);
+    this.instanceProps = props;
+
+    // hostedzone
+    this.hostedZone = route53.HostedZone.fromLookup(this, 'HostedZone', {
+      domainName: props.domainName,
+    });
+
+
+    // Route53レコード作成
+    this.recordSet = new route53.CfnRecordSet(this, 'RecordSet', {
+      hostedZoneId: this.hostedZone.hostedZoneId,
+      name: props.domainName,
+      type: route53.RecordType.A, // A record
+      aliasTarget: {
+        dnsName: props.albDnsName,
+        hostedZoneId: 'Z35SXD0TRQ7X7K',
+        evaluateTargetHealth: false,
+      },
+    });
+
+    // Route53のタグを追加
+    cdk.Tags.of(this.recordSet).add('Name', `${props.domainName}-record`);
+  }
+}

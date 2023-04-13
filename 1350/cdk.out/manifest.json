@@ -1,0 +1,920 @@
+{
+  "version": "30.0.0",
+  "artifacts": {
+    "dev-cpi-network.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "dev-cpi-network.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "dev-cpi-network": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://679182460211/ap-northeast-1",
+      "properties": {
+        "templateFile": "dev-cpi-network.template.json",
+        "tags": {
+          "CTC_Bill02_System": "ps-dev"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::679182460211:role/cdk-hnb659fds-deploy-role-679182460211-ap-northeast-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::679182460211:role/cdk-hnb659fds-cfn-exec-role-679182460211-ap-northeast-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-679182460211-ap-northeast-1/0a49260f4d433568c4a06a0464e00588df1a68b3d06ea30850848fa7498c4f77.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "dev-cpi-network.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::679182460211:role/cdk-hnb659fds-lookup-role-679182460211-ap-northeast-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "dev-cpi-network.assets"
+      ],
+      "metadata": {
+        "/dev-cpi-network": [
+          {
+            "type": "aws:cdk:stack-tags",
+            "data": [
+              {
+                "Key": "CTC_Bill02_System",
+                "Value": "ps-dev"
+              }
+            ]
+          }
+        ],
+        "/dev-cpi-network/S3LogBucket/s3Bucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "S3LogBuckets3Bucket9252A6FD"
+          }
+        ],
+        "/dev-cpi-network/S3LogBucket/s3Bucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "S3LogBuckets3BucketPolicyDB375CE9"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/Vpc/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcB3B0C151"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/Vpc/S3GatewayEp/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcS3GatewayEp039F2B29"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/Vpc/Ec2MessagesInterfaceEp/SecurityGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcEc2MessagesInterfaceEpSecurityGroupA7E42F28"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/Vpc/Ec2MessagesInterfaceEp/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcEc2MessagesInterfaceEp5B71D0AF"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/Vpc/SsmInterfaceEp/SecurityGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcSsmInterfaceEpSecurityGroup08A93B32"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/Vpc/SsmInterfaceEp/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcSsmInterfaceEp1CABA055"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/Vpc/SsmMessagesInterfaceEp/SecurityGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcSsmMessagesInterfaceEpSecurityGroupBA464C26"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/Vpc/SsmMessagesInterfaceEp/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcSsmMessagesInterfaceEpAB120C6D"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/Igw": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcIgw5C685DB3"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/IgwAtt": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcIgwAtt70BBF2A3"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PublicSubnet0/PublicSubnet/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPublicSubnet0PublicSubnet2D08C832"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PublicSubnet0/PublicSubnet/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPublicSubnet0PublicSubnetRouteTableB244480B"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PublicSubnet0/PublicSubnet/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPublicSubnet0PublicSubnetRouteTableAssociationB5186F48"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PublicSubnet0/PublicSubnet/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPublicSubnet0PublicSubnetDefaultRouteA06EF3AF"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PublicSubnet0/Eip": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPublicSubnet0Eip29037005"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PublicSubnet0/NatGateway": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPublicSubnet0NatGateway1C7BC65D"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PublicSubnet1/PublicSubnet/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPublicSubnet1PublicSubnetF4FCB026"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PublicSubnet1/PublicSubnet/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPublicSubnet1PublicSubnetRouteTable6BA5313F"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PublicSubnet1/PublicSubnet/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPublicSubnet1PublicSubnetRouteTableAssociation435B1413"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PublicSubnet1/PublicSubnet/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPublicSubnet1PublicSubnetDefaultRouteE5FC4C06"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PublicSubnet1/Eip": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPublicSubnet1EipB03695F1"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PublicSubnet1/NatGateway": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPublicSubnet1NatGateway449156E1"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PrivateSubnet0/PrivateSubnet/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPrivateSubnet0PrivateSubnetE40A98D3"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PrivateSubnet0/PrivateSubnet/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPrivateSubnet0PrivateSubnetRouteTable30A55845"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PrivateSubnet0/PrivateSubnet/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPrivateSubnet0PrivateSubnetRouteTableAssociationA4BCDB43"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PrivateSubnet0/PrivateSubnet/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPrivateSubnet0PrivateSubnetDefaultRoute4966EBAE"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PrivateSubnet1/PrivateSubnet/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPrivateSubnet1PrivateSubnetD6B6AC37"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PrivateSubnet1/PrivateSubnet/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPrivateSubnet1PrivateSubnetRouteTable3C5D049F"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PrivateSubnet1/PrivateSubnet/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPrivateSubnet1PrivateSubnetRouteTableAssociationB5686E53"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PrivateSubnet1/PrivateSubnet/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPrivateSubnet1PrivateSubnetDefaultRoute8B1574DC"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PrivateSubnet2/PrivateSubnet/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPrivateSubnet2PrivateSubnet22D9407C"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PrivateSubnet2/PrivateSubnet/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPrivateSubnet2PrivateSubnetRouteTable95471598"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PrivateSubnet2/PrivateSubnet/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPrivateSubnet2PrivateSubnetRouteTableAssociationA8BD0B3D"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PrivateSubnet2/PrivateSubnet/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPrivateSubnet2PrivateSubnetDefaultRoute3BFEAC5C"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PrivateSubnet3/PrivateSubnet/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPrivateSubnet3PrivateSubnetF9D7050C"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PrivateSubnet3/PrivateSubnet/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPrivateSubnet3PrivateSubnetRouteTable4711CA5A"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PrivateSubnet3/PrivateSubnet/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPrivateSubnet3PrivateSubnetRouteTableAssociation5DA988E0"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/PrivateSubnet3/PrivateSubnet/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcPrivateSubnet3PrivateSubnetDefaultRoute0632E12C"
+          }
+        ],
+        "/dev-cpi-network/PsVpc/vpcFlowLog/FlowLog": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PsVpcvpcFlowLog44076D7B"
+          }
+        ],
+        "/dev-cpi-network/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/dev-cpi-network/Exports/Output{\"Ref\":\"PsVpcB3B0C151\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefPsVpcB3B0C151B33DF0C2"
+          }
+        ],
+        "/dev-cpi-network/Exports/Output{\"Ref\":\"S3LogBuckets3Bucket9252A6FD\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefS3LogBuckets3Bucket9252A6FD51C30570"
+          }
+        ],
+        "/dev-cpi-network/Exports/Output{\"Ref\":\"PsVpcPublicSubnet0PublicSubnet2D08C832\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefPsVpcPublicSubnet0PublicSubnet2D08C83284F96B1D"
+          }
+        ],
+        "/dev-cpi-network/Exports/Output{\"Ref\":\"PsVpcPublicSubnet1PublicSubnetF4FCB026\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefPsVpcPublicSubnet1PublicSubnetF4FCB026F17E1682"
+          }
+        ],
+        "/dev-cpi-network/Exports/Output{\"Ref\":\"PsVpcPrivateSubnet1PrivateSubnetD6B6AC37\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefPsVpcPrivateSubnet1PrivateSubnetD6B6AC376E7E9A65"
+          }
+        ],
+        "/dev-cpi-network/Exports/Output{\"Ref\":\"PsVpcPrivateSubnet0PrivateSubnetE40A98D3\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefPsVpcPrivateSubnet0PrivateSubnetE40A98D30D9DAA90"
+          }
+        ],
+        "/dev-cpi-network/Exports/Output{\"Ref\":\"PsVpcPrivateSubnet3PrivateSubnetF9D7050C\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefPsVpcPrivateSubnet3PrivateSubnetF9D7050C93356736"
+          }
+        ],
+        "/dev-cpi-network/Exports/Output{\"Fn::GetAtt\":[\"PsVpcB3B0C151\",\"CidrBlock\"]}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputFnGetAttPsVpcB3B0C151CidrBlockA83CC59E"
+          }
+        ],
+        "/dev-cpi-network/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/dev-cpi-network/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "dev-cpi-network"
+    },
+    "dev-cpi-appConnection.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "dev-cpi-appConnection.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "dev-cpi-appConnection": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://679182460211/ap-northeast-1",
+      "properties": {
+        "templateFile": "dev-cpi-appConnection.template.json",
+        "tags": {
+          "CTC_Bill02_System": "ps-dev"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::679182460211:role/cdk-hnb659fds-deploy-role-679182460211-ap-northeast-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::679182460211:role/cdk-hnb659fds-cfn-exec-role-679182460211-ap-northeast-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-679182460211-ap-northeast-1/a70f5225eb46b7b42087c3880dcd2a791aa9267d087354ed8721f8e084d9e8ab.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "dev-cpi-appConnection.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::679182460211:role/cdk-hnb659fds-lookup-role-679182460211-ap-northeast-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "dev-cpi-network",
+        "dev-cpi-server",
+        "dev-cpi-appConnection.assets"
+      ],
+      "metadata": {
+        "/dev-cpi-appConnection": [
+          {
+            "type": "aws:cdk:stack-tags",
+            "data": [
+              {
+                "Key": "CTC_Bill02_System",
+                "Value": "ps-dev"
+              }
+            ]
+          }
+        ],
+        "/dev-cpi-appConnection/LemsALB/sg-alb/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LemsALBsgalb360F0F1A"
+          }
+        ],
+        "/dev-cpi-appConnection/LemsALB/Alb/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LemsALBAlb29929891"
+          }
+        ],
+        "/dev-cpi-appConnection/LemsALB/Alb/AlbListener/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LemsALBAlbAlbListener3E2CC054"
+          }
+        ],
+        "/dev-cpi-appConnection/LemsALB/TargetGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LemsALBTargetGroupE97E445E"
+          }
+        ],
+        "/dev-cpi-appConnection/Nlb/Nlb/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "Nlb055C53DF"
+          }
+        ],
+        "/dev-cpi-appConnection/Nlb/Nlb/NlbListener/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NlbNlbListener91B03033"
+          }
+        ],
+        "/dev-cpi-appConnection/Nlb/TargetGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NlbTargetGroup9B90BE2A"
+          }
+        ],
+        "/dev-cpi-appConnection/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/dev-cpi-appConnection/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/dev-cpi-appConnection/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "dev-cpi-appConnection"
+    },
+    "dev-cpi-server.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "dev-cpi-server.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "dev-cpi-server": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://679182460211/ap-northeast-1",
+      "properties": {
+        "templateFile": "dev-cpi-server.template.json",
+        "tags": {
+          "CTC_Bill02_System": "ps-dev"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::679182460211:role/cdk-hnb659fds-deploy-role-679182460211-ap-northeast-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::679182460211:role/cdk-hnb659fds-cfn-exec-role-679182460211-ap-northeast-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-679182460211-ap-northeast-1/e68c243ec838413b4835a54d5c04c7ae5b1aad5a92197cee5067ad014e00ddcf.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "dev-cpi-server.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::679182460211:role/cdk-hnb659fds-lookup-role-679182460211-ap-northeast-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "dev-cpi-network",
+        "dev-cpi-server.assets"
+      ],
+      "metadata": {
+        "/dev-cpi-server": [
+          {
+            "type": "aws:cdk:stack-tags",
+            "data": [
+              {
+                "Key": "CTC_Bill02_System",
+                "Value": "ps-dev"
+              }
+            ]
+          }
+        ],
+        "/dev-cpi-server/EC2-Instance-Construct/sg-ec2-1/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "EC2InstanceConstructsgec21DE2F2108"
+          }
+        ],
+        "/dev-cpi-server/EC2-Instance-Construct/sg-ec2-bastion2/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "EC2InstanceConstructsgec2bastion22EA48C4E"
+          }
+        ],
+        "/dev-cpi-server/EC2-Instance-Construct/EC2-bastion/InstanceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "EC2InstanceConstructEC2bastionInstanceRole67F21BDB"
+          }
+        ],
+        "/dev-cpi-server/EC2-Instance-Construct/EC2-bastion/InstanceProfile": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "EC2InstanceConstructEC2bastionInstanceProfile37AC8AE2"
+          }
+        ],
+        "/dev-cpi-server/EC2-Instance-Construct/EC2-bastion/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "EC2InstanceConstructEC2bastion747ED369"
+          }
+        ],
+        "/dev-cpi-server/EC2-Instance-Construct/EC2-sagyou/InstanceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "EC2InstanceConstructEC2sagyouInstanceRole89DCD7DC"
+          }
+        ],
+        "/dev-cpi-server/EC2-Instance-Construct/EC2-sagyou/InstanceProfile": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "EC2InstanceConstructEC2sagyouInstanceProfile2A090D3A"
+          }
+        ],
+        "/dev-cpi-server/EC2-Instance-Construct/EC2-sagyou/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "EC2InstanceConstructEC2sagyou91DC81FA"
+          }
+        ],
+        "/dev-cpi-server/SsmParameterValue:--aws--service--ami-amazon-linux-latest--amzn2-ami-hvm-x86_64-gp2:C96584B6-F00A-464E-AD19-53AFF4B05118.Parameter": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SsmParameterValueawsserviceamiamazonlinuxlatestamzn2amihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter"
+          }
+        ],
+        "/dev-cpi-server/SsmParameterValue:--aws--service--ami-windows-latest--Windows_Server-2019-English-Full-Base:C96584B6-F00A-464E-AD19-53AFF4B05118.Parameter": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SsmParameterValueawsserviceamiwindowslatestWindowsServer2019EnglishFullBaseC96584B6F00A464EAD1953AFF4B05118Parameter"
+          }
+        ],
+        "/dev-cpi-server/ADConstruct/ManagedMicrosoftAD": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ADConstructManagedMicrosoftADB67C54ED"
+          }
+        ],
+        "/dev-cpi-server/FsxConstruct/fsxSecurityGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "FsxConstructfsxSecurityGroupC13E49C8"
+          }
+        ],
+        "/dev-cpi-server/FsxConstruct/fsxFileSystem": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "FsxConstructfsxFileSystemA2F44D0E"
+          }
+        ],
+        "/dev-cpi-server/FsxConstruct/fsxDnsName": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "FsxConstructfsxDnsNameD9111DB1"
+          }
+        ],
+        "/dev-cpi-server/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/dev-cpi-server/Exports/Output{\"Ref\":\"EC2InstanceConstructEC2bastion747ED369\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefEC2InstanceConstructEC2bastion747ED3695EEEBAD0"
+          }
+        ],
+        "/dev-cpi-server/Exports/Output{\"Ref\":\"EC2InstanceConstructEC2sagyou91DC81FA\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefEC2InstanceConstructEC2sagyou91DC81FA3FA79780"
+          }
+        ],
+        "/dev-cpi-server/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/dev-cpi-server/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "dev-cpi-server"
+    },
+    "dev-cpi-storage.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "dev-cpi-storage.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "dev-cpi-storage": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://679182460211/ap-northeast-1",
+      "properties": {
+        "templateFile": "dev-cpi-storage.template.json",
+        "tags": {
+          "CTC_Bill02_System": "ps-dev"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::679182460211:role/cdk-hnb659fds-deploy-role-679182460211-ap-northeast-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::679182460211:role/cdk-hnb659fds-cfn-exec-role-679182460211-ap-northeast-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-679182460211-ap-northeast-1/e796098522350ecd855d9156eaa19b1d6e05fdb0ed10d9ce42bfade915172a6b.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "dev-cpi-storage.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::679182460211:role/cdk-hnb659fds-lookup-role-679182460211-ap-northeast-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "dev-cpi-storage.assets"
+      ],
+      "metadata": {
+        "/dev-cpi-storage": [
+          {
+            "type": "aws:cdk:stack-tags",
+            "data": [
+              {
+                "Key": "CTC_Bill02_System",
+                "Value": "ps-dev"
+              }
+            ]
+          }
+        ],
+        "/dev-cpi-storage/S3AppLogBucket/s3Bucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "S3AppLogBuckets3Bucket7CB23DEB"
+          }
+        ],
+        "/dev-cpi-storage/S3AppLogBucket/s3Bucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "S3AppLogBuckets3BucketPolicy5C17C2C8"
+          }
+        ],
+        "/dev-cpi-storage/S3CloudtrailLogBucket/s3Bucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "S3CloudtrailLogBuckets3Bucket4D0399A5"
+          }
+        ],
+        "/dev-cpi-storage/S3CloudtrailLogBucket/s3Bucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "S3CloudtrailLogBuckets3BucketPolicyF9A1D0AB"
+          }
+        ],
+        "/dev-cpi-storage/S3FileBucket/s3Bucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "S3FileBuckets3Bucket37DE9D32"
+          }
+        ],
+        "/dev-cpi-storage/S3FileBucket/s3Bucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "S3FileBuckets3BucketPolicy0EA56AD9"
+          }
+        ],
+        "/dev-cpi-storage/S3WafLogBucket/s3Bucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "S3WafLogBuckets3BucketFB6535F4"
+          }
+        ],
+        "/dev-cpi-storage/S3WafLogBucket/s3Bucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "S3WafLogBuckets3BucketPolicyB541D237"
+          }
+        ],
+        "/dev-cpi-storage/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/dev-cpi-storage/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/dev-cpi-storage/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "dev-cpi-storage"
+    },
+    "dev-cpi-ops.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "dev-cpi-ops.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "dev-cpi-ops": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://679182460211/ap-northeast-1",
+      "properties": {
+        "templateFile": "dev-cpi-ops.template.json",
+        "tags": {
+          "CTC_Bill02_System": "ps-dev"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::679182460211:role/cdk-hnb659fds-deploy-role-679182460211-ap-northeast-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::679182460211:role/cdk-hnb659fds-cfn-exec-role-679182460211-ap-northeast-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-679182460211-ap-northeast-1/368e3036b180a4dae9ff6cb1885f818e101fd23cfaf40f11142925c94bc0e682.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "dev-cpi-ops.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::679182460211:role/cdk-hnb659fds-lookup-role-679182460211-ap-northeast-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "dev-cpi-ops.assets"
+      ],
+      "metadata": {
+        "/dev-cpi-ops": [
+          {
+            "type": "aws:cdk:stack-tags",
+            "data": [
+              {
+                "Key": "CTC_Bill02_System",
+                "Value": "ps-dev"
+              }
+            ]
+          }
+        ],
+        "/dev-cpi-ops/Backup-Construct/BackupVault": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BackupConstructBackupVaultE6D97FF3"
+          }
+        ],
+        "/dev-cpi-ops/Backup-Construct/CustomResource": [
+          {
+            "type": "aws:cdk:warning",
+            "data": "installLatestAwsSdk was not specified, and defaults to true. You probably do not want this. Set the global context flag '@aws-cdk/customresources:installLatestAwsSdkDefault' to false to switch this behavior off project-wide, or set the property explicitly to true if you know you need to call APIs that are not in Lambda's built-in SDK version.",
+            "trace": [
+              "Annotations.addMessage (/home/ec2-user/environment/1555/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1071)",
+              "Annotations.addWarning (/home/ec2-user/environment/1555/node_modules/aws-cdk-lib/core/lib/annotations.js:1:504)",
+              "new AwsCustomResource (/home/ec2-user/environment/1555/node_modules/aws-cdk-lib/custom-resources/lib/aws-custom-resource/aws-custom-resource.js:1:4196)",
+              "new BackupConstruct (/home/ec2-user/environment/1555/lib/construct/backup/backup-construct.ts:37:28)",
+              "new WccOpsStack (/home/ec2-user/environment/1555/lib/stack/wcc-ops-stack.ts:29:28)",
+              "Object.<anonymous> (/home/ec2-user/environment/1555/bin/index.ts:101:18)",
+              "Module._compile (node:internal/modules/cjs/loader:1196:14)",
+              "Module.m._compile (/home/ec2-user/environment/1555/node_modules/ts-node/src/index.ts:1618:23)",
+              "Module._extensions..js (node:internal/modules/cjs/loader:1250:10)",
+              "Object.require.extensions.<computed> [as .ts] (/home/ec2-user/environment/1555/node_modules/ts-node/src/index.ts:1621:12)",
+              "Module.load (node:internal/modules/cjs/loader:1074:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:909:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "phase4 (/home/ec2-user/environment/1555/node_modules/ts-node/src/bin.ts:649:14)",
+              "bootstrap (/home/ec2-user/environment/1555/node_modules/ts-node/src/bin.ts:95:10)",
+              "main (/home/ec2-user/environment/1555/node_modules/ts-node/src/bin.ts:55:10)",
+              "Object.<anonymous> (/home/ec2-user/environment/1555/node_modules/ts-node/src/bin.ts:800:3)",
+              "Module._compile (node:internal/modules/cjs/loader:1196:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1250:10)",
+              "Module.load (node:internal/modules/cjs/loader:1074:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:909:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/dev-cpi-ops/Backup-Construct/CustomResource/Resource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BackupConstructCustomResourceDB0A386A"
+          }
+        ],
+        "/dev-cpi-ops/Backup-Construct/CustomResource/CustomResourcePolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BackupConstructCustomResourceCustomResourcePolicy16CC1306"
+          }
+        ],
+        "/dev-cpi-ops/Backup-Construct/BackupPlan": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BackupConstructBackupPlan7F2C2B5D"
+          }
+        ],
+        "/dev-cpi-ops/Backup-Construct/BackupRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BackupConstructBackupRole53D2E43C"
+          }
+        ],
+        "/dev-cpi-ops/Backup-Construct/BackupSelection": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BackupConstructBackupSelection448DA88B"
+          }
+        ],
+        "/dev-cpi-ops/AWS679f53fac002430cb0da5b7982bd2287/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2"
+          }
+        ],
+        "/dev-cpi-ops/AWS679f53fac002430cb0da5b7982bd2287/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AWS679f53fac002430cb0da5b7982bd22872D164C4C"
+          }
+        ],
+        "/dev-cpi-ops/IamConstruct/MyRole1/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "IamConstructMyRole16296A5EF"
+          }
+        ],
+        "/dev-cpi-ops/IamConstruct/MyRole2/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "IamConstructMyRole25CB377D7"
+          }
+        ],
+        "/dev-cpi-ops/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/dev-cpi-ops/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/dev-cpi-ops/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "dev-cpi-ops"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}

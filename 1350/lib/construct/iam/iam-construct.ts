@@ -1,0 +1,41 @@
+import * as cdk from 'aws-cdk-lib';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import { Construct } from 'constructs';
+
+export interface IamConstructProps {
+  roleName1: string;
+  roleName2: string;
+}
+
+export class IamConstruct extends Construct {
+  public readonly role1: iam.Role;
+  public readonly role2: iam.Role;
+
+  constructor(scope: Construct, id: string, props: IamConstructProps) {
+    super(scope, id);
+
+    // 创建 IAM 角色#1
+    this.role1 = new iam.Role(this, 'MyRole1', {
+      roleName: props.roleName1,
+      assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com'),
+    });
+
+    // 附加所需的策略
+    this.role1.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonS3FullAccess'));
+    this.role1.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonRDSFullAccess'));
+    this.role1.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonVPCFullAccess'));
+    this.role1.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2FullAccess'));
+
+    // 创建 IAM 角色#2
+    this.role2 = new iam.Role(this, 'MyRole2', {
+      roleName: props.roleName2,
+      assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com'),
+    });
+
+    // 附加所需的策略
+    this.role2.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonS3FullAccess'));
+    this.role2.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonRDSFullAccess'));
+    this.role2.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonVPCFullAccess'));
+    this.role2.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2FullAccess'));    
+  }
+}

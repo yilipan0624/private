@@ -1,0 +1,287 @@
+{
+ "Resources": {
+  "LemsALBsgalb360F0F1A": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "dev-cpi-appConnection/LemsALB/sg-alb",
+    "GroupName": "cpi-sg-ps-dev-alb-01",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "from 0.0.0.0/0:443",
+      "FromPort": 443,
+      "IpProtocol": "tcp",
+      "ToPort": 443
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-sg-ps-dev-alb-01"
+     }
+    ],
+    "VpcId": {
+     "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcB3B0C151B33DF0C2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-appConnection/LemsALB/sg-alb/Resource"
+   }
+  },
+  "LemsALBAlb29929891": {
+   "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+   "Properties": {
+    "LoadBalancerAttributes": [
+     {
+      "Key": "deletion_protection.enabled",
+      "Value": "true"
+     },
+     {
+      "Key": "access_logs.s3.enabled",
+      "Value": "true"
+     },
+     {
+      "Key": "access_logs.s3.bucket",
+      "Value": {
+       "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefS3LogBuckets3Bucket9252A6FD51C30570"
+      }
+     },
+     {
+      "Key": "access_logs.s3.prefix",
+      "Value": "accesslog"
+     }
+    ],
+    "Name": "cpi-alb-ps-dev-lems-01",
+    "Scheme": "internet-facing",
+    "SecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "LemsALBsgalb360F0F1A",
+       "GroupId"
+      ]
+     }
+    ],
+    "Subnets": [
+     {
+      "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcPublicSubnet0PublicSubnet2D08C83284F96B1D"
+     },
+     {
+      "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcPublicSubnet1PublicSubnetF4FCB026F17E1682"
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-alb-ps-dev-lems-01"
+     }
+    ],
+    "Type": "application"
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-appConnection/LemsALB/Alb/Resource"
+   }
+  },
+  "LemsALBAlbAlbListener3E2CC054": {
+   "Type": "AWS::ElasticLoadBalancingV2::Listener",
+   "Properties": {
+    "DefaultActions": [
+     {
+      "TargetGroupArn": {
+       "Ref": "LemsALBTargetGroupE97E445E"
+      },
+      "Type": "forward"
+     }
+    ],
+    "LoadBalancerArn": {
+     "Ref": "LemsALBAlb29929891"
+    },
+    "Certificates": [
+     {
+      "CertificateArn": "arn:aws:acm:us-east-1:679182460211:certificate/8d857a90-1d81-4a09-90ca-46e505959fe5"
+     }
+    ],
+    "Port": 443,
+    "Protocol": "HTTPS"
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-appConnection/LemsALB/Alb/AlbListener/Resource"
+   }
+  },
+  "LemsALBTargetGroupE97E445E": {
+   "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+   "Properties": {
+    "Port": 443,
+    "Protocol": "HTTP",
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     }
+    ],
+    "TargetGroupAttributes": [
+     {
+      "Key": "stickiness.enabled",
+      "Value": "false"
+     }
+    ],
+    "Targets": [
+     {
+      "Id": {
+       "Fn::ImportValue": "dev-cpi-server:ExportsOutputRefEC2InstanceConstructEC2bastion747ED3695EEEBAD0"
+      }
+     },
+     {
+      "Id": {
+       "Fn::ImportValue": "dev-cpi-server:ExportsOutputRefEC2InstanceConstructEC2sagyou91DC81FA3FA79780"
+      }
+     }
+    ],
+    "TargetType": "instance",
+    "VpcId": {
+     "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcB3B0C151B33DF0C2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-appConnection/LemsALB/TargetGroup/Resource"
+   }
+  },
+  "Nlb055C53DF": {
+   "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+   "Properties": {
+    "LoadBalancerAttributes": [
+     {
+      "Key": "deletion_protection.enabled",
+      "Value": "true"
+     },
+     {
+      "Key": "load_balancing.cross_zone.enabled",
+      "Value": "true"
+     }
+    ],
+    "Name": "cpi-nlb-ps-dev-lems-01",
+    "Scheme": "internet-facing",
+    "Subnets": [
+     {
+      "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcPublicSubnet0PublicSubnet2D08C83284F96B1D"
+     },
+     {
+      "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcPublicSubnet1PublicSubnetF4FCB026F17E1682"
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     },
+     {
+      "Key": "Name",
+      "Value": "cpi-nlb-ps-dev-lems-01"
+     }
+    ],
+    "Type": "network"
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-appConnection/Nlb/Nlb/Resource"
+   }
+  },
+  "NlbNlbListener91B03033": {
+   "Type": "AWS::ElasticLoadBalancingV2::Listener",
+   "Properties": {
+    "DefaultActions": [
+     {
+      "TargetGroupArn": {
+       "Ref": "NlbTargetGroup9B90BE2A"
+      },
+      "Type": "forward"
+     }
+    ],
+    "LoadBalancerArn": {
+     "Ref": "Nlb055C53DF"
+    },
+    "Port": 80,
+    "Protocol": "TCP"
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-appConnection/Nlb/Nlb/NlbListener/Resource"
+   }
+  },
+  "NlbTargetGroup9B90BE2A": {
+   "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+   "Properties": {
+    "Port": 443,
+    "Protocol": "TCP",
+    "Tags": [
+     {
+      "Key": "CTC_Bill02_System",
+      "Value": "ps-dev"
+     }
+    ],
+    "TargetType": "instance",
+    "VpcId": {
+     "Fn::ImportValue": "dev-cpi-network:ExportsOutputRefPsVpcB3B0C151B33DF0C2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-appConnection/Nlb/TargetGroup/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1VQvQ6CMBB+FvdSkYFdHVyMA7qbUk5yUlvSH4ghfXeLUlOm+/7uy+UKWpY037DRZLzpMoE1na6W8Y4E6T4BLwIH7jTa90kr15PjQ64ET0AwY5ELxZqaCSY5ynYIe/u+F8iZRSXPwTt8PdBzw4qnOTQW5JKJOPFvTLdg/4ek9AJ2VLpbNUctNi08WfOeVGCU0xzmwog9kaoB+jTbYVfSIg8vehrETDtp8QW0+s0PEGysCT4BAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "dev-cpi-appConnection/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
