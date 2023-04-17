@@ -3,7 +3,7 @@ import { Construct } from 'constructs';
 import { NamingStackProps } from '../../utils/commonTypes';
 import { ensureStr } from '../../utils/helpers';
 import { ResourceNameBuilder } from '../../utils/helpers';
-import { VpcConstruct, PrivateSubnetProps, PublicSubnetProps } from '../construct/vpc/vpc-construct';
+import { VpcConstruct, PrivateSubnetProps, PublicSubnetProps, SharedSubnetProps } from '../construct/vpc/vpc-construct';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { S3S3logBucketConstruct } from '../construct/s3/s3-s3log-bucket-construct';
@@ -13,21 +13,22 @@ type WccNetworkStackProps = {
   vpcCidr: string;
   publicSubnetsInfo?: SubnetInfo[];
   privateSubnetsInfo?: SubnetInfo[];
+  sharedSubnetsInfo?:SubnetInfo[];
   s3flowLogBucketArn?: string;
   /** datasync用IAMロール */
-  dataSyncRoleArnList?: string[];
+  dataSyncRoleArnList?: string[]
   /**
    * dataSyncクロスアカウントId
    * クロスアカウントでDatasyncする場合は必須
    */
-  dataSyncCorssAccountId?: string;
-  
+  dataSyncCorssAccountId?: string
 } & cdk.StackProps
 
 type SubnetInfo = {
   subnetCidr: string;
   availabilityZone: string;
 }
+
 
 export class WccNetworkStack extends cdk.Stack {
   public readonly vpc: VpcConstruct;
@@ -107,11 +108,32 @@ export class WccNetworkStack extends cdk.Stack {
       });
     });
 
+    // Shared Subnet 列表
+    const sharedSubnetsList: SharedSubnetProps[] = [];
+    props.sharedSubnetsInfo?.forEach(v_ => {
+      const azCode = ensureStr(v_, 'availabilityZone').slice(-1);
+      sharedSubnetsList.push({
+        subnetCidr: v_.subnetCidr,
+        availabilityZone: v_.availabilityZone,
+        subnetName: ResourceNameBuilder.makeResourceNameStr({
+          serviceName: 'subnet',
+          use: `shared-${azCode}`,
+          ...props.namingStackProps,
+        }),
+        routeTableName: ResourceNameBuilder.makeResourceNameStr({ 
+          serviceName: 'rtb',
+          use: `shared-${azCode}`,
+          ...props.namingStackProps,
+        }),
+      });
+    });
+    
     // VPC作成
     this.vpc = new VpcConstruct(this, 'PsVpc', {
       vpcCidr: props.vpcCidr,
       publicSubnets: publicSubnetsList,
       privateSubnets: privateSubnetsList,
+      sharedSubnets: sharedSubnetsList, 
       vpcName: ResourceNameBuilder.makeResourceNameStr({
         serviceName: 'vpc',
         use: 'apne1',
@@ -120,11 +142,7 @@ export class WccNetworkStack extends cdk.Stack {
       igwName: ResourceNameBuilder.makeResourceNameStr({
         serviceName: 'igw',
         ...props.namingStackProps
-      }),
-      vgwName: ResourceNameBuilder.makeResourceNameStr({ 
-      serviceName: 'vgw',
-       ...props.namingStackProps,
-  }), 
+      })
     });
 
 // S3フローログ作成

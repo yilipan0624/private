@@ -3,6 +3,7 @@ import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { VpcPrivateSubnetConstruct } from './vpc-private-subnet-construct';
 import { VpcPublicSubnetConstruct } from './vpc-public-subnet-construct';
+import { VpcSharedSubnetConstruct } from './vpc-shared-subnet-construct';
 import { CfnNatGateway } from 'aws-cdk-lib/aws-ec2';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
 
@@ -10,9 +11,9 @@ export type VpcConstructProps = {
     vpcCidr: string;
     publicSubnets: PublicSubnetProps[],
     privateSubnets: PrivateSubnetProps[],
+    sharedSubnets?: SharedSubnetProps[]; 
     vpcName?: string;
     igwName?: string;
-    vgwName?: string;
 }
 
 export type AddS3FlowLogProps = {
@@ -36,10 +37,18 @@ export type PrivateSubnetProps = {
     routeTableName?: string,
 }
 
+export type SharedSubnetProps = {
+    subnetCidr: string;
+    availabilityZone: string;
+    subnetName?: string,
+    routeTableName?: string,
+}
+
 export class VpcConstruct extends Construct {
     public readonly vpc: ec2.Vpc;
     public readonly publicSubnets: ec2.Subnet[];
     public readonly privateSubnets: ec2.Subnet[];
+    public readonly sharedSubnets: ec2.Subnet[]; 
     readonly uniqueAZPrivateSubnets: ec2.ISubnet[];
 
     constructor(scope: Construct, id: string, props: VpcConstructProps) {
@@ -64,19 +73,6 @@ export class VpcConstruct extends Construct {
             vpcId: this.vpc.vpcId,
             internetGatewayId: igw.ref,
         });
-        
-        const vgw = new ec2.CfnVPNGateway(this, 'Vgw', {
-            type: 'ipsec.1',
-        });
-        if (props.vgwName) {
-            cdk.Tags.of(vgw).add('Name', props.vgwName);
-        }
-        new ec2.CfnVPCGatewayAttachment(this, 'VgwAtt', {
-            vpcId: this.vpc.vpcId,
-            vpnGatewayId: vgw.ref,
-        });
-
-
 
         const publicSubnetList: ec2.Subnet[] = [];
         const natGwMap: Map<string, CfnNatGateway> = new Map<string, CfnNatGateway>();
@@ -113,6 +109,22 @@ export class VpcConstruct extends Construct {
         privateSubnetList.push(privateSubnetConstruct.subnet);
     });
     this.privateSubnets = privateSubnetList;
+    
+        const sharedSubnetList: ec2.Subnet[] = [];
+        if (props.sharedSubnets) {
+            props.sharedSubnets.forEach((v_, i_) => {
+        const sharedSubnetConstruct = new VpcPrivateSubnetConstruct(this, 'SharedSubnet' + i_, {
+            availabilityZone: v_.availabilityZone,
+            vpc: this.vpc,
+            subnetCidr: v_.subnetCidr,
+            subnetName: v_.subnetName,
+            routeTableName: v_.routeTableName,
+            cfnNatGateway: natGwMap.get(v_.availabilityZone) as ec2.CfnNatGateway,
+        });
+        sharedSubnetList.push(sharedSubnetConstruct.subnet);
+            });
+        }
+        this.sharedSubnets = sharedSubnetList;
 
     // Initialize uniqueAZPrivateSubnets
     this.uniqueAZPrivateSubnets = Array.from(
