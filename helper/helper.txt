@@ -30,14 +30,14 @@ export class ResourceNameBuilder {
         let resultStr = `${props.pjPrefix}-${props.serviceName}-${props.systemId}-${props.envKey}`;
         resultStr = resultStr + ((props.use === undefined || props.use === '') ? '' : '-' + props.use);
 
-        // 根据资源类型递增计数器
+        // リソースタイプに基づいてカウンターをインクリメント
         const resourceKey = resultStr;
         if (!ResourceNameBuilder.resourceCounters[resourceKey]) {
             ResourceNameBuilder.resourceCounters[resourceKey] = 0;
         }
         ResourceNameBuilder.resourceCounters[resourceKey] += 1;
 
-        // 在生成的资源名称中添加递增后的计数器值
+        // 生成されたリソース名にインクリメント後のカウンター値を追加
         const increment = ResourceNameBuilder.resourceCounters[resourceKey];
         resultStr = resultStr + ((increment === undefined || increment === 0) ? '' : '-' + ('00' + increment).slice(-2));
 
