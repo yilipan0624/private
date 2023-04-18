@@ -2,50 +2,40 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 
-// VpcSharedSubnetConstruct 的属性
-type VpcSharedSubnetConstructProps = {
-  vpc: ec2.Vpc;
-  cfnNatGateway: ec2.CfnNatGateway;
-  subnetCidr: string;
-  availabilityZone: string;
-  subnetName?: string;
-  routeTableName?: string;
-};
+export type VpcSharedSubnetConstructProps = {
+    vpc: ec2.Vpc;
+    cfnNatGateway: ec2.CfnNatGateway;
+    subnetCidr: string;
+    availabilityZone: string;
+    subnetName?: string;
+    routeTableName?: string;
+}
 
-// VpcSharedSubnetConstruct
-let azCounters: { [key: string]: number } = {};
 export class VpcSharedSubnetConstruct extends Construct {
-  public readonly subnet: ec2.Subnet;
-  public readonly routeTable: ec2.CfnRouteTable;
+    public readonly subnet: ec2.Subnet;
+    public readonly routeTable: ec2.CfnRouteTable;
 
-  constructor(scope: Construct, id: string, props: VpcSharedSubnetConstructProps) {
-    super(scope, id);
+    constructor(scope: Construct, id: string, props: VpcSharedSubnetConstructProps) {
+        super(scope, id);
 
-    if (!azCounters[props.availabilityZone]) {
-      azCounters[props.availabilityZone] = 1;
-    } else {
-      azCounters[props.availabilityZone]++;
+        this.subnet = new ec2.PrivateSubnet(this, 'SharedSubnet', {
+            vpcId: props.vpc.vpcId,
+            cidrBlock: props.subnetCidr,
+            availabilityZone: props.availabilityZone,
+        });
+
+    // 向子网添加 Client vpn Endpoint 路由
+    this.subnet.addDefaultNatRoute(props.cfnNatGateway.ref);
+
+        if (props.subnetName) {
+            cdk.Tags.of(this.subnet).add('Name', props.subnetName, {
+                includeResourceTypes: ['AWS::EC2::Subnet']
+            });
+        }
+        if (props.routeTableName) {
+            cdk.Tags.of(this.subnet).add('Name', props.routeTableName, {
+                includeResourceTypes: ['AWS::EC2::RouteTable']
+            });
+        }
     }
-
-    const subnetNameWithSuffix = props.subnetName + `-${azCounters[props.availabilityZone].toString().padStart(2, '0')}`;
-
-    // 创建子网
-    this.subnet = new ec2.Subnet(this, 'SharedSubnet', {
-      vpcId: props.vpc.vpcId,
-      cidrBlock: props.subnetCidr,
-      availabilityZone: props.availabilityZone,
-    });
-    
-        // サブネットにNat Gateway ルートを追加
-        this.subnet.addDefaultNatRoute(props.cfnNatGateway.ref);
-
-    // 添加 Name 标签
-    cdk.Tags.of(this.subnet).add('Name', subnetNameWithSuffix);
-
-    if (props.routeTableName) {
-      cdk.Tags.of(this.subnet).add('Name', props.routeTableName, {
-        includeResourceTypes: ['AWS::EC2::RouteTable'],
-      });
-    }
-  }
 }

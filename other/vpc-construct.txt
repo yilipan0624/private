@@ -3,6 +3,7 @@ import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { VpcPrivateSubnetConstruct } from './vpc-private-subnet-construct';
 import { VpcPublicSubnetConstruct } from './vpc-public-subnet-construct';
+import { VpcClientvpnSubnetConstruct } from './vpc-clientvpn-subnet-construct';
 import { VpcSharedSubnetConstruct } from './vpc-shared-subnet-construct';
 import { CfnNatGateway } from 'aws-cdk-lib/aws-ec2';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
@@ -12,6 +13,7 @@ export type VpcConstructProps = {
     publicSubnets: PublicSubnetProps[],
     privateSubnets: PrivateSubnetProps[],
     sharedSubnets?: SharedSubnetProps[]; 
+    clientvpnSubnets: ClientvpnSubnetProps[];
     vpcName?: string;
     igwName?: string;
 }
@@ -44,11 +46,19 @@ export type SharedSubnetProps = {
     routeTableName?: string,
 }
 
+export type ClientvpnSubnetProps = {
+  subnetCidr: string;
+  availabilityZone: string;
+  subnetName?: string,
+  routeTableName?: string,
+};
+
 export class VpcConstruct extends Construct {
     public readonly vpc: ec2.Vpc;
     public readonly publicSubnets: ec2.Subnet[];
     public readonly privateSubnets: ec2.Subnet[];
     public readonly sharedSubnets: ec2.Subnet[]; 
+    public readonly clientvpnSubnets: ec2.Subnet[];
     readonly uniqueAZPrivateSubnets: ec2.ISubnet[];
 
     constructor(scope: Construct, id: string, props: VpcConstructProps) {
@@ -93,7 +103,7 @@ export class VpcConstruct extends Construct {
         this.publicSubnets = publicSubnetList;
 
         const privateSubnetList: ec2.Subnet[] = [];
-       props.privateSubnets.forEach((v_, i_) => {
+        props.privateSubnets.forEach((v_, i_) => {
         if (!natGwMap.has(v_.availabilityZone)) {
             throw new Error('プライベートサブネットに対応するAZのNatGatewayがありません。');
         }
@@ -106,14 +116,15 @@ export class VpcConstruct extends Construct {
             routeTableName: v_.routeTableName,
             cfnNatGateway: natGw
         });
-        privateSubnetList.push(privateSubnetConstruct.subnet);
-    });
-    this.privateSubnets = privateSubnetList;
+            privateSubnetList.push(privateSubnetConstruct.subnet);
+        });
+        this.privateSubnets = privateSubnetList;
+    
     
         const sharedSubnetList: ec2.Subnet[] = [];
         if (props.sharedSubnets) {
             props.sharedSubnets.forEach((v_, i_) => {
-        const sharedSubnetConstruct = new VpcPrivateSubnetConstruct(this, 'SharedSubnet' + i_, {
+        const sharedSubnetConstruct = new VpcSharedSubnetConstruct(this, 'SharedSubnet' + i_, {
             availabilityZone: v_.availabilityZone,
             vpc: this.vpc,
             subnetCidr: v_.subnetCidr,
@@ -125,51 +136,30 @@ export class VpcConstruct extends Construct {
             });
         }
         this.sharedSubnets = sharedSubnetList;
+        
+        const clientvpnSubnetList: ec2.Subnet[] = [];
+        if (props.clientvpnSubnets) {
+          props.clientvpnSubnets.forEach((v_, i_) => {
+            if (!natGwMap.has(v_.availabilityZone)) {
+              throw new Error('Client vpn 子网没有对应可用区的 NAT 网关。');
+            }
+            const natGw = natGwMap.get(v_.availabilityZone) as ec2.CfnNatGateway;
+            const clientvpnSubnetConstruct = new VpcClientvpnSubnetConstruct(this, 'ClientvpnSubnet' + i_, {
+              availabilityZone: v_.availabilityZone,
+              vpc: this.vpc,
+              subnetCidr: v_.subnetCidr,
+              subnetName: v_.subnetName,
+              routeTableName: v_.routeTableName,
+              cfnNatGateway: natGw,
+            });
+            clientvpnSubnetList.push(clientvpnSubnetConstruct.subnet);
+          });
+        }
+        this.clientvpnSubnets = clientvpnSubnetList;
 
     // Initialize uniqueAZPrivateSubnets
     this.uniqueAZPrivateSubnets = Array.from(
         new Set(privateSubnetList.map(subnet => subnet.availabilityZone))
     ).map(az => privateSubnetList.find(subnet => subnet.availabilityZone === az) as ec2.ISubnet);
-}
-
-addS3GatewayEndpoint(id: string) {
-    this.vpc.addGatewayEndpoint(id, {
-        service: ec2.GatewayVpcEndpointAwsService.S3,
-        subnets: [{ subnets: this.publicSubnets }, { subnets: this.privateSubnets }]
-    });
-}
-
-addEc2MessagesInterfaceEndpoint(id: string, subnets: ec2.SubnetSelection) {
-    this.vpc.addInterfaceEndpoint(id, {
-        service: ec2.InterfaceVpcEndpointAwsService.EC2_MESSAGES,
-        subnets: subnets,
-    });
-}
-
-addSsmInterfaceEndpoint(id: string, subnets: ec2.SubnetSelection) {
-    this.vpc.addInterfaceEndpoint(id, {
-        service: ec2.InterfaceVpcEndpointAwsService.SSM,
-        subnets: subnets,
-    });
-}
-
-addSsmMessagesInterfaceEndpoint(id: string, subnets: ec2.SubnetSelection) {
-    this.vpc.addInterfaceEndpoint(id, {
-        service: ec2.InterfaceVpcEndpointAwsService.SSM_MESSAGES,
-        subnets: subnets,
-    });
-}
-
-addS3FlowLog(id: string, props: AddS3FlowLogProps) {
-    const flowlog = new ec2.FlowLog(this, 'vpcFlowLog', {
-        flowLogName: props.S3FlowLogName,
-        resourceType: ec2.FlowLogResourceType.fromVpc(this.vpc),
-        destination: ec2.FlowLogDestination.toS3(props.s3flowLogBucket, props.S3FlowLogName + '/'),
-        maxAggregationInterval: ec2.FlowLogMaxAggregationInterval.ONE_MINUTE,
-        trafficType: ec2.FlowLogTrafficType.ALL
-    });
-    if (props.S3FlowLogName) {
-        cdk.Tags.of(flowlog).add('Name', props.S3FlowLogName);
-    }
 }}
     

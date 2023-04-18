@@ -1,0 +1,44 @@
+import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+
+// VpcClientvpnSubnetConstruct 的属性
+type VpcClientvpnSubnetConstructProps = {
+  vpc: ec2.Vpc;
+  cfnNatGateway: ec2.CfnNatGateway;
+  subnetCidr: string;
+  availabilityZone: string;
+  subnetName?: string;
+  routeTableName?: string;
+};
+
+// VpcClientvpnSubnetConstruct
+
+export class VpcClientvpnSubnetConstruct extends Construct {
+  public readonly subnet: ec2.Subnet;
+  public readonly routeTable: ec2.CfnRouteTable;
+
+  constructor(scope: Construct, id: string, props: VpcClientvpnSubnetConstructProps) {
+    super(scope, id);
+
+        this.subnet = new ec2.Subnet(this, 'ClientVpnSubnet', {
+            vpcId: props.vpc.vpcId,
+            cidrBlock: props.subnetCidr,
+            availabilityZone: props.availabilityZone,
+        });
+
+        // 向子网添加 Client vpn Endpoint 路由
+        this.subnet.addDefaultNatRoute(props.cfnNatGateway.ref);
+        
+        if (props.subnetName) {
+            cdk.Tags.of(this.subnet).add('Name', props.subnetName, {
+                includeResourceTypes: ['AWS::EC2::Subnet']
+            });
+        }
+        if (props.routeTableName) {
+            cdk.Tags.of(this.subnet).add('Name', props.routeTableName, {
+                includeResourceTypes: ['AWS::EC2::RouteTable']
+            });
+        }
+    }
+}
