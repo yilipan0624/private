@@ -6,64 +6,59 @@ import { ADConstruct } from '../../construct/ad/ad-construct';
 import { NamingStackProps } from '../../../utils/commonTypes';
 import { ResourceNameBuilder } from '../../../utils/helpers';
 
-type FSxConstructProps = {
-  namingStackProps: NamingStackProps;
-  vpc: ec2.IVpc;
+export interface FsxConstructProps {
+  vpc: ec2.Vpc;
   privateSubnets: ec2.ISubnet[];
-  securityGroupName?: string;
-  adConstruct: ADConstruct;
-};
+  directoryService: ADConstruct;
+  namingStackProps: NamingStackProps;
+}
 
-export class FSxConstruct extends Construct {
-  public readonly fsxFileSystem: fsx.CfnFileSystem;
-
-  constructor(scope: Construct, id: string, props: FSxConstructProps) {
+export class FsxConstruct extends Construct {
+  constructor(scope: Construct, id: string, props: FsxConstructProps) {
     super(scope, id);
 
-    const httpsPort = 443;
-
-    // EC2 SecurityGroup#1
-    const sg = new ec2.SecurityGroup(this, 'sg-ec2-1', {
-      vpc: props.vpc,
-      securityGroupName: props.securityGroupName,
-      allowAllOutbound: true,
-    });
-    props.privateSubnets.forEach(v_ => {
-      sg.addIngressRule(ec2.Peer.ipv4(v_.ipv4CidrBlock), ec2.Port.tcp(httpsPort), 'allow HTTPS port access.');
-    });
-    if (props.securityGroupName) {
-      cdk.Tags.of(sg).add('Name', props.securityGroupName);
-    }
-
-    const fsxName = ResourceNameBuilder.makeResourceNameStr({
+    // Create SecurityGroup
+    const fsxSecurityGroupName = ResourceNameBuilder.makeResourceNameStr({
       serviceName: 'fsx',
+      use: 'securityGroup',
       ...props.namingStackProps,
     });
 
-this.fsxFileSystem = new fsx.CfnFileSystem(this, 'FSxFileSystem', {
-  fileSystemType: 'WINDOWS',
-  subnetIds: props.privateSubnets.map(subnet => subnet.subnetId),
-  securityGroupIds: [sg.securityGroupId],
-  windowsConfiguration: {
-    activeDirectoryId: props.adConstruct.directoryService.ref,
-    throughputCapacity: 8,
-    deploymentType: 'MULTI_AZ_1',
-    maintenanceOperationsInProgress: ['PATCHING'] as unknown as string[],
-    preferredSubnetId: props.privateSubnets[0].subnetId,
-    automaticBackupRetentionDays: 7,
-    dailyAutomaticBackupStartTime: '00:00',
-    copyTagsToBackups: true,
-  },
-  storageCapacity: 300,
-  kmsKeyId: '',
-});
+    const fsxSecurityGroup = new ec2.SecurityGroup(this, 'fsxSecurityGroup', {
+      vpc: props.vpc,
+      securityGroupName: fsxSecurityGroupName,
+      description: 'Security group for FSx',
+    });
+    cdk.Tags.of(fsxSecurityGroup).add('Name', fsxSecurityGroupName);
 
-    if (!(/^ctc[0-9]$/.test(props.namingStackProps.envKey))) {
-      this.fsxFileSystem.cfnOptions.metadata = {
-        'AWS::CloudFormation::Interface': {
-          'PreventDeletion': 'true',
-        },
-      };
-    }
+    // Add inbound rule
+    fsxSecurityGroup.addIngressRule(ec2.Peer.ipv4(props.vpc.vpcCidrBlock), ec2.Port.tcp(445), 'Allow FSx traffic');
+
+    // Create FSx for Windows
+    const fsxFileSystemName = ResourceNameBuilder.makeResourceNameStr({
+      serviceName: 'fsx',
+      use: 'fileSystem',
+      ...props.namingStackProps,
+    });
+
+    const fsxFileSystem = new fsx.CfnFileSystem(this, 'fsxFileSystem', {
+      fileSystemType: 'WINDOWS',
+      storageCapacity: 300,
+      subnetIds: [props.privateSubnets[0].subnetId],
+      securityGroupIds: [fsxSecurityGroup.securityGroupId],
+      windowsConfiguration: {
+        activeDirectoryId: props.directoryService.directoryService.ref,
+        throughputCapacity: 8,
+        automaticBackupRetentionDays: 7,
+        dailyAutomaticBackupStartTime: '01:00',
+        weeklyMaintenanceStartTime: '1:01:00',
+      },
+    });
+
+    // Output FSx DNS Name
+    new cdk.CfnOutput(this, 'fsxDnsName', {
+      value: fsxFileSystem.attrDnsName,
+      description: 'FSx for Windows File System DNS Name',
+    });
   }
 }

@@ -1,0 +1,7 @@
+    // Add FsxConstruct
+    this.fsxConstruct = new FsxConstruct(this, 'FsxConstruct', {
+      vpc: props.vpc.vpc,
+      privateSubnets: props.vpc.privateSubnets,
+      directoryService: this.adConstruct,  
+      namingStackProps: props.namingStackProps, 
+    });   
