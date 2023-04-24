@@ -6,17 +6,22 @@ import { ADConstruct } from '../../construct/ad/ad-construct';
 import { NamingStackProps } from '../../../utils/commonTypes';
 import { ResourceNameBuilder } from '../../../utils/helpers';
 
-export interface FsxConstructProps {
-  vpc: ec2.Vpc;
+
+
+type FSxConstructProps = {
+  vpc: ec2.IVpc;
   privateSubnets: ec2.ISubnet[];
   directoryService: ADConstruct;
   namingStackProps: NamingStackProps;
-}
+  fsxName?: string;
+};
 
-export class FsxConstruct extends Construct {
-  constructor(scope: Construct, id: string, props: FsxConstructProps) {
+export class FSxConstruct extends Construct {
+  public readonly fileSystem: fsx.CfnFileSystem;
+
+  constructor(scope: Construct, id: string, props: FSxConstructProps) {
     super(scope, id);
-
+    
     // Create SecurityGroup
     const fsxSecurityGroupName = ResourceNameBuilder.makeResourceNameStr({
       serviceName: 'fsx',
@@ -40,43 +45,38 @@ export class FsxConstruct extends Construct {
       use: 'fileSystem',
       ...props.namingStackProps,
     });
-
-    const fsxFileSystem = new fsx.CfnFileSystem(this, 'fsxFileSystem', {
-      fileSystemType: 'WINDOWS',
-      storageCapacity: 5120,
-      subnetIds: [
-        props.privateSubnets[0].subnetId,
-        props.privateSubnets[1].subnetId, // 添加第二个子网 ID
-      ],
-      securityGroupIds: [fsxSecurityGroup.securityGroupId],
-      windowsConfiguration: {
-        activeDirectoryId: props.directoryService.directoryService.ref,
-        throughputCapacity: 64,
-        auditLogConfiguration: { // 添加日志审查功能
-          fileAccessAuditLogLevel: 'INFORMATION',
-          fileShareAccessAuditLogLevel: 'INFORMATION',
-        },
-        //automaticBackupRetentionDays: 7,
-        //dailyAutomaticBackupStartTime: '01:00',
-        //weeklyMaintenanceStartTime: '1:01:00',
-        deploymentType: 'MULTI_AZ_1', // 更改为多 AZ 部署
-        preferredSubnetId: props.privateSubnets[0].subnetId, // 选择首选子网
-      },
-    });
-
-    // 添加 FSx 文件系统标签
-    fsxFileSystem.addOverride('Properties.Tags', [
-      {
-        Key: 'Name',
-        Value: fsxFileSystemName,
-      },
-    ]);
     
-    fsxFileSystem.addOverride('Properties.WindowsConfiguration.StorageType', 'HDD');
+
+// Create the FSx for Windows File Server
+this.fileSystem = new fsx.CfnFileSystem(this, 'FsxWindowsFileSystem', {
+  fileSystemType: 'WINDOWS',
+  subnetIds: [
+    props.privateSubnets[0].subnetId,
+    props.privateSubnets[1].subnetId,
+  ], // Provide both subnets
+  securityGroupIds: [fsxSecurityGroup.securityGroupId],
+  storageType: 'HDD',
+  storageCapacity: 5120,
+  windowsConfiguration: {
+    activeDirectoryId: props.directoryService.directoryService.ref,
+    throughputCapacity: 64, // 8 MB/s is the minimum throughput capacity for HDD storage type
+
+    deploymentType: 'MULTI_AZ_1', // Change to MULTI_AZ deployment
+    preferredSubnetId: props.privateSubnets[0].subnetId, // Choose the first subnet as preferred
+    automaticBackupRetentionDays: 0, // Disable automatic backups
+    auditLogConfiguration: {
+      fileAccessAuditLogLevel: 'SUCCESS_AND_FAILURE',
+      fileShareAccessAuditLogLevel: 'SUCCESS_AND_FAILURE',
+    },
+  },
+});
+
+cdk.Tags.of(this.fileSystem).add('Name', fsxFileSystemName);
+
     
     // Output FSx DNS Name
     new cdk.CfnOutput(this, 'fsxDnsName', {
-      value: fsxFileSystem.attrDnsName,
+      value: this.fileSystem.attrDnsName,
       description: 'FSx for Windows File System DNS Name',
     });
   }
