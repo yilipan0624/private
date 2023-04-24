@@ -43,18 +43,37 @@ export class FsxConstruct extends Construct {
 
     const fsxFileSystem = new fsx.CfnFileSystem(this, 'fsxFileSystem', {
       fileSystemType: 'WINDOWS',
-      storageCapacity: 300,
-      subnetIds: [props.privateSubnets[0].subnetId],
+      storageCapacity: 5120,
+      subnetIds: [
+        props.privateSubnets[0].subnetId,
+        props.privateSubnets[1].subnetId, // 添加第二个子网 ID
+      ],
       securityGroupIds: [fsxSecurityGroup.securityGroupId],
       windowsConfiguration: {
         activeDirectoryId: props.directoryService.directoryService.ref,
-        throughputCapacity: 8,
-        automaticBackupRetentionDays: 7,
-        dailyAutomaticBackupStartTime: '01:00',
-        weeklyMaintenanceStartTime: '1:01:00',
+        throughputCapacity: 64,
+        auditLogConfiguration: { // 添加日志审查功能
+          fileAccessAuditLogLevel: 'INFORMATION',
+          fileShareAccessAuditLogLevel: 'INFORMATION',
+        },
+        //automaticBackupRetentionDays: 7,
+        //dailyAutomaticBackupStartTime: '01:00',
+        //weeklyMaintenanceStartTime: '1:01:00',
+        deploymentType: 'MULTI_AZ_1', // 更改为多 AZ 部署
+        preferredSubnetId: props.privateSubnets[0].subnetId, // 选择首选子网
       },
     });
 
+    // 添加 FSx 文件系统标签
+    fsxFileSystem.addOverride('Properties.Tags', [
+      {
+        Key: 'Name',
+        Value: fsxFileSystemName,
+      },
+    ]);
+    
+    fsxFileSystem.addOverride('Properties.WindowsConfiguration.StorageType', 'HDD');
+    
     // Output FSx DNS Name
     new cdk.CfnOutput(this, 'fsxDnsName', {
       value: fsxFileSystem.attrDnsName,
