@@ -1,0 +1,69 @@
+import * as cdk from 'aws-cdk-lib';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as fsx from 'aws-cdk-lib/aws-fsx';
+import { Construct } from 'constructs';
+import { ADConstruct } from '../../construct/ad/ad-construct';
+import { NamingStackProps } from '../../../utils/commonTypes';
+import { ResourceNameBuilder } from '../../../utils/helpers';
+
+type FSxConstructProps = {
+  namingStackProps: NamingStackProps;
+  vpc: ec2.IVpc;
+  privateSubnets: ec2.ISubnet[];
+  securityGroupName?: string;
+  adConstruct: ADConstruct;
+};
+
+export class FSxConstruct extends Construct {
+  public readonly fsxFileSystem: fsx.CfnFileSystem;
+
+  constructor(scope: Construct, id: string, props: FSxConstructProps) {
+    super(scope, id);
+
+    const httpsPort = 443;
+
+    // EC2 SecurityGroup#1
+    const sg = new ec2.SecurityGroup(this, 'sg-ec2-1', {
+      vpc: props.vpc,
+      securityGroupName: props.securityGroupName,
+      allowAllOutbound: true,
+    });
+    props.privateSubnets.forEach(v_ => {
+      sg.addIngressRule(ec2.Peer.ipv4(v_.ipv4CidrBlock), ec2.Port.tcp(httpsPort), 'allow HTTPS port access.');
+    });
+    if (props.securityGroupName) {
+      cdk.Tags.of(sg).add('Name', props.securityGroupName);
+    }
+
+    const fsxName = ResourceNameBuilder.makeResourceNameStr({
+      serviceName: 'fsx',
+      ...props.namingStackProps,
+    });
+
+this.fsxFileSystem = new fsx.CfnFileSystem(this, 'FSxFileSystem', {
+  fileSystemType: 'WINDOWS',
+  subnetIds: props.privateSubnets.map(subnet => subnet.subnetId),
+  securityGroupIds: [sg.securityGroupId],
+  windowsConfiguration: {
+    activeDirectoryId: props.adConstruct.directoryService.ref,
+    throughputCapacity: 8,
+    deploymentType: 'MULTI_AZ_1',
+    maintenanceOperationsInProgress: ['PATCHING'] as unknown as string[],
+    preferredSubnetId: props.privateSubnets[0].subnetId,
+    automaticBackupRetentionDays: 7,
+    dailyAutomaticBackupStartTime: '00:00',
+    copyTagsToBackups: true,
+  },
+  storageCapacity: 300,
+  kmsKeyId: '',
+});
+
+    if (!(/^ctc[0-9]$/.test(props.namingStackProps.envKey))) {
+      this.fsxFileSystem.cfnOptions.metadata = {
+        'AWS::CloudFormation::Interface': {
+          'PreventDeletion': 'true',
+        },
+      };
+    }
+  }
+}
