@@ -1,0 +1,148 @@
+import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import { Ec2InstanceConstruct } from '../construct/ec2/ec2-construct';
+import { NamingStackProps } from '../../utils/commonTypes';
+import { ResourceNameBuilder } from '../../utils/helpers';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as sns from 'aws-cdk-lib/aws-sns';
+import { VpcConstruct } from '../construct/vpc/vpc-construct';
+import { AlbConstruct } from '../construct/alb/alb-construct';
+import { InstanceTarget } from 'aws-cdk-lib/aws-elasticloadbalancingv2-targets';
+import { ADConstruct } from '../construct/ad/ad-construct';
+import { FSxConstruct } from '../construct/fsx/fsx-construct';
+
+// EC2 Instance Stack properties
+type WccServerStackProps = {
+  namingStackProps: NamingStackProps;
+  vpc: VpcConstruct;
+  //publicSubnets: ec2.ISubnet[];
+  privateSubnets: ec2.ISubnet[];
+  sharedSubnets: ec2.ISubnet[];
+  uniqueAZPrivateSubnets: ec2.ISubnet[];
+  alb: AlbConstruct;
+  instanceType?: string;
+  securityGroupName?: string;
+  logGroupName?: string;
+  snsAlarmTopicArn?: string;
+  password: string;
+  domainName?: string;
+  subnetSelection: ec2.SubnetSelection;
+} & cdk.StackProps;
+
+// EC2 Instance Stack
+export class WccServerstack extends cdk.Stack {
+  readonly iwelServer: Ec2InstanceConstruct;
+  readonly ec2InstanceConstruct: Ec2InstanceConstruct;
+  readonly adConstruct: ADConstruct;
+  readonly fsxConstruct: FSxConstruct;
+
+  constructor(scope: Construct, id: string, props: WccServerStackProps) {
+    super(scope, id, props);
+
+    // EC2 セキュリティグループ作成#1
+    const sg = new ec2.SecurityGroup(this, 'iwelSg', {
+      vpc: props.vpc.vpc,
+      securityGroupName: props.securityGroupName,
+      allowAllOutbound: true,
+    });
+
+    props.privateSubnets.forEach(v_ => {
+      sg.addIngressRule(ec2.Peer.ipv4(v_.ipv4CidrBlock), ec2.Port.tcp(443), 'allow HTTPS port access.',);
+    });
+    if (props.securityGroupName) {
+      cdk.Tags.of(sg).add('Name', props.securityGroupName);
+    }
+
+
+
+    //iwelインスタンス作成
+    this.iwelServer = new Ec2InstanceConstruct(this, 'IwelServer-01', {
+      vpc: props.vpc.vpc,
+      //vpcSubnets: props.subnetSelection,
+      vpcSubnets: { subnets: [props.privateSubnets[0]] },
+      instanceName: ResourceNameBuilder.makeResourceNameStr({
+        serviceName: 'ec2',
+        use: `iwel`,
+        ...props.namingStackProps
+      }),
+      instanceType: 't3.medium',
+      machineImage: ec2.MachineImage.latestWindows(ec2.WindowsVersion.WINDOWS_SERVER_2022_JAPANESE_FULL_BASE),
+      securityGroup: sg,
+      ebsVolume: 100,
+    });
+
+    //iwelインスタンス作成
+    this.iwelServer = new Ec2InstanceConstruct(this, 'IwelServer-02', {
+      vpc: props.vpc.vpc,
+      //vpcSubnets: props.subnetSelection,
+      vpcSubnets: { subnets: [props.privateSubnets[1]] },
+      instanceName: ResourceNameBuilder.makeResourceNameStr({
+        serviceName: 'ec2',
+        use: `iwel`,
+        ...props.namingStackProps
+      }),
+      instanceType: 't3.medium',
+      machineImage: ec2.MachineImage.latestWindows(ec2.WindowsVersion.WINDOWS_SERVER_2022_JAPANESE_FULL_BASE),
+      securityGroup: sg,
+      ebsVolume: 100,
+    });
+
+    //wishインスタンス作成
+    this.iwelServer = new Ec2InstanceConstruct(this, 'wishServer', {
+      vpc: props.vpc.vpc,
+      //vpcSubnets: props.subnetSelection,
+      vpcSubnets: { subnets: [props.privateSubnets[0]] },
+      instanceName: ResourceNameBuilder.makeResourceNameStr({
+        serviceName: 'ec2',
+        use: `wish`,
+        ...props.namingStackProps
+      }),
+      instanceType: 't3.medium',
+      machineImage: ec2.MachineImage.latestWindows(ec2.WindowsVersion.WINDOWS_SERVER_2022_JAPANESE_FULL_BASE),
+      securityGroup: sg,
+      ebsVolume: 100,
+    });
+  
+    // Create AD
+    this.adConstruct = new ADConstruct(this, 'ManagedMicrosoftAD', {
+      namingStackProps: props.namingStackProps,
+      vpc: props.vpc.vpc,
+      uniqueAZPrivateSubnets: props.uniqueAZPrivateSubnets,
+      password: cdk.SecretValue.plainText(props.password),
+      domainName: props.domainName || 'wanghaichen.local',
+      edition: 'Standard',
+    });
+    
+    // Create FSx for Windows
+    const fsxFileSystemName = ResourceNameBuilder.makeResourceNameStr({
+      serviceName: 'fsx',
+      use: 'fileSystem',
+      ...props.namingStackProps,
+    });
+    // Create FSx
+    this.fsxConstruct = new FSxConstruct(this, 'FSxWindowsFileSystem', {
+      fsxName: ResourceNameBuilder.makeResourceNameStr({
+        serviceName: 'fsx',
+        use:'apne1',
+        ...props.namingStackProps
+      }),
+      vpc: props.vpc.vpc,
+      privateSubnets: props.privateSubnets,
+      directoryService: this.adConstruct,
+      namingStackProps: props.namingStackProps,
+      securityGroup: sg,
+      activeDirectoryId: this.adConstruct.directoryService.ref,
+      storageType: 'HDD',
+      storageCapacity: 5120,
+      throughputCapacity: 64,
+      deploymentType: 'MULTI_AZ_1',
+      preferredSubnetId: props.privateSubnets[0].subnetId,
+      automaticBackupRetentionDays: 0,
+      fileSystemType: 'WINDOWS',
+      auditLogConfiguration: {
+        fileAccessAuditLogLevel: 'SUCCESS_AND_FAILURE',
+        fileShareAccessAuditLogLevel: 'SUCCESS_AND_FAILURE',
+      },
+    });
+  }
+}

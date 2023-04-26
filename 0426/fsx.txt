@@ -1,0 +1,67 @@
+import * as cdk from 'aws-cdk-lib';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as fsx from 'aws-cdk-lib/aws-fsx';
+import { Construct } from 'constructs';
+import { ADConstruct } from '../../construct/ad/ad-construct';
+import { NamingStackProps } from '../../../utils/commonTypes';
+import { ResourceNameBuilder } from '../../../utils/helpers';
+
+type FSxConstructProps = {
+  vpc: ec2.IVpc;
+  privateSubnets: ec2.ISubnet[];
+  directoryService: ADConstruct;
+  namingStackProps: NamingStackProps;
+  fsxName?: string;
+  securityGroup: ec2.ISecurityGroup;
+  activeDirectoryId: string;
+  storageType: string;
+  storageCapacity: number;
+  throughputCapacity: number;
+  deploymentType: string;
+  preferredSubnetId: string;
+  automaticBackupRetentionDays: number;
+  fileSystemType: string;
+  auditLogConfiguration: {
+  fileAccessAuditLogLevel: string;
+  fileShareAccessAuditLogLevel: string;
+  };
+};
+
+export class FSxConstruct extends Construct {
+
+  public readonly fileSystem: fsx.CfnFileSystem;
+
+  constructor(scope: Construct, id: string, props: FSxConstructProps) {
+    super(scope, id);
+
+   //// Create FSx for Windows
+   //const fsxFileSystemName = ResourceNameBuilder.makeResourceNameStr({
+   //  serviceName: 'fsx',
+   //  use: 'fileSystem',
+   //  ...props.namingStackProps,
+   //});
+    
+    this.fileSystem = new fsx.CfnFileSystem(this, 'FsxWindowsFileSystem', {
+      fileSystemType: props.fileSystemType,
+      storageType: props.storageType,
+      storageCapacity: props.storageCapacity,
+      subnetIds: [
+        props.privateSubnets[0].subnetId,
+        props.privateSubnets[1].subnetId,
+      ],
+      securityGroupIds: [props.securityGroup.securityGroupId],
+      windowsConfiguration: {
+        activeDirectoryId: props.activeDirectoryId,
+        throughputCapacity: props.throughputCapacity,
+        deploymentType: props.deploymentType,
+        preferredSubnetId: props.preferredSubnetId,
+        automaticBackupRetentionDays: props.automaticBackupRetentionDays,
+        auditLogConfiguration: props.auditLogConfiguration,
+      },
+    });
+
+    if (props.fsxName) {
+      cdk.Tags.of(this.fileSystem).add('Name', props.fsxName);
+    }
+  }
+}
