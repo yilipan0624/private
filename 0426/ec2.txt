@@ -1,0 +1,1152 @@
+import * as cdk from 'aws-cdk-lib';
+import * as cw from 'aws-cdk-lib/aws-cloudwatch';
+import * as sns from 'aws-cdk-lib/aws-sns';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as cw_actions from 'aws-cdk-lib/aws-cloudwatch-actions';
+import * as logs from 'aws-cdk-lib/aws-logs';
+import { Construct } from 'constructs';
+import { NamingStackProps } from '../../../utils/commonTypes';
+import { ResourceNameBuilder } from '../../../utils/helpers';
+
+
+// EC2 Instanceのプロパティ
+type Ec2InstanceConstructProps = {
+    // VPC
+    vpc: ec2.IVpc;
+    // subnet
+    vpcSubnets: ec2.SubnetSelection;
+    // subnetを指定
+    subnetSelection?: ec2.SubnetSelection;
+    //インスタンス名
+    instanceName: string;
+    // マシンイメージ
+    machineImage: ec2.IMachineImage;
+    // インスタンスタイプ
+    instanceType: string;
+    //EBSボリューム
+    ebsVolume: number;
+    //セキュリティグループ
+    securityGroup: ec2.ISecurityGroup;
+    // セキュリティグループ　名
+    securityGroupName?: string;
+    // ロググループ　名
+    logGroupName?: string;
+    // cdk Destroy した時に自動で削除するか(開発用) 。デフォルト:false
+    cdkAutoRemove?: boolean;
+}
+
+
+export class Ec2InstanceConstruct extends Construct {
+    public readonly instance: ec2.Instance;
+    constructor(scope: Construct, id: string, props: Ec2InstanceConstructProps) {
+        super(scope, id);
+
+        this.instance = new ec2.Instance(this, 'ec2Instance', {
+            vpc: props.vpc,
+            vpcSubnets: props.vpcSubnets,
+            instanceType: new ec2.InstanceType(props.instanceType),
+            machineImage: props.machineImage,
+            instanceName: props.instanceName,
+            securityGroup: props.securityGroup,
+            blockDevices: [{
+                deviceName: `/dev/sda1`,
+                volume: ec2.BlockDeviceVolume.ebs(props.ebsVolume, {
+                    encrypted: true,
+                    volumeType: ec2.EbsDeviceVolumeType.GP3,
+                    iops: 3000,
+                }),
+            }]
+        }
+        );
+        // EC2 Instanceのuser dataを作成
+        this.instance.userData.addCommands(
+            'Set-ExecutionPolicy Unrestricted -Force',
+            'Import-Module AWS.Tools.Installer',
+            'Install-AWSToolsModule AWS.Tools.EC2, AWS.Tools.CloudWatch -CleanUp',
+            'Set-Location C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent',
+            'New-Item -Path . -Name "amazon-cloudwatch-agent.json" -ItemType "file" -Force',
+            'Add-Content -Path ".\\amazon-cloudwatch-agent.json" -Value \'{"metrics":{"append_dimensions":{"InstanceId":"${aws:InstanceId}"},"metrics_collected":{"LogicalDisk":[{"measurement":["FreeSpace"],"resources":["C:"]}],"Memory":{"measurement":["% Committed Bytes In Use"]}}},"logs":{}}\'',
+            'C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.exe -config "C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.json"'
+        );
+        const cfnInstance = this.instance.node.defaultChild as ec2.CfnInstance;
+        //if (!(/^ctc[0-9]$/.test(props.namingStackProps.envKey))) {
+            //cfnInstance.disableApiTermination = true;
+        //} 
+    }
+}
+
+/*
+// EC2 instanceを作成
+export class Ec2InstanceConstruct extends Construct {
+
+    readonly instance1: ec2.Instance;
+    readonly instance2: ec2.Instance;
+    readonly instance3: ec2.Instance;
+    readonly instance4: ec2.Instance;
+    readonly instance5: ec2.Instance;
+    readonly instance6: ec2.Instance;
+    readonly instance7: ec2.Instance;
+    readonly instance8: ec2.Instance;
+    readonly instance9: ec2.Instance;
+    readonly instance10: ec2.Instance;
+
+    readonly instaceType?: string;
+    readonly ec2Logs: { [logType: string]: logs.ILogGroup };
+
+
+    
+    constructor(scope: Construct, id: string, props: Ec2InstanceConstructProps) {
+        super(scope, id);
+        
+        //例
+        const httpsPort = 443;
+        
+        this.instaceType = props.instanceType || 't3.medium';
+        const cloudwatchLogsExportsList = ['error'];
+
+        // EC2 SecurityGroup#1
+        const sg = new ec2.SecurityGroup(this, 'sg-ec2-1', {
+            vpc: props.vpc,
+            securityGroupName: props.securityGroupName,
+            allowAllOutbound: true,
+        });
+        props.privateSubnets.forEach(v_ => {
+            sg.addIngressRule(ec2.Peer.ipv4(v_.ipv4CidrBlock), ec2.Port.tcp(httpsPort), 'allow HTTPS port access.',);
+        });
+        if (props.securityGroupName) {
+            cdk.Tags.of(sg).add('Name', props.securityGroupName);
+        }
+        
+        // EC2 SecurityGroup#2
+        const sgName2 = ResourceNameBuilder.makeResourceNameStr({
+            serviceName: 'sg',
+            use: '2',
+            ...props.namingStackProps
+        });
+        const sg2 = new ec2.SecurityGroup(this, 'sg-ec2-bastion2', {
+            vpc: props.vpc,
+            securityGroupName: sgName2,
+            allowAllOutbound: true
+        });
+        props.privateSubnets.forEach(subnet => {
+        sg2.addIngressRule(ec2.Peer.ipv4(subnet.ipv4CidrBlock), ec2.Port.allTraffic(), 'Allow all traffic from private subnets');
+        });
+
+        // add 443 port
+        sg2.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(443), 'Allow TCP traffic on port 443');
+            cdk.Tags.of(sg).add('Name', sgName2);
+
+        // EC2 Instance#1名を作成
+        const instanceName1 = ResourceNameBuilder.makeResourceNameStr({
+            serviceName: 'ec2',
+            use: 'iwel-01',
+            ...props.namingStackProps
+        }); 
+        
+        // EC2 Instance#1を作成
+        this.instance1 = new ec2.Instance(this, 'EC2-iwel-01', {
+         vpc: props.vpc,
+         vpcSubnets: { subnets: [props.privateSubnets[0]]},
+         instanceType: new ec2.InstanceType(this.instaceType || 'r6i.xlarge'),
+         machineImage: ec2.MachineImage.latestWindows(ec2.WindowsVersion.WINDOWS_SERVER_2022_JAPANESE_FULL_BASE),
+         instanceName: instanceName1,
+         securityGroup:sg2,
+         blockDevices: [{
+           deviceName: `/dev/sda1`,
+           volume: ec2.BlockDeviceVolume.ebs(100, {
+           encrypted: true,
+           volumeType: ec2.EbsDeviceVolumeType.GP3,
+           iops: 3000,
+                   }),
+                }]
+            }
+        );
+        
+        // EC2 Instance#1のuser dataを作成
+        this.instance1.userData.addCommands(
+            'Set-ExecutionPolicy Unrestricted -Force',
+            'Import-Module AWS.Tools.Installer',
+            'Install-AWSToolsModule AWS.Tools.EC2, AWS.Tools.CloudWatch -CleanUp',
+            'Set-Location C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent',
+            'New-Item -Path . -Name "amazon-cloudwatch-agent.json" -ItemType "file" -Force',
+            'Add-Content -Path ".\\amazon-cloudwatch-agent.json" -Value \'{"metrics":{"append_dimensions":{"InstanceId":"${aws:InstanceId}"},"metrics_collected":{"LogicalDisk":[{"measurement":["FreeSpace"],"resources":["C:"]}],"Memory":{"measurement":["% Committed Bytes In Use"]}}},"logs":{}}\'',
+            'C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.exe -config "C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.json"'
+        );
+        
+        // EC2 Instance#1のタグを作成    
+        const cfnInstance1 = this.instance1.node.defaultChild as ec2.CfnInstance;
+          if (!(/^ctc[0-9]$/.test(props.namingStackProps.envKey))) {
+          cfnInstance1.disableApiTermination = true;
+          }            
+
+        // EC2 Instance#2名を作成
+        const instanceName2 = ResourceNameBuilder.makeResourceNameStr({
+        serviceName: 'ec2',
+        use: 'iwel-02',
+            ...props.namingStackProps
+        });   
+       
+        // EC2 Instance#2を作成
+        this.instance2 = new ec2.Instance(this, 'EC2-iwel-02', {
+         vpc: props.vpc,
+         vpcSubnets: { subnets: [props.privateSubnets[1]]},
+         instanceType: new ec2.InstanceType(this.instaceType || 'r6i.xlarge'),
+         machineImage: ec2.MachineImage.latestWindows(ec2.WindowsVersion.WINDOWS_SERVER_2022_JAPANESE_FULL_BASE),
+         instanceName: instanceName2,
+         securityGroup:sg,
+         blockDevices: [{
+           deviceName: `/dev/sda1`,
+           volume: ec2.BlockDeviceVolume.ebs(100, {
+           encrypted: true,
+           volumeType: ec2.EbsDeviceVolumeType.GP3,
+           iops: 3000,
+                   }),
+                }]
+            }
+        );
+        
+        // EC2 Instance#2のuser dataを作成
+        this.instance2.userData.addCommands(
+            'Set-ExecutionPolicy Unrestricted -Force',
+            'Import-Module AWS.Tools.Installer',
+            'Install-AWSToolsModule AWS.Tools.EC2, AWS.Tools.CloudWatch -CleanUp',
+            'Set-Location C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent',
+            'New-Item -Path . -Name "amazon-cloudwatch-agent.json" -ItemType "file" -Force',
+            'Add-Content -Path ".\\amazon-cloudwatch-agent.json" -Value \'{"metrics":{"append_dimensions":{"InstanceId":"${aws:InstanceId}"},"metrics_collected":{"LogicalDisk":[{"measurement":["FreeSpace"],"resources":["C:"]}],"Memory":{"measurement":["% Committed Bytes In Use"]}}},"logs":{}}\'',
+            'C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.exe -config "C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.json"'
+        );
+        
+        // EC2 Instance#2のタグを作成 
+        const cfnInstance2 = this.instance2.node.defaultChild as ec2.CfnInstance;
+          if (!(/^ctc[0-9]$/.test(props.namingStackProps.envKey))) {
+          cfnInstance2.disableApiTermination = true;
+          } 
+          
+        // EC2 Instance#3名を作成
+        const instanceName3 = ResourceNameBuilder.makeResourceNameStr({
+        serviceName: 'ec2',
+        use: 'wish-01',
+            ...props.namingStackProps
+        });   
+        
+        // EC2 Instance#3を作成
+        this.instance3 = new ec2.Instance(this, 'EC2-wish-01', {
+         vpc: props.vpc,
+         vpcSubnets: { subnets: [props.privateSubnets[0]]},
+         instanceType: new ec2.InstanceType(this.instaceType || 'r6i.2xlarge'),
+         machineImage: ec2.MachineImage.latestWindows(ec2.WindowsVersion.WINDOWS_SERVER_2022_JAPANESE_FULL_BASE),
+         instanceName: instanceName3,
+         securityGroup:sg,
+         blockDevices: [{
+           deviceName: `/dev/sda1`,
+           volume: ec2.BlockDeviceVolume.ebs(100, {
+           encrypted: true,
+           volumeType: ec2.EbsDeviceVolumeType.GP3,
+           iops: 3000,
+                   }),
+                }]
+            }
+        );
+        
+        // EC2 Instance#3のuser dataを作成
+        this.instance3.userData.addCommands(
+            'Set-ExecutionPolicy Unrestricted -Force',
+            'Import-Module AWS.Tools.Installer',
+            'Install-AWSToolsModule AWS.Tools.EC2, AWS.Tools.CloudWatch -CleanUp',
+            'Set-Location C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent',
+            'New-Item -Path . -Name "amazon-cloudwatch-agent.json" -ItemType "file" -Force',
+            'Add-Content -Path ".\\amazon-cloudwatch-agent.json" -Value \'{"metrics":{"append_dimensions":{"InstanceId":"${aws:InstanceId}"},"metrics_collected":{"LogicalDisk":[{"measurement":["FreeSpace"],"resources":["C:"]}],"Memory":{"measurement":["% Committed Bytes In Use"]}}},"logs":{}}\'',
+            'C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.exe -config "C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.json"'
+        );
+        
+        // EC2 Instance#3のタグを作成
+        const cfnInstance3 = this.instance3.node.defaultChild as ec2.CfnInstance;
+          if (!(/^ctc[0-9]$/.test(props.namingStackProps.envKey))) {
+          cfnInstance3.disableApiTermination = true;
+          }  
+   
+        // EC2 Instance#4名を作成
+        const instanceName4 = ResourceNameBuilder.makeResourceNameStr({
+        serviceName: 'ec2',
+        use: 'wish-2',
+            ...props.namingStackProps
+        });  
+        
+        // EC2 Instance#4を作成
+        this.instance4 = new ec2.Instance(this, 'EC2-wish-02', {
+         vpc: props.vpc,
+         vpcSubnets: { subnets: [props.privateSubnets[1]]},
+         instanceType: new ec2.InstanceType(this.instaceType || 'r6i.2xlarge'),
+         machineImage: ec2.MachineImage.latestWindows(ec2.WindowsVersion.WINDOWS_SERVER_2022_JAPANESE_FULL_BASE),
+         instanceName: instanceName4,
+         securityGroup:sg,
+         blockDevices: [{
+           deviceName: `/dev/sda1`,
+           volume: ec2.BlockDeviceVolume.ebs(100, {
+           encrypted: true,
+           volumeType: ec2.EbsDeviceVolumeType.GP3,
+           iops: 3000,
+                   }),
+                }]
+            }
+        );
+        
+        // EC2 Instance#4のuser dataを作成
+        this.instance4.userData.addCommands(
+            'Set-ExecutionPolicy Unrestricted -Force',
+            'Import-Module AWS.Tools.Installer',
+            'Install-AWSToolsModule AWS.Tools.EC2, AWS.Tools.CloudWatch -CleanUp',
+            'Set-Location C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent',
+            'New-Item -Path . -Name "amazon-cloudwatch-agent.json" -ItemType "file" -Force',
+            'Add-Content -Path ".\\amazon-cloudwatch-agent.json" -Value \'{"metrics":{"append_dimensions":{"InstanceId":"${aws:InstanceId}"},"metrics_collected":{"LogicalDisk":[{"measurement":["FreeSpace"],"resources":["C:"]}],"Memory":{"measurement":["% Committed Bytes In Use"]}}},"logs":{}}\'',
+            'C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.exe -config "C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.json"'
+        );
+        
+        // EC2 Instance#4のタグを作成
+        const cfnInstance4 = this.instance4.node.defaultChild as ec2.CfnInstance;
+          if (!(/^ctc[0-9]$/.test(props.namingStackProps.envKey))) {
+          cfnInstance4.disableApiTermination = true;
+          }  
+          
+        // EC2 Instance#5名を作成
+        const instanceName5 = ResourceNameBuilder.makeResourceNameStr({
+        serviceName: 'ec2',
+        use: 'sry',
+            ...props.namingStackProps
+        });   
+       
+        // EC2 Instance#5を作成
+        this.instance5 = new ec2.Instance(this, 'EC2-sry', {
+         vpc: props.vpc,
+         vpcSubnets: { subnets: [props.privateSubnets[0]]},
+         instanceType: new ec2.InstanceType(this.instaceType || 't3.micro'),
+         machineImage: ec2.MachineImage.latestWindows(ec2.WindowsVersion.WINDOWS_SERVER_2022_JAPANESE_FULL_BASE),
+         instanceName: instanceName5,
+         securityGroup:sg,
+         blockDevices: [{
+           deviceName: `/dev/sda1`,
+           volume: ec2.BlockDeviceVolume.ebs(40, {
+           encrypted: true,
+           volumeType: ec2.EbsDeviceVolumeType.GP3,
+           iops: 3000,
+                   }),
+                }]
+            }
+        );
+        
+        // EC2 Instance#5のuser dataを作成
+        this.instance5.userData.addCommands(
+            'Set-ExecutionPolicy Unrestricted -Force',
+            'Import-Module AWS.Tools.Installer',
+            'Install-AWSToolsModule AWS.Tools.EC2, AWS.Tools.CloudWatch -CleanUp',
+            'Set-Location C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent',
+            'New-Item -Path . -Name "amazon-cloudwatch-agent.json" -ItemType "file" -Force',
+            'Add-Content -Path ".\\amazon-cloudwatch-agent.json" -Value \'{"metrics":{"append_dimensions":{"InstanceId":"${aws:InstanceId}"},"metrics_collected":{"LogicalDisk":[{"measurement":["FreeSpace"],"resources":["C:"]}],"Memory":{"measurement":["% Committed Bytes In Use"]}}},"logs":{}}\'',
+            'C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.exe -config "C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.json"'
+        );
+        
+        // EC2 Instance#5のタグを作成
+        const cfnInstance5 = this.instance5.node.defaultChild as ec2.CfnInstance;
+          if (!(/^ctc[0-9]$/.test(props.namingStackProps.envKey))) {
+          cfnInstance5.disableApiTermination = true;
+          } 
+        
+          
+        // EC2 Instance#6名を作成
+        const instanceName6 = ResourceNameBuilder.makeResourceNameStr({
+        serviceName: 'ec2',
+        use: 'mail',
+            ...props.namingStackProps
+        });   
+        
+        // EC2 Instance#6を作成
+        this.instance6 = new ec2.Instance(this, 'EC2-mail', {
+         vpc: props.vpc,
+         vpcSubnets: { subnets: [props.sharedSubnets[0]]},
+         instanceType: new ec2.InstanceType(this.instaceType || 'c6i.large'),
+         machineImage: ec2.MachineImage.latestWindows(ec2.WindowsVersion.WINDOWS_SERVER_2022_JAPANESE_FULL_BASE),
+         instanceName: instanceName6,
+         securityGroup:sg,
+         blockDevices: [{
+           deviceName: `/dev/sda1`,
+           volume: ec2.BlockDeviceVolume.ebs(120, {
+           encrypted: true,
+           volumeType: ec2.EbsDeviceVolumeType.GP3,
+           iops: 3000,
+                   }),
+                }]
+            }
+        );
+        
+        // EC2 Instance#6のuser dataを作成
+        this.instance6.userData.addCommands(
+            'Set-ExecutionPolicy Unrestricted -Force',
+            'Import-Module AWS.Tools.Installer',
+            'Install-AWSToolsModule AWS.Tools.EC2, AWS.Tools.CloudWatch -CleanUp',
+            'Set-Location C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent',
+            'New-Item -Path . -Name "amazon-cloudwatch-agent.json" -ItemType "file" -Force',
+            'Add-Content -Path ".\\amazon-cloudwatch-agent.json" -Value \'{"metrics":{"append_dimensions":{"InstanceId":"${aws:InstanceId}"},"metrics_collected":{"LogicalDisk":[{"measurement":["FreeSpace"],"resources":["C:"]}],"Memory":{"measurement":["% Committed Bytes In Use"]}}},"logs":{}}\'',
+            'C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.exe -config "C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.json"'
+        );
+        
+        // EC2 Instance#6のタグを作成
+        const cfnInstance6 = this.instance6.node.defaultChild as ec2.CfnInstance;
+          if (!(/^ctc[0-9]$/.test(props.namingStackProps.envKey))) {
+          cfnInstance6.disableApiTermination = true;
+          }  
+   
+        // EC2 Instance#7名を作成
+        const instanceName7 = ResourceNameBuilder.makeResourceNameStr({
+        serviceName: 'ec2',
+        use: 'bat',
+            ...props.namingStackProps
+        });   
+       
+        // EC2 Instance#7を作成
+        this.instance7 = new ec2.Instance(this, 'EC2-bat', {
+         vpc: props.vpc,
+         vpcSubnets: { subnets: [props.sharedSubnets[0]]},
+         instanceType: new ec2.InstanceType(this.instaceType || 'm6i.xlarge'),
+         machineImage: ec2.MachineImage.latestWindows(ec2.WindowsVersion.WINDOWS_SERVER_2022_JAPANESE_FULL_BASE),
+         instanceName: instanceName7,
+         securityGroup:sg,
+         blockDevices: [{
+           deviceName: `/dev/sda1`,
+           volume: ec2.BlockDeviceVolume.ebs(100, {
+           encrypted: true,
+           volumeType: ec2.EbsDeviceVolumeType.GP3,
+           iops: 3000,
+                   }),
+                }]
+            }
+        );
+        
+        // EC2 Instance#7のuser dataを作成
+        this.instance7.userData.addCommands(
+            'Set-ExecutionPolicy Unrestricted -Force',
+            'Import-Module AWS.Tools.Installer',
+            'Install-AWSToolsModule AWS.Tools.EC2, AWS.Tools.CloudWatch -CleanUp',
+            'Set-Location C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent',
+            'New-Item -Path . -Name "amazon-cloudwatch-agent.json" -ItemType "file" -Force',
+            'Add-Content -Path ".\\amazon-cloudwatch-agent.json" -Value \'{"metrics":{"append_dimensions":{"InstanceId":"${aws:InstanceId}"},"metrics_collected":{"LogicalDisk":[{"measurement":["FreeSpace"],"resources":["C:"]}],"Memory":{"measurement":["% Committed Bytes In Use"]}}},"logs":{}}\'',
+            'C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.exe -config "C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.json"'
+        );
+        
+        // EC2 Instance#7のタグを作成
+        const cfnInstance7 = this.instance7.node.defaultChild as ec2.CfnInstance;
+          if (!(/^ctc[0-9]$/.test(props.namingStackProps.envKey))) {
+          cfnInstance7.disableApiTermination = true;
+          }  
+          
+        // EC2 Instance#8名を作成
+        const instanceName8 = ResourceNameBuilder.makeResourceNameStr({
+        serviceName: 'ec2',
+        use: 'work',
+            ...props.namingStackProps
+        });   
+        
+        // EC2 Instance#8を作成
+        this.instance8 = new ec2.Instance(this, 'EC2-work', {
+         vpc: props.vpc,
+         vpcSubnets: { subnets: [props.privateSubnets[0]]},
+         instanceType: new ec2.InstanceType(this.instaceType || 't3.xlarge'),
+         machineImage: ec2.MachineImage.latestWindows(ec2.WindowsVersion.WINDOWS_SERVER_2022_JAPANESE_FULL_BASE),
+         instanceName: instanceName8,
+         securityGroup:sg,
+         blockDevices: [{
+           deviceName: `/dev/sda1`,
+           volume: ec2.BlockDeviceVolume.ebs(200, {
+           encrypted: true,
+           volumeType: ec2.EbsDeviceVolumeType.GP3,
+           iops: 3000,
+                   }),
+                }]
+            }
+        );
+        
+        // EC2 Instance#8のuser dataを作成
+        this.instance8.userData.addCommands(
+            'Set-ExecutionPolicy Unrestricted -Force',
+            'Import-Module AWS.Tools.Installer',
+            'Install-AWSToolsModule AWS.Tools.EC2, AWS.Tools.CloudWatch -CleanUp',
+            'Set-Location C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent',
+            'New-Item -Path . -Name "amazon-cloudwatch-agent.json" -ItemType "file" -Force',
+            'Add-Content -Path ".\\amazon-cloudwatch-agent.json" -Value \'{"metrics":{"append_dimensions":{"InstanceId":"${aws:InstanceId}"},"metrics_collected":{"LogicalDisk":[{"measurement":["FreeSpace"],"resources":["C:"]}],"Memory":{"measurement":["% Committed Bytes In Use"]}}},"logs":{}}\'',
+            'C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.exe -config "C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.json"'
+        );
+        
+        // EC2 Instance#8のタグを作成
+        const cfnInstance8 = this.instance8.node.defaultChild as ec2.CfnInstance;
+          if (!(/^ctc[0-9]$/.test(props.namingStackProps.envKey))) {
+          cfnInstance8.disableApiTermination = true;
+          } 
+          
+        // EC2 Instance#9名を作成
+        const instanceName9 = ResourceNameBuilder.makeResourceNameStr({
+        serviceName: 'ec2',
+        use: 'ad',
+            ...props.namingStackProps
+        });   
+        
+        // EC2 Instance#9を作成
+        this.instance9 = new ec2.Instance(this, 'EC2-ad', {
+         vpc: props.vpc,
+         vpcSubnets: { subnets: [props.privateSubnets[0]]},
+         instanceType: new ec2.InstanceType(this.instaceType || 't3.medium'),
+         machineImage: ec2.MachineImage.latestWindows(ec2.WindowsVersion.WINDOWS_SERVER_2022_JAPANESE_FULL_BASE),
+         instanceName: instanceName9,
+         securityGroup:sg,
+         blockDevices: [{
+           deviceName: `/dev/sda1`,
+           volume: ec2.BlockDeviceVolume.ebs(50, {
+           encrypted: true,
+           volumeType: ec2.EbsDeviceVolumeType.GP3,
+           iops: 3000,
+                   }),
+                }]
+            }
+        );
+        
+        // EC2 Instance#9のuser dataを作成
+        this.instance9.userData.addCommands(
+            'Set-ExecutionPolicy Unrestricted -Force',
+            'Import-Module AWS.Tools.Installer',
+            'Install-AWSToolsModule AWS.Tools.EC2, AWS.Tools.CloudWatch -CleanUp',
+            'Set-Location C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent',
+            'New-Item -Path . -Name "amazon-cloudwatch-agent.json" -ItemType "file" -Force',
+            'Add-Content -Path ".\\amazon-cloudwatch-agent.json" -Value \'{"metrics":{"append_dimensions":{"InstanceId":"${aws:InstanceId}"},"metrics_collected":{"LogicalDisk":[{"measurement":["FreeSpace"],"resources":["C:"]}],"Memory":{"measurement":["% Committed Bytes In Use"]}}},"logs":{}}\'',
+            'C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.exe -config "C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.json"'
+        );
+        
+        // EC2 Instance#9のタグを作成
+        const cfnInstance9 = this.instance9.node.defaultChild as ec2.CfnInstance;
+          if (!(/^ctc[0-9]$/.test(props.namingStackProps.envKey))) {
+          cfnInstance9.disableApiTermination = true;
+          }  
+ 
+ 
+         // EC2 Instance#9名を作成
+        const instanceName10 = ResourceNameBuilder.makeResourceNameStr({
+        serviceName: 'ec2',
+        use: 'base',
+            ...props.namingStackProps
+        });   
+        
+        // EC2 Instance#10を作成
+        this.instance10 = new ec2.Instance(this, 'EC2-base', {
+         vpc: props.vpc,
+         vpcSubnets: { subnets: [props.publicSubnets[0]]},
+         instanceType: new ec2.InstanceType(this.instaceType || 't3.micro'),
+         machineImage: ec2.MachineImage.latestWindows(ec2.WindowsVersion.WINDOWS_SERVER_2022_JAPANESE_FULL_BASE),
+         instanceName: instanceName10,
+         securityGroup:sg,
+         blockDevices: [{
+           deviceName: `/dev/sda1`,
+           volume: ec2.BlockDeviceVolume.ebs(8, {
+           encrypted: true,
+           volumeType: ec2.EbsDeviceVolumeType.GP3,
+           iops: 3000,
+                   }),
+                }]
+            }
+        );
+        
+        // EC2 Instance#9のuser dataを作成
+        this.instance10.userData.addCommands(
+            'Set-ExecutionPolicy Unrestricted -Force',
+            'Import-Module AWS.Tools.Installer',
+            'Install-AWSToolsModule AWS.Tools.EC2, AWS.Tools.CloudWatch -CleanUp',
+            'Set-Location C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent',
+            'New-Item -Path . -Name "amazon-cloudwatch-agent.json" -ItemType "file" -Force',
+            'Add-Content -Path ".\\amazon-cloudwatch-agent.json" -Value \'{"metrics":{"append_dimensions":{"InstanceId":"${aws:InstanceId}"},"metrics_collected":{"LogicalDisk":[{"measurement":["FreeSpace"],"resources":["C:"]}],"Memory":{"measurement":["% Committed Bytes In Use"]}}},"logs":{}}\'',
+            'C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.exe -config "C:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\amazon-cloudwatch-agent.json"'
+        );
+        
+        // EC2 Instance#9のタグを作成
+        const cfnInstance10 = this.instance10.node.defaultChild as ec2.CfnInstance;
+          if (!(/^ctc[0-9]$/.test(props.namingStackProps.envKey))) {
+          cfnInstance10.disableApiTermination = true;
+          }            
+          
+          
+   */
+  /*
+
+          
+
+        // Create Loggroup
+        this.ec2Logs = {};
+        cloudwatchLogsExportsList.forEach(v_ => {
+        
+        // Loggroup#1    
+        const logs1_ = logs.LogGroup.fromLogGroupName(
+    
+        this,
+        `Instance1${v_}Log`,
+        `/aws/ec2/instance/${this.instance1.instanceId}/${v_}`
+        );
+ 
+        this.ec2Logs[`instance1${v_}`] = logs1_;
+        logs1_.node.addDependency(this.instance1);
+        
+        // Loggroup#2
+        const logs2_ = logs.LogGroup.fromLogGroupName(
+        this,
+        `Instance2${v_}Log`,
+        `/aws/ec2/instance/${this.instance2.instanceId}/${v_}`
+         );
+        this.ec2Logs[`instance2${v_}`] = logs2_;
+        logs2_.node.addDependency(this.instance2);
+        
+        // Loggroup#3
+        const logs3_ = logs.LogGroup.fromLogGroupName(
+        this,
+        `Instance3${v_}Log`,
+        `/aws/ec2/instance/${this.instance3.instanceId}/${v_}`
+         );
+        this.ec2Logs[`instance3${v_}`] = logs3_;
+        logs3_.node.addDependency(this.instance3);        
+        
+        // Loggroup#4
+        const logs4_ = logs.LogGroup.fromLogGroupName(
+        this,
+        `Instance4${v_}Log`,
+        `/aws/ec2/instance/${this.instance4.instanceId}/${v_}`
+         );
+        this.ec2Logs[`instance4${v_}`] = logs4_;
+        logs3_.node.addDependency(this.instance4); 
+
+        // Loggroup#5
+        const logs5_ = logs.LogGroup.fromLogGroupName(
+        this,
+        `Instance5${v_}Log`,
+        `/aws/ec2/instance/${this.instance5.instanceId}/${v_}`
+         );
+        this.ec2Logs[`instance5${v_}`] = logs5_;
+        logs5_.node.addDependency(this.instance5); 
+
+        // Loggroup#6
+        const logs6_ = logs.LogGroup.fromLogGroupName(
+        this,
+        `Instance6${v_}Log`,
+        `/aws/ec2/instance/${this.instance6.instanceId}/${v_}`
+         );
+        this.ec2Logs[`instance6${v_}`] = logs6_;
+        logs6_.node.addDependency(this.instance6); 
+        
+        
+        // Loggroup#7
+        const logs7_ = logs.LogGroup.fromLogGroupName(
+        this,
+        `Instance7${v_}Log`,
+        `/aws/ec2/instance/${this.instance7.instanceId}/${v_}`
+         );
+        this.ec2Logs[`instance7${v_}`] = logs7_;
+        logs7_.node.addDependency(this.instance7);         
+
+        // Loggroup#8
+        const logs8_ = logs.LogGroup.fromLogGroupName(
+        this,
+        `Instance8${v_}Log`,
+        `/aws/ec2/instance/${this.instance8.instanceId}/${v_}`
+         );
+        this.ec2Logs[`instance8${v_}`] = logs8_;
+        logs8_.node.addDependency(this.instance8);  
+
+        // Loggroup#9
+        const logs9_ = logs.LogGroup.fromLogGroupName(
+        this,
+        `Instance9${v_}Log`,
+        `/aws/ec2/instance/${this.instance9.instanceId}/${v_}`
+         );
+        this.ec2Logs[`instance9${v_}`] = logs9_;
+        logs9_.node.addDependency(this.instance9);  
+
+        });
+        }
+*/
+    /**
+     * CPUアラームを追加
+     * @param id
+     * @param alarmTopic 通知するSNSトピック
+     * @param thresholdRate CPU使用率のアラート閾値
+     * @param alarmName アラーム名
+     */
+     /*
+    // Cpu Ararm1 
+    addCpuArarm1(id: string, alarmTopic: sns.ITopic, thresholdRate = 0.8, alarmName?: string) {
+    const alarm1 = new cw.Alarm(this, id, {
+        metric: new cw.Metric({
+            namespace: 'AWS/EC2',
+            metricName: 'CPUUtilization',
+            dimensionsMap: {
+                InstanceId: this.instance1.instanceId,
+            },
+            period: cdk.Duration.minutes(5),
+            statistic: cw.Statistic.AVERAGE,
+        }),
+        evaluationPeriods: 5,
+        datapointsToAlarm: 1,
+        threshold: thresholdRate * 100,
+        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        actionsEnabled: true,
+        treatMissingData: cw.TreatMissingData.BREACHING,
+        alarmName,
+    });
+    if (alarmName) {
+        cdk.Tags.of(alarm1).add('Cpu-Ararm1', alarmName);
+    }
+    alarm1.addAlarmAction(new cw_actions.SnsAction(alarmTopic));
+    }
+    
+    // Cpu Ararm2 
+    addCpuArarm2(id: string, alarmTopic: sns.ITopic, thresholdRate = 0.8, alarmName?: string) {
+    const alarm2 = new cw.Alarm(this, id, {
+        metric: new cw.Metric({
+            namespace: 'AWS/EC2',
+            metricName: 'CPUUtilization',
+            dimensionsMap: {
+                InstanceId: this.instance2.instanceId,
+            },
+            period: cdk.Duration.minutes(5),
+            statistic: cw.Statistic.AVERAGE,
+        }),
+        evaluationPeriods: 5,
+        datapointsToAlarm: 1,
+        threshold: thresholdRate * 100,
+        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        actionsEnabled: true,
+        treatMissingData: cw.TreatMissingData.BREACHING,
+        alarmName,
+    });
+    if (alarmName) {
+        cdk.Tags.of(alarm2).add('Cpu-Ararm2', alarmName);
+    }
+    alarm2.addAlarmAction(new cw_actions.SnsAction(alarmTopic));
+    }
+
+    // Cpu Ararm3 
+    addCpuArarm3(id: string, alarmTopic: sns.ITopic, thresholdRate = 0.8, alarmName?: string) {
+    const alarm3 = new cw.Alarm(this, id, {
+        metric: new cw.Metric({
+            namespace: 'AWS/EC2',
+            metricName: 'CPUUtilization',
+            dimensionsMap: {
+                InstanceId: this.instance3.instanceId,
+            },
+            period: cdk.Duration.minutes(5),
+            statistic: cw.Statistic.AVERAGE,
+        }),
+        evaluationPeriods: 5,
+        datapointsToAlarm: 1,
+        threshold: thresholdRate * 100,
+        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        actionsEnabled: true,
+        treatMissingData: cw.TreatMissingData.BREACHING,
+        alarmName,
+    });
+    if (alarmName) {
+        cdk.Tags.of(alarm3).add('Cpu-Ararm3', alarmName);
+    }
+    alarm3.addAlarmAction(new cw_actions.SnsAction(alarmTopic));
+    }
+
+    // Cpu Ararm4 
+    addCpuArarm4(id: string, alarmTopic: sns.ITopic, thresholdRate = 0.8, alarmName?: string) {
+    const alarm4 = new cw.Alarm(this, id, {
+        metric: new cw.Metric({
+            namespace: 'AWS/EC2',
+            metricName: 'CPUUtilization',
+            dimensionsMap: {
+                InstanceId: this.instance4.instanceId,
+            },
+            period: cdk.Duration.minutes(5),
+            statistic: cw.Statistic.AVERAGE,
+        }),
+        evaluationPeriods: 5,
+        datapointsToAlarm: 1,
+        threshold: thresholdRate * 100,
+        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        actionsEnabled: true,
+        treatMissingData: cw.TreatMissingData.BREACHING,
+        alarmName,
+    });
+    if (alarmName) {
+        cdk.Tags.of(alarm4).add('Cpu-Ararm4', alarmName);
+    }
+    alarm4.addAlarmAction(new cw_actions.SnsAction(alarmTopic));
+    }
+
+    // Cpu Ararm5 
+    addCpuArarm5(id: string, alarmTopic: sns.ITopic, thresholdRate = 0.8, alarmName?: string) {
+    const alarm5 = new cw.Alarm(this, id, {
+        metric: new cw.Metric({
+            namespace: 'AWS/EC2',
+            metricName: 'CPUUtilization',
+            dimensionsMap: {
+                InstanceId: this.instance5.instanceId,
+            },
+            period: cdk.Duration.minutes(5),
+            statistic: cw.Statistic.AVERAGE,
+        }),
+        evaluationPeriods: 5,
+        datapointsToAlarm: 1,
+        threshold: thresholdRate * 100,
+        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        actionsEnabled: true,
+        treatMissingData: cw.TreatMissingData.BREACHING,
+        alarmName,
+    });
+    if (alarmName) {
+        cdk.Tags.of(alarm5).add('Cpu-Ararm5', alarmName);
+    }
+    alarm5.addAlarmAction(new cw_actions.SnsAction(alarmTopic));
+    }
+
+    // Cpu Ararm6 
+    addCpuArarm6(id: string, alarmTopic: sns.ITopic, thresholdRate = 0.8, alarmName?: string) {
+    const alarm6 = new cw.Alarm(this, id, {
+        metric: new cw.Metric({
+            namespace: 'AWS/EC2',
+            metricName: 'CPUUtilization',
+            dimensionsMap: {
+                InstanceId: this.instance6.instanceId,
+            },
+            period: cdk.Duration.minutes(5),
+            statistic: cw.Statistic.AVERAGE,
+        }),
+        evaluationPeriods: 5,
+        datapointsToAlarm: 1,
+        threshold: thresholdRate * 100,
+        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        actionsEnabled: true,
+        treatMissingData: cw.TreatMissingData.BREACHING,
+        alarmName,
+    });
+    if (alarmName) {
+        cdk.Tags.of(alarm6).add('Cpu-Ararm6', alarmName);
+    }
+    alarm6.addAlarmAction(new cw_actions.SnsAction(alarmTopic));
+    }
+
+
+    // Cpu Ararm7 
+    addCpuArarm7(id: string, alarmTopic: sns.ITopic, thresholdRate = 0.8, alarmName?: string) {
+    const alarm7 = new cw.Alarm(this, id, {
+        metric: new cw.Metric({
+            namespace: 'AWS/EC2',
+            metricName: 'CPUUtilization',
+            dimensionsMap: {
+                InstanceId: this.instance7.instanceId,
+            },
+            period: cdk.Duration.minutes(5),
+            statistic: cw.Statistic.AVERAGE,
+        }),
+        evaluationPeriods: 5,
+        datapointsToAlarm: 1,
+        threshold: thresholdRate * 100,
+        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        actionsEnabled: true,
+        treatMissingData: cw.TreatMissingData.BREACHING,
+        alarmName,
+    });
+    if (alarmName) {
+        cdk.Tags.of(alarm7).add('Cpu-Ararm7', alarmName);
+    }
+    alarm7.addAlarmAction(new cw_actions.SnsAction(alarmTopic));
+    }
+
+    // Cpu Ararm8 
+    addCpuArarm8(id: string, alarmTopic: sns.ITopic, thresholdRate = 0.8, alarmName?: string) {
+    const alarm8 = new cw.Alarm(this, id, {
+        metric: new cw.Metric({
+            namespace: 'AWS/EC2',
+            metricName: 'CPUUtilization',
+            dimensionsMap: {
+                InstanceId: this.instance8.instanceId,
+            },
+            period: cdk.Duration.minutes(5),
+            statistic: cw.Statistic.AVERAGE,
+        }),
+        evaluationPeriods: 5,
+        datapointsToAlarm: 1,
+        threshold: thresholdRate * 100,
+        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        actionsEnabled: true,
+        treatMissingData: cw.TreatMissingData.BREACHING,
+        alarmName,
+    });
+    if (alarmName) {
+        cdk.Tags.of(alarm8).add('Cpu-Ararm8', alarmName);
+    }
+    alarm8.addAlarmAction(new cw_actions.SnsAction(alarmTopic));
+    }
+
+    // Cpu Ararm9 
+    addCpuArarm9(id: string, alarmTopic: sns.ITopic, thresholdRate = 0.8, alarmName?: string) {
+    const alarm9 = new cw.Alarm(this, id, {
+        metric: new cw.Metric({
+            namespace: 'AWS/EC2',
+            metricName: 'CPUUtilization',
+            dimensionsMap: {
+                InstanceId: this.instance9.instanceId,
+            },
+            period: cdk.Duration.minutes(5),
+            statistic: cw.Statistic.AVERAGE,
+        }),
+        evaluationPeriods: 5,
+        datapointsToAlarm: 1,
+        threshold: thresholdRate * 100,
+        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        actionsEnabled: true,
+        treatMissingData: cw.TreatMissingData.BREACHING,
+        alarmName,
+    });
+    if (alarmName) {
+        cdk.Tags.of(alarm9).add('Cpu-Ararm9', alarmName);
+    }
+    alarm9.addAlarmAction(new cw_actions.SnsAction(alarmTopic));
+    }
+
+*/
+
+
+      /**
+     * CPUアラームを追加
+     * @param id
+     * @param alarmTopic 通知するSNSトピック
+     * @param thresholdRate CPU使用率のアラート閾値
+     * @param alarmName アラーム名
+     */
+    /*
+    // Memory Ararm1
+    addMemoryAlarm1(id: string, alarmTopic: sns.ITopic, thresholdRate = 0.8, alarmName?: string) {
+    const alarm1 = new cw.Alarm(this, id, {
+        metric: new cw.Metric({
+            namespace: 'CWAgent',
+            metricName: 'mem_used_percent',
+            dimensionsMap: {
+                InstanceId: this.instance1.instanceId,
+            },
+            period: cdk.Duration.minutes(5),
+            statistic: cw.Statistic.AVERAGE,
+        }),
+        evaluationPeriods: 5,
+        datapointsToAlarm: 1,
+        threshold: thresholdRate * 100,
+        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        actionsEnabled: true,
+        treatMissingData: cw.TreatMissingData.BREACHING,
+        alarmName,
+    });
+    if (alarmName) {
+        cdk.Tags.of(alarm1).add('Memory-Ararm1', alarmName);
+    }
+    alarm1.addAlarmAction(new cw_actions.SnsAction(alarmTopic));
+    }
+
+    // Memory Ararm2
+    addMemoryAlarm2(id: string, alarmTopic: sns.ITopic, thresholdRate = 0.8, alarmName?: string) {
+    const alarm2 = new cw.Alarm(this, id, {
+        metric: new cw.Metric({
+            namespace: 'CWAgent',
+            metricName: 'mem_used_percent',
+            dimensionsMap: {
+                InstanceId: this.instance2.instanceId,
+            },
+            period: cdk.Duration.minutes(5),
+            statistic: cw.Statistic.AVERAGE,
+        }),
+        evaluationPeriods: 5,
+        datapointsToAlarm: 1,
+        threshold: thresholdRate * 100,
+        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        actionsEnabled: true,
+        treatMissingData: cw.TreatMissingData.BREACHING,
+        alarmName,
+    });
+    if (alarmName) {
+        cdk.Tags.of(alarm2).add('Name', alarmName);
+    }
+    alarm2.addAlarmAction(new cw_actions.SnsAction(alarmTopic));
+    }   
+
+    // Memory Ararm3
+    addMemoryAlarm3(id: string, alarmTopic: sns.ITopic, thresholdRate = 0.8, alarmName?: string) {
+    const alarm3 = new cw.Alarm(this, id, {
+        metric: new cw.Metric({
+            namespace: 'CWAgent',
+            metricName: 'mem_used_percent',
+            dimensionsMap: {
+                InstanceId: this.instance3.instanceId,
+            },
+            period: cdk.Duration.minutes(5),
+            statistic: cw.Statistic.AVERAGE,
+        }),
+        evaluationPeriods: 5,
+        datapointsToAlarm: 1,
+        threshold: thresholdRate * 100,
+        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        actionsEnabled: true,
+        treatMissingData: cw.TreatMissingData.BREACHING,
+        alarmName,
+    });
+    if (alarmName) {
+        cdk.Tags.of(alarm3).add('Name', alarmName);
+    }
+    alarm3.addAlarmAction(new cw_actions.SnsAction(alarmTopic));
+    } 
+
+    // Memory Ararm4
+    addMemoryAlarm4(id: string, alarmTopic: sns.ITopic, thresholdRate = 0.8, alarmName?: string) {
+    const alarm4 = new cw.Alarm(this, id, {
+        metric: new cw.Metric({
+            namespace: 'CWAgent',
+            metricName: 'mem_used_percent',
+            dimensionsMap: {
+                InstanceId: this.instance4.instanceId,
+            },
+            period: cdk.Duration.minutes(5),
+            statistic: cw.Statistic.AVERAGE,
+        }),
+        evaluationPeriods: 5,
+        datapointsToAlarm: 1,
+        threshold: thresholdRate * 100,
+        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        actionsEnabled: true,
+        treatMissingData: cw.TreatMissingData.BREACHING,
+        alarmName,
+    });
+    if (alarmName) {
+        cdk.Tags.of(alarm4).add('Name', alarmName);
+    }
+    alarm4.addAlarmAction(new cw_actions.SnsAction(alarmTopic));
+    } 
+
+    // Memory Ararm5
+    addMemoryAlarm5(id: string, alarmTopic: sns.ITopic, thresholdRate = 0.8, alarmName?: string) {
+    const alarm5 = new cw.Alarm(this, id, {
+        metric: new cw.Metric({
+            namespace: 'CWAgent',
+            metricName: 'mem_used_percent',
+            dimensionsMap: {
+                InstanceId: this.instance5.instanceId,
+            },
+            period: cdk.Duration.minutes(5),
+            statistic: cw.Statistic.AVERAGE,
+        }),
+        evaluationPeriods: 5,
+        datapointsToAlarm: 1,
+        threshold: thresholdRate * 100,
+        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        actionsEnabled: true,
+        treatMissingData: cw.TreatMissingData.BREACHING,
+        alarmName,
+    });
+    if (alarmName) {
+        cdk.Tags.of(alarm5).add('Name', alarmName);
+    }
+    alarm5.addAlarmAction(new cw_actions.SnsAction(alarmTopic));
+    } 
+
+    addMemoryAlarm6(id: string, alarmTopic: sns.ITopic, thresholdRate = 0.8, alarmName?: string) {
+    const alarm6 = new cw.Alarm(this, id, {
+        metric: new cw.Metric({
+            namespace: 'CWAgent',
+            metricName: 'mem_used_percent',
+            dimensionsMap: {
+                InstanceId: this.instance6.instanceId,
+            },
+            period: cdk.Duration.minutes(5),
+            statistic: cw.Statistic.AVERAGE,
+        }),
+        evaluationPeriods: 5,
+        datapointsToAlarm: 1,
+        threshold: thresholdRate * 100,
+        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        actionsEnabled: true,
+        treatMissingData: cw.TreatMissingData.BREACHING,
+        alarmName,
+    });
+    if (alarmName) {
+        cdk.Tags.of(alarm6).add('Name', alarmName);
+    }
+    alarm6.addAlarmAction(new cw_actions.SnsAction(alarmTopic));
+    } 
+    
+    addMemoryAlarm7(id: string, alarmTopic: sns.ITopic, thresholdRate = 0.8, alarmName?: string) {
+    const alarm7 = new cw.Alarm(this, id, {
+        metric: new cw.Metric({
+            namespace: 'CWAgent',
+            metricName: 'mem_used_percent',
+            dimensionsMap: {
+                InstanceId: this.instance7.instanceId,
+            },
+            period: cdk.Duration.minutes(5),
+            statistic: cw.Statistic.AVERAGE,
+        }),
+        evaluationPeriods: 5,
+        datapointsToAlarm: 1,
+        threshold: thresholdRate * 100,
+        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        actionsEnabled: true,
+        treatMissingData: cw.TreatMissingData.BREACHING,
+        alarmName,
+    });
+    if (alarmName) {
+        cdk.Tags.of(alarm7).add('Name', alarmName);
+    }
+    alarm7.addAlarmAction(new cw_actions.SnsAction(alarmTopic));
+    } 
+    
+    addMemoryAlarm8(id: string, alarmTopic: sns.ITopic, thresholdRate = 0.8, alarmName?: string) {
+    const alarm8 = new cw.Alarm(this, id, {
+        metric: new cw.Metric({
+            namespace: 'CWAgent',
+            metricName: 'mem_used_percent',
+            dimensionsMap: {
+                InstanceId: this.instance7.instanceId,
+            },
+            period: cdk.Duration.minutes(5),
+            statistic: cw.Statistic.AVERAGE,
+        }),
+        evaluationPeriods: 5,
+        datapointsToAlarm: 1,
+        threshold: thresholdRate * 100,
+        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        actionsEnabled: true,
+        treatMissingData: cw.TreatMissingData.BREACHING,
+        alarmName,
+    });
+    if (alarmName) {
+        cdk.Tags.of(alarm8).add('Name', alarmName);
+    }
+    alarm8.addAlarmAction(new cw_actions.SnsAction(alarmTopic));
+    }  
+    
+    addMemoryAlarm9(id: string, alarmTopic: sns.ITopic, thresholdRate = 0.8, alarmName?: string) {
+    const alarm9 = new cw.Alarm(this, id, {
+        metric: new cw.Metric({
+            namespace: 'CWAgent',
+            metricName: 'mem_used_percent',
+            dimensionsMap: {
+                InstanceId: this.instance7.instanceId,
+            },
+            period: cdk.Duration.minutes(5),
+            statistic: cw.Statistic.AVERAGE,
+        }),
+        evaluationPeriods: 5,
+        datapointsToAlarm: 1,
+        threshold: thresholdRate * 100,
+        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        actionsEnabled: true,
+        treatMissingData: cw.TreatMissingData.BREACHING,
+        alarmName,
+    });
+    if (alarmName) {
+        cdk.Tags.of(alarm9).add('Name', alarmName);
+    }
+    alarm9.addAlarmAction(new cw_actions.SnsAction(alarmTopic));
+    }         
+}
+*/
