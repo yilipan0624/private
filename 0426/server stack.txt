@@ -113,7 +113,7 @@ export class WccServerstack extends cdk.Stack {
       edition: 'Standard',
     });
     
-    // Create FSx for Windows
+    // Create FSx name
     const fsxFileSystemName = ResourceNameBuilder.makeResourceNameStr({
       serviceName: 'fsx',
       use: 'fileSystem',
