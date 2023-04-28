@@ -19,12 +19,12 @@ export class WccOpsStack extends Construct {
   constructor(scope: Construct, id: string, props: WccOpsStackProps) {
     super(scope, id);
 
-    // 创建一个新的backup-vault
+    // Create a new backup vault
     const backupVault = new backup.BackupVault(this, 'MyBackupVault', {
       backupVaultName: 'backup-vault',
     });
 
-    // 创建一个新的备份计划
+   // Create a new backup plan
     const backupPlan = new backup.BackupPlan(this, 'MyBackupPlan', {
       backupVault: backupVault,
       backupPlanName: 'backup-plan',
@@ -32,19 +32,19 @@ export class WccOpsStack extends Construct {
         backupPlanRules: [
           new backup.BackupPlanRule({
             ruleName: 'windows-backup-rule',
-            scheduleExpression: Schedule.cron({ minute: '0', hour: '15' }), // 每天下午3点开始
-            startWindow: Duration.hours(1), // 开始时间范围为1小时
-            completionWindow: Duration.hours(6), // 时长为6小时
-            deleteAfter: Duration.days(20), // 保留期为20天
-            moveToColdStorageAfter: undefined, // 不开启冷存储
+            scheduleExpression: Schedule.cron({ minute: '0', hour: '15' }), // Start every day at 3:00 PM
+            startWindow: Duration.hours(1), // Start time range of 1 hour
+            completionWindow: Duration.hours(6), // Duration of 6 hours
+            deleteAfter: Duration.days(20), // Retention period of 20 days
+            moveToColdStorageAfter: undefined, // Do not enable cold storage
           }),
           new backup.BackupPlanRule({
             ruleName: 'linux-backup-rule',
-            scheduleExpression: Schedule.cron({ minute: '0', hour: '15' }), // 每天下午3点开始
-            startWindow: Duration.hours(1), // 开始时间范围为1小时
-            completionWindow: Duration.hours(6), // 时长为6小时
-            deleteAfter: Duration.days(20), // 保留期为20天
-            moveToColdStorageAfter: undefined, // 不开启冷存储
+            scheduleExpression: Schedule.cron({ minute: '0', hour: '15' }), // Start every day at 3:00 PM
+            startWindow: Duration.hours(1), // Start time range of 1 hour
+            completionWindow: Duration.hours(6), // Duration of 6 hours
+            deleteAfter: Duration.days(20), // Retention period of 20 days
+            moveToColdStorageAfter: undefined, // Do not enable cold storage
           }),
         ],
     });
@@ -78,7 +78,7 @@ export class WccOpsStack extends Construct {
         listOfTags: [
       {
         conditionType: 'STRINGEQUALS',
-        conditionKey: 'Name', // 修改为标签键名 'Name'
+        conditionKey: 'Name', 
         conditionValue: 'cpi-ec2-ps-dev-iwel-02', 
       },
     ],
