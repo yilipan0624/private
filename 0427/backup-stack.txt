@@ -1,0 +1,86 @@
+import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import { Duration } from 'aws-cdk-lib';
+import * as backup from 'aws-cdk-lib/aws-backup';
+import { Schedule } from 'aws-cdk-lib/aws-events';
+
+type BackupConstructProps = {
+  backupVaultName?: string;
+  backupPlanName?: string;
+  dailyBackupHour: number;
+  dailyBackupMinute: number;
+};
+
+export class BackupConstruct extends Construct {
+  public readonly backupVault: backup.CfnBackupVault;
+  public readonly backupPlan: backup.CfnBackupPlan;
+
+  constructor(scope: Construct, id: string, props: BackupConstructProps) {
+    super(scope, id);
+
+    // 创建一个新的backup-vault
+    const backupVault = new backup.BackupVault(this, 'MyBackupVault', {
+      backupVaultName: 'backup-vault',
+    });
+
+    // 创建一个新的备份计划
+    const backupPlan = new backup.BackupPlan(this, 'MyBackupPlan', {
+      backupVault: backupVault,
+      backupPlanName: 'backup-plan',
+      windowsVss: true,
+        backupPlanRules: [
+          new backup.BackupPlanRule({
+            ruleName: 'windows-backup-rule',
+            scheduleExpression: Schedule.cron({ minute: '0', hour: '15' }), // 每天下午3点开始
+            startWindow: Duration.hours(1), // 开始时间范围为1小时
+            completionWindow: Duration.hours(6), // 时长为6小时
+            deleteAfter: Duration.days(20), // 保留期为20天
+            moveToColdStorageAfter: undefined, // 不开启冷存储
+          }),
+          new backup.BackupPlanRule({
+            ruleName: 'linux-backup-rule',
+            scheduleExpression: Schedule.cron({ minute: '0', hour: '15' }), // 每天下午3点开始
+            startWindow: Duration.hours(1), // 开始时间范围为1小时
+            completionWindow: Duration.hours(6), // 时长为6小时
+            deleteAfter: Duration.days(20), // 保留期为20天
+            moveToColdStorageAfter: undefined, // 不开启冷存储
+          }),
+        ],
+    });
+
+    // Create Backup Selection for EC2-Windows
+    const windowsBackupSelection = new backup.CfnBackupSelection(this, 'WindowsBackupSelection', {
+      backupPlanId: backupPlan.backupPlanId,
+      backupSelection: {
+        selectionName: 'ec2-windows',
+        iamRoleArn: `arn:aws:iam::${cdk.Stack.of(this).account}:role/service-role/AWSBackupDefaultServiceRole`, // Default role ARN
+        resources: [
+          `arn:aws:ec2:*:*:instance/*`, 
+        ],
+        listOfTags: [
+          {
+            conditionType: 'STRINGEQUALS',
+            conditionKey: 'Name', 
+            conditionValue: 'cpi-ec2-ps-dev-iwel-01', 
+          },
+        ],
+      },
+    });
+
+    // Create Backup Selection for EC2-Linux
+    const linuxBackupSelection = new backup.CfnBackupSelection(this, 'LinuxBackupSelection', {
+      backupPlanId: backupPlan.backupPlanId,
+      backupSelection: {
+        selectionName: 'ec2-linux',
+        iamRoleArn: `arn:aws:iam::${cdk.Stack.of(this).account}:role/service-role/AWSBackupDefaultServiceRole`, 
+        resources: [`arn:aws:ec2:*:*:instance/*`, ],
+        listOfTags: [
+      {
+        conditionType: 'STRINGEQUALS',
+        conditionKey: 'Name', // 修改为标签键名 'Name'
+        conditionValue: 'cpi-ec2-ps-dev-iwel-02', 
+      },
+    ],
+  },
+});
+}}        
