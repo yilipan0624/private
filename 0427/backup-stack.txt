@@ -3,19 +3,20 @@ import { Construct } from 'constructs';
 import { Duration } from 'aws-cdk-lib';
 import * as backup from 'aws-cdk-lib/aws-backup';
 import { Schedule } from 'aws-cdk-lib/aws-events';
+import { BackupConstruct } from '../construct/backup/backup-construct';
 
-type BackupConstructProps = {
+type WccOpsStackProps = {
   backupVaultName?: string;
   backupPlanName?: string;
   dailyBackupHour: number;
   dailyBackupMinute: number;
 };
 
-export class BackupConstruct extends Construct {
+export class WccOpsStack extends Construct {
   public readonly backupVault: backup.CfnBackupVault;
   public readonly backupPlan: backup.CfnBackupPlan;
 
-  constructor(scope: Construct, id: string, props: BackupConstructProps) {
+  constructor(scope: Construct, id: string, props: WccOpsStackProps) {
     super(scope, id);
 
     // 创建一个新的backup-vault
