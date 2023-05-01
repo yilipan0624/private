@@ -40,7 +40,7 @@ const backupPlanec2windows = new backup.CfnBackupPlan(this, 'plan1', {
   backupPlan: {
     backupPlanName: ResourceNameBuilder.makeResourceNameStr({
       serviceName: 'backup',
-      use: `plan`,
+      use: `ec2windowsplan`,
       ...props.namingStackProps,
     }),
     backupPlanRule: [
@@ -77,7 +77,7 @@ const backupPlanec2linux = new backup.CfnBackupPlan(this, 'plan2', {
   backupPlan: {
     backupPlanName: ResourceNameBuilder.makeResourceNameStr({
       serviceName: 'backup',
-      use: `plan`,
+      use: `ec2linuxplan`,
       ...props.namingStackProps,
     }),
     backupPlanRule: [
@@ -134,6 +134,53 @@ const backupPlanec2linux = new backup.CfnBackupPlan(this, 'plan2', {
         ],
       },
     });
+    
+    
+    
+      // Add a new backup plan for FSx for Windows
+    const backupPlanFSxWindows = new backup.CfnBackupPlan(this, 'FSxWindowsBackupPlan', {
+      backupPlan: {
+        backupPlanName: ResourceNameBuilder.makeResourceNameStr({
+          serviceName: 'backup',
+          use: `fsxwindows`,
+          ...props.namingStackProps,
+        }),
+        backupPlanRule: [
+          {
+            ruleName: ResourceNameBuilder.makeResourceNameStr({
+              serviceName: 'rule',
+              use: `fsxwindowsrule`,
+              ...props.namingStackProps,
+            }),
+            scheduleExpression: 'cron(0 15 * * ? *)',
+            startWindowMinutes: Duration.hours(1).toMinutes(),
+            completionWindowMinutes: Duration.hours(6).toMinutes(),
+            lifecycle: {
+              deleteAfterDays: 20,
+            },
+            copyActions: [commonCopyAction],
+            targetBackupVault: backupVault.backupVaultName,
+          } as backup.CfnBackupPlan.BackupRuleResourceTypeProperty,
+        ],
+      },
+    });
+
+    // Add a new backup selection for FSx for Windows
+    new backup.CfnBackupSelection(this, 'FSxWindowsBackupSelection', {
+      backupPlanId: backupPlanFSxWindows.ref,
+      backupSelection: {
+        selectionName: 'fsx-windows',
+        iamRoleArn: `arn:aws:iam::${cdk.Stack.of(this).account}:role/service-role/AWSBackupDefaultServiceRole`,
+        resources: [`arn:aws:fsx:*:*:file-system/*`],
+        listOfTags: [
+          {
+            conditionType: 'STRINGEQUALS',
+            conditionKey: 'Name',
+            conditionValue: 'cpi-fsx-ps-dev-windows', // Change this to the appropriate value for your FSx for Windows resource
+          },
+        ],
+      },
+    });  
   }
 }
 
