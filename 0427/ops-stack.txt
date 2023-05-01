@@ -2,7 +2,6 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { Duration } from 'aws-cdk-lib';
 import * as backup from 'aws-cdk-lib/aws-backup';
-import { Schedule } from 'aws-cdk-lib/aws-events';
 import { NamingStackProps } from '../../utils/commonTypes';
 import { ResourceNameBuilder } from '../../utils/helpers';
 
@@ -19,7 +18,6 @@ export class WccOpsStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: WccOpsStackProps) {
     super(scope, id);
 
-    const destinationRegion = 'ap-northeast-3';
 
     const backupVault = new backup.BackupVault(this, 'MyBackupVault', {
       backupVaultName: ResourceNameBuilder.makeResourceNameStr({
@@ -62,8 +60,18 @@ const backupPlanec2windows = new backup.CfnBackupPlan(this, 'plan1', {
         targetBackupVault: backupVault.backupVaultName,
       } as backup.CfnBackupPlan.BackupRuleResourceTypeProperty,
     ],
+    advancedBackupSettings: [
+      {
+        backupOptions: {
+          'WindowsVSS': 'enabled',
+        },
+        resourceType: 'EC2',
+      },
+    ],
   },
 });
+
+
 
 const backupPlanec2linux = new backup.CfnBackupPlan(this, 'plan2', {
   backupPlan: {
@@ -93,7 +101,7 @@ const backupPlanec2linux = new backup.CfnBackupPlan(this, 'plan2', {
 });
 
 
-     const windowsBackupSelection = new backup.CfnBackupSelection(this, 'WindowsBackupSelection', {
+     new backup.CfnBackupSelection(this, 'WindowsBackupSelection', {
       backupPlanId: backupPlanec2windows.ref,
       backupSelection: {
         selectionName: 'ec2-windows',
@@ -111,7 +119,7 @@ const backupPlanec2linux = new backup.CfnBackupPlan(this, 'plan2', {
       },
     });
 
-    const linuxBackupSelection = new backup.CfnBackupSelection(this, 'LinuxBackupSelection', {
+    new backup.CfnBackupSelection(this, 'LinuxBackupSelection', {
       backupPlanId: backupPlanec2linux.ref,
       backupSelection: {
         selectionName: 'ec2-linux',
