@@ -1,0 +1,38 @@
+import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import * as backup from 'aws-cdk-lib/aws-backup';
+
+export interface BackupConstructProps {
+  backupPlanEc2Windows: backup.BackupPlan;
+  backupPlanEc2Linux: backup.BackupPlan;
+  windowsBackupSelection: {
+    selectionName: string;
+    iamRoleArn: string;
+    resources: string[];
+    listOfTags: backup.CfnBackupSelection.ConditionResourceTypeProperty[];
+  };
+  linuxBackupSelection: {
+    selectionName: string;
+    iamRoleArn: string;
+    resources: string[];
+    listOfTags: backup.CfnBackupSelection.ConditionResourceTypeProperty[];
+  };
+}
+
+export class BackupConstruct extends Construct {
+  constructor(scope: Construct, id: string, props: BackupConstructProps) {
+    super(scope, id);
+
+    // Create Backup Selection for EC2-Windows
+    new backup.CfnBackupSelection(this, 'WindowsBackupSelection', {
+      backupPlanId: props.backupPlanEc2Windows.backupPlanId,
+      backupSelection: props.windowsBackupSelection,
+    });
+
+    // Create Backup Selection for EC2-Linux
+    new backup.CfnBackupSelection(this, 'LinuxBackupSelection', {
+      backupPlanId: props.backupPlanEc2Linux.backupPlanId,
+      backupSelection: props.linuxBackupSelection,
+    });
+  }
+}
