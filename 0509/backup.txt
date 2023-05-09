@@ -1,0 +1,138 @@
+import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import { Duration } from 'aws-cdk-lib';
+import * as backup from 'aws-cdk-lib/aws-backup';
+import { NamingStackProps } from '../../utils/commonTypes';
+import { ResourceNameBuilder } from '../../utils/helpers';
+
+type WccOpsStackProps = {
+  namingStackProps: NamingStackProps;
+  backupVaultName?: string;
+  backupPlanName?: string;
+  dailyBackupHour?: number;
+  dailyBackupMinute?: number;
+  destinationBackupVaultArn: string;
+  cdkAutoRemove?: boolean;
+} & cdk.StackProps;
+
+export class WccOpsStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props: WccOpsStackProps) {
+    super(scope, id);
+
+    // Create backup vault
+    const backupVault = new backup.BackupVault(this, 'TokyoVault', {
+      backupVaultName: ResourceNameBuilder.makeResourceNameStr({
+        serviceName: 'backup',
+        use: `tokyovault`,
+        ...props.namingStackProps,
+      }),
+    });
+
+    // Add name tag to backup vault
+    const vaultName = ResourceNameBuilder.makeResourceNameStr({
+      serviceName: 'backupvault',
+      use: 'tokyovault',
+      ...props.namingStackProps
+    });
+    cdk.Tags.of(backupVault).add('Name', vaultName);
+
+    // Define common copy action
+    const commonCopyAction: backup.CfnBackupPlan.CopyActionResourceTypeProperty = {
+      destinationBackupVaultArn: props.destinationBackupVaultArn,
+      lifecycle: {
+        deleteAfterDays: 20,
+      },
+    };
+
+
+    
+    // Create backup plan for EC2 Linux instances
+    const backupPlanec2linux = new backup.CfnBackupPlan(this, 'plan2', {
+      backupPlan: {
+        backupPlanName: ResourceNameBuilder.makeResourceNameStr({
+          serviceName: 'backup',
+          use: `ec2linuxplan`,
+          ...props.namingStackProps,
+    }),
+    backupPlanRule: [
+      {
+        ruleName: ResourceNameBuilder.makeResourceNameStr({
+          serviceName: 'rule',
+          use: `ec2rule`,
+          ...props.namingStackProps,
+        }),
+        scheduleExpression: 'cron(43 1 * * ? *)',
+        startWindowMinutes: Duration.hours(1).toMinutes(),
+        completionWindowMinutes: Duration.hours(2).toMinutes(),
+        lifecycle: {
+          deleteAfterDays: 20,
+        },
+        copyActions: [commonCopyAction],
+        targetBackupVault: backupVault.backupVaultName,
+      } as backup.CfnBackupPlan.BackupRuleResourceTypeProperty,
+    ],
+  },
+    });
+
+    // Add name tag to EC2 Linux backup plan
+    const ec2linuxplanName = ResourceNameBuilder.makeResourceNameStr({
+      serviceName: 'backupplan',
+      use: 'ec2linuxsplan',
+      ...props.namingStackProps
+    });
+    cdk.Tags.of(backupPlanec2linux).add('Name', ec2linuxplanName);
+    
+
+    
+
+//const conditionsProperty = {
+//  StringEquals: [
+//    {
+//      'aws:ResourceTag/Name': 'test',
+//    },
+//  ],
+//};
+ 
+  
+// Add FSx for Windows backup selection
+new backup.CfnBackupSelection(this, 'FSxWindowsBackupSelection', {
+  backupPlanId: backupPlanec2linux.ref,
+  backupSelection: {
+    selectionName: 'fsx-windows',
+    iamRoleArn: `arn:aws:iam::${cdk.Stack.of(this).account}:role/service-role/AWSBackupDefaultServiceRole`,
+    resources: [`arn:aws:ec2:*:*:instance/*`],
+    conditions: {
+      StringLike: [
+        {
+          ConditionKey: 'aws:ResourceTag/Name',
+          ConditionValue: 'test3311111',
+        },
+      ],
+    },
+
+  },
+});
+
+// Add FSx for Windows backup selection
+new backup.CfnBackupSelection(this, 'FSxWindowsBackupSelection2', {
+  backupPlanId: backupPlanec2linux.ref,
+  backupSelection: {
+    selectionName: 'fsx-windows2',
+    iamRoleArn: `arn:aws:iam::${cdk.Stack.of(this).account}:role/service-role/AWSBackupDefaultServiceRole`,
+    resources: [`arn:aws:ec2:*:*:instance/*`],
+    conditions: {
+      StringLike: [
+        {
+          ConditionKey: 'aws:ResourceTag/Name',
+          ConditionValue: 'assasda',
+        },
+      ],
+    },
+
+  },
+});
+
+
+  }
+}
+    
