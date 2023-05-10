@@ -1,0 +1,160 @@
+import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import { Duration } from 'aws-cdk-lib';
+import * as backup from 'aws-cdk-lib/aws-backup';
+import { NamingStackProps } from '../../utils/commonTypes';
+import { ResourceNameBuilder } from '../../utils/helpers';
+import { BackupConstruct } from '../construct/backup/backup-construct';
+import { CfnBackupVault } from 'aws-cdk-lib/aws-backup';
+import { IamRoleConstruct } from '../construct/iam/iam-construct';
+import * as iam from 'aws-cdk-lib/aws-iam';
+
+type WccOpsStackProps = {
+  namingStackProps: NamingStackProps;
+  backupVaultName?: string;
+  backupPlanName?: string;
+  dailyBackupHour?: number;
+  dailyBackupMinute?: number;
+  destinationBackupVaultArn: string;
+  cdkAutoRemove?: boolean;
+} & cdk.StackProps;
+
+export class WccOpsStack extends cdk.Stack {
+  
+  readonly BackupConstruct: BackupConstruct;
+  
+  constructor(scope: Construct, id: string, props: WccOpsStackProps) {
+    super(scope, id);
+
+    // 创建第一个 IAM 角色，需要 AmazonSSMManagedInstanceCore 权限
+    const ssmRole = new IamRoleConstruct(this, 'SSMRole', {
+      roleName: ResourceNameBuilder.makeResourceNameStr({
+        serviceName: 'role',
+        use: `bastion`,
+        ...props.namingStackProps,
+      }),
+      policyDocument: new iam.PolicyDocument({
+        statements: [
+          new iam.PolicyStatement({
+            actions: ['ssm:*'],
+            resources: ['*'],
+          }),
+        ],
+      }),
+      maxSessionDuration: 3600,
+    });
+    // 添加标签
+    cdk.Tags.of(ssmRole.role).add('Purpose', 'bastion');
+    
+
+    // 创建第二个 IAM 角色，需要 AdministratorAccess 权限
+    const adminRole = new IamRoleConstruct(this, 'AdminRole', {
+      roleName: ResourceNameBuilder.makeResourceNameStr({
+        serviceName: 'role',
+        use: `xxx`,
+        ...props.namingStackProps,
+      }),
+      policyDocument: new iam.PolicyDocument({
+        statements: [
+          new iam.PolicyStatement({
+            actions: ['*'],
+            resources: ['*'],
+          }),
+        ],
+      }),
+      maxSessionDuration: 3600,
+    });
+    // 添加标签
+    cdk.Tags.of(adminRole.role).add('Purpose', 'xxx');
+    
+    
+//      // Add name tag to backup vault
+//    const backupVaultName = ResourceNameBuilder.makeResourceNameStr({
+//      serviceName: 'backup',
+//      use: `tokyovault`,
+//      ...props.namingStackProps,
+//    });
+//    
+//
+//    // Create backup vault
+//    const backupVault = new CfnBackupVault(this, 'TokyoVault', {
+//      backupVaultName: backupVaultName,
+//      backupVaultTags: {
+//        'Name': backupVaultName,
+//      },
+//    });
+//
+//
+//
+//    // Define common copy action
+//    const commonCopyAction: backup.CfnBackupPlan.CopyActionResourceTypeProperty = {
+//      destinationBackupVaultArn: props.destinationBackupVaultArn,
+//      lifecycle: {
+//        deleteAfterDays: 20,
+//      },
+//    };
+//
+//
+//      // Add name tag to EC2 Linux backup plan
+//    const ec2linuxplanName = ResourceNameBuilder.makeResourceNameStr({
+//      serviceName: 'backupplan',
+//      use: 'ec2linuxsplan',
+//      ...props.namingStackProps
+//    });
+//    
+//    // Create backup plan for EC2 Linux instances
+//const backupPlanec2linux = new backup.CfnBackupPlan(this, 'plan2', {
+//  backupPlanTags: {
+//    'Name': ec2linuxplanName,
+//  },
+//  backupPlan: {
+//    backupPlanName: ec2linuxplanName,
+//    backupPlanRule: [
+//      {
+//        ruleName: ResourceNameBuilder.makeResourceNameStr({
+//          serviceName: 'rule',
+//          use: `ec2rule`,
+//          ...props.namingStackProps,
+//        }),
+//        scheduleExpression: 'cron(0 14 * * ? *)',
+//        startWindowMinutes: Duration.hours(1).toMinutes(),
+//        completionWindowMinutes: Duration.hours(6).toMinutes(),
+//        lifecycle: {
+//          deleteAfterDays: 20,
+//        },
+//        copyActions: [commonCopyAction],
+//        targetBackupVault: backupVaultName,
+//      } as backup.CfnBackupPlan.BackupRuleResourceTypeProperty,
+//    ],
+//  },
+//});
+//    
+//  backupPlanec2linux.node.addDependency(backupVault);  
+//
+//
+//    
+//
+// 
+//  
+//// Add FSx for Windows backup selection
+//new backup.CfnBackupSelection(this, 'FSxWindowsBackupSelection', {
+//  backupPlanId: backupPlanec2linux.ref,
+//  backupSelection: {
+//    selectionName: 'fsx-windows',
+//    iamRoleArn: `arn:aws:iam::${cdk.Stack.of(this).account}:role/service-role/AWSBackupDefaultServiceRole`,
+//    resources: [`arn:aws:ec2:*:*:instance/*`],
+//    conditions: {
+//      StringEquals: [
+//        {
+//          ConditionKey: 'aws:ResourceTag/Name',
+//          ConditionValue: 'test',
+//        },
+//      ],
+//    },
+//
+//  },
+//});
+
+  }
+}
+    

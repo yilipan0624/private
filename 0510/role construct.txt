@@ -1,0 +1,37 @@
+import * as iam from 'aws-cdk-lib/aws-iam';
+import { Construct } from 'constructs';
+
+// IAM Role 的属性
+type IamRoleConstructProps = {
+  // 角色名称
+  roleName: string;
+  // 策略文档
+  policyDocument: iam.PolicyDocument;
+  // 描述
+  description?: string;
+  // 最大会话持续时间（可选）
+  maxSessionDuration?: number;
+}
+
+export class IamRoleConstruct extends Construct {
+  public readonly role: iam.Role;
+
+  constructor(scope: Construct, id: string, props: IamRoleConstructProps) {
+    super(scope, id);
+
+    this.role = new iam.Role(this, 'IamRole', {
+      roleName: props.roleName,
+      assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com'),
+      inlinePolicies: {
+        defaultPolicy: props.policyDocument,
+      },
+      description: props.description,
+    });
+
+    // 根据需要设置 maxSessionDuration
+    if (props.maxSessionDuration) {
+      const cfnRole = this.role.node.defaultChild as iam.CfnRole;
+      cfnRole.addPropertyOverride('MaxSessionDuration', props.maxSessionDuration);
+    }
+  }
+}
